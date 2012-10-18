@@ -44,11 +44,7 @@ public final class InitSessionFilter implements Filter
 			chain.doFilter(request,response);
 			return;
 		}
-		session.setAttribute("userIsSysadmin",new Boolean(true));
 		
-		chain.doFilter(request,response);
-		if(1==1)
-			return;
 		
 		//get groups for user
 		String message = "";
