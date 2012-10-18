@@ -1,0 +1,16 @@
+* { font-family: Helvetica, Arial, sans-serif; }
+body { background: #fff; color: #000; font-size: 12px; line-height: 1.5em; }
+#emergency-message, #bookmarks, #search-options, #secondary-nav, 
+#global-nav, #breadcrumbs, #context, 
+#footer, #feedback_link { display: none; } /* REMOVED #site-name */
+
+a { color: #238800; text-decoration: none; }
+img { border: none; }
+
+#site-name {
+position: absolute; top: 30px; left: 310px; margin: 0; padding: 0 0 0 18px;
+font-size: 2.0em;
+line-height: 0.6em;
+background: transparent url('../img/glyph.png') no-repeat 0 0; padding-left: 30px; 
+}
+#site-name, #site-name a { color: #444 !important; text-shadow: #fff 1px 1px 0; }

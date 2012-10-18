@@ -1,0 +1,89 @@
+<%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*"%>
+<%
+String courseOfferingId = request.getParameter("course_offering_id");
+CourseManager cm = CourseManager.instance();
+CourseOffering courseOffering = cm.getCourseOfferingById(Integer.parseInt(courseOfferingId));
+int linkId = HTMLTools.getInt(request.getParameter("assessment_link_id"));
+boolean editing = false;
+LinkCourseOfferingAssessment link = new LinkCourseOfferingAssessment();
+String requiredParameters = "'assessmentMethod',";
+if(linkId > -1)
+{
+	link = cm.getLinkCourseOfferingAssessmentById(linkId);
+	editing = true;
+	requiredParameters = "";
+}
+
+%>
+<div>
+<div id="addAssessmentMethodDiv"  class="fake-input">
+	<form name="addAssessmentMethodForm" id="assessmentMethodForm" method="post" action="" >
+			<input type="hidden" name="objectClass" id="objectClass" value="LinkCourseOfferingAssessmentMethod"/>
+			<%
+			if(editing)
+			{%>
+			<input type="hidden" name="assessment_link_id" id="assessment_link_id" value="<%=linkId%>"/>
+			<%} %>
+			<input type="hidden" name="course_offering_id" id="course_offering_id" value="<%=courseOfferingId%>"/>
+			<div class="formElement">
+				<div class="label">Select the format that best describes your assessment method:</div>
+				<div class="field">
+					<div id="availableAssessmentMethods">
+						<jsp:include page="/auth/courseOffering/availableAssessmentMethods.jsp">
+							<jsp:param name="assessment_link_id" value="<%=linkId%>" />
+						</jsp:include>
+					</div>
+				</div>
+			</div>
+			<hr/>
+			<div class="formElement">
+				<div class="label">Add any additional information<br/> about your assessment method here:</div>
+				<div class="field"> <textarea name="additional_info" id="additional_info" cols="40" rows="2"><%=editing?(link.getAdditionalInfo()==null?"":link.getAdditionalInfo()):""%></textarea></div>
+				<div class="spacer"> </div>
+			</div>
+			<hr/>
+			<div class="formElement">
+				<div class="label">% of total mark :</div>
+				<div class="field">
+					<input type="text" name="assessmentWeight" id="assessmentWeight" size="10" value="<%=editing?""+link.getWeight():"0.0"%>"/>
+				</div>
+			</div>
+			<hr/>
+			<div class="formElement">
+				<div class="label">Students must meet a criterion on this course-work to proceed in the program/course:</div>
+				<div class="field">
+						<input type="radio" name="criterion_exists" <%=editing?(link.getCriterionExists().equalsIgnoreCase("N")?"checked=\"checked\"":""):"checked=\"checked\"" %> value="N"> Not applicable<br/>
+						<input type="radio" name="criterion_exists" <%=editing?(link.getCriterionExists().equalsIgnoreCase("Y")?"checked=\"checked\"":""):"" %> value="Y"> yes
+				</div>
+			</div>
+			<hr/>
+			
+			<div class="formElement">
+				<div class="label"> % Criterion that must be met (if applicable):</div>
+				<div class="field">
+					<input type="text" name="criterion_level" id="criterion_level" size="10" value="<%=editing?""+link.getCriterionLevel():"0.0"%>"/>
+				</div>
+			</div>
+			<hr/>
+			<div class="formElement">
+				<div class="label">Due/occur:</div>
+				<div class="field">
+				<%=HTMLTools.createSelect( "when", cm.getAssessmentTimeOptions(), "Id", "Name", editing?""+link.getWhen().getId():null, null)%>
+				</div>
+			</div>
+			<hr/>
+			<jsp:include page="additionalAssessmentOptions.jsp">
+				<jsp:param name="assessment_link_id" value="<%=linkId%>" />
+			</jsp:include>
+			
+			<hr/>
+			<div class="formElement">
+			<div class="label"><input type="button" name="saveLinkCourseOfferingAssessmentMethodButton" id="saveLinkCourseOfferingAssessmentMethodButton" value="Save" 
+						onclick="saveOffering(new Array(<%=requiredParameters%>'assessmentWeight','when'),new Array(<%=requiredParameters%>'assessmentWeight','when','additional_info','course_offering_id','criterion_level'),'LinkCourseOfferingAssessmentMethod');" /></div>
+			<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
+			<div class="spacer"> </div>
+		</div>
+	</form>
+</div>
+</div>
+

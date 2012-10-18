@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+
+	<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+    <property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>
+    <property name="hibernate.connection.password">ULCkerriMap</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost/currimap</property>
+    <property name="hibernate.connection.username">currimapUser</property>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+    <property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+    
+	<property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+	<property name="hibernate.c3p0.min_size">3</property>
+	<property name="hibernate.c3p0.max_size">50</property>
+	<property name="hibernate.c3p0.timeout">1800</property>
+	<property name="hibernate.c3p0.idle_test_period">600</property>
+
+    <property name="hibernate.c3p0.preferredTestQuery">SELECT id FROM Organization WHERE id=-1</property>
+    <property name="hibernate.c3p0.testConnectionOnCheckout">true</property>
+  
+    <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+    <property name="cache.use_query_cache">false</property>
+    <property name="cache.use_minimal_puts">false</property>
+    <property name="max_fetch_depth">10</property>
+
+    <property name="hibernate.hbm2ddl.auto">none</property>
+	
+	<property name="hibernate.show_sql">false</property>
+    <property name="hibernate.format_sql">false</property>
+
+
+
+
+
+	<mapping class="ca.usask.gmcte.currimap.model.Assessment"/>
+	<mapping class="ca.usask.gmcte.currimap.model.AssessmentGroup"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Characteristic"/>
+	<mapping class="ca.usask.gmcte.currimap.model.CharacteristicType"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Course"/>
+	<mapping class="ca.usask.gmcte.currimap.model.CourseAttribute"/>
+	<mapping class="ca.usask.gmcte.currimap.model.CourseAttributeValue"/>
+	<mapping class="ca.usask.gmcte.currimap.model.CourseClassification"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Department"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingAssessment"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkAssessmentCourseOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingContributionProgramOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingOutcomeCharacteristic"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseProgram"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingTeachingMethod"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseDepartment"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkDepartmentCharacteristicType"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Organization"/>
+	<mapping class="ca.usask.gmcte.currimap.model.OrganizationAdmin"/>
+	<mapping class="ca.usask.gmcte.currimap.model.ProgramOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.ProgramOutcomeGroup"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseContributionProgramOutcome" />
+	<mapping class="ca.usask.gmcte.currimap.model.CourseOffering"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Feature"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingInstructor"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Instructor"/>
+	<mapping class="ca.usask.gmcte.currimap.model.InstructorAttribute"/>
+	<mapping class="ca.usask.gmcte.currimap.model.InstructorAttributeValue"/>
+	<mapping class="ca.usask.gmcte.currimap.model.CourseOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Program"/>
+	<mapping class="ca.usask.gmcte.currimap.model.ProgramAdmin"/>
+	<mapping class="ca.usask.gmcte.currimap.model.SystemAdmin"/>
+	<mapping class="ca.usask.gmcte.currimap.model.TeachingMethod"/>
+	<mapping class="ca.usask.gmcte.currimap.model.TestTable"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Time"/>
+	<mapping class="ca.usask.gmcte.currimap.model.TimeItTook"/>
+	<mapping class="ca.usask.gmcte.currimap.model.AssessmentTimeOption"/>
+	<mapping class="ca.usask.gmcte.currimap.model.TeachingMethodPortionOption"/>
+	<mapping class="ca.usask.gmcte.currimap.model.CourseOutcomeGroup" />
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseAssessmentFeedbackOption"/>
+	<mapping class="ca.usask.gmcte.currimap.model.AssessmentFeedbackOption"/>
+	<mapping class="ca.usask.gmcte.currimap.model.AssessmentFeedbackOptionType"/>
+	
+	<mapping class="ca.usask.gmcte.currimap.model.OrganizationOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.OrganizationOutcomeGroup"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOutcomeProgramOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.ContributionOptionValue"/>
+	<mapping class="ca.usask.gmcte.currimap.model.MasteryOptionValue"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkOrganizationOrganizationOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkProgramOutcomeOrganizationOutcome"/>
+	</session-factory>
+</hibernate-configuration>

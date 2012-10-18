@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="dist" name="cat">
+	<!-- ******************************************************************* -->
+	<!-- * Project Home Directories                                        * -->
+	<!-- ******************************************************************* -->
+		
+	<!-- * We should include most dependancy jars in the repository.       * -->
+	<!-- ******************************************************************* -->
+	<!-- Override this with "ant -Dconf.home=./conf.example deploy" -->
+		
+<property name="conf.home" value="${basedir}/../svnconfigs/cat/localhost" />
+	<!--<property name="conf.home" value="${basedir}/conf" />-->
+	<!-- Load the build environment properties -->
+	<property file="${conf.home}/build.properties"/>
+		<!-- ******************************************************************* -->
+		<!-- * Classpath Parameters                                            * -->
+		<!-- ******************************************************************* -->
+		<!-- * The different classpaths that are used in the build process.    * -->
+		<!-- ******************************************************************* -->
+	<path id="dist.classpath">
+		<pathelement location="${dist.home}"/>
+	</path>
+	<path id="test.classpath">
+		<pathelement location="${dist.home}/WEB-INF/classes"/>
+	</path>
+	<path id="bin.classpath">
+		<pathelement location="${bin.home}"/>
+	</path>
+	<path id="mail.classpath">
+		<fileset dir="${lib.home}/mail" id="mail.files" includes="*.jar"/>
+	</path>
+	<path id="jexcelapi.classpath">
+		<fileset dir="${lib.home}/jexcelapi" id="jexcelapi.files" includes="*.jar"/>
+	</path>
+
+	<path id="log4j.classpath">
+		<fileset dir="${lib.home}/log4j" id="log4j.files" includes="*.jar"/>
+	</path>
+	<path id="hibernate.classpath">
+		<fileset dir="${lib.home}/hibernate" id="hibernate.files" includes="*.jar"/>
+	</path>
+	<path id="jsf.classpath">
+		<fileset dir="${lib.home}/jsf" id="jsf.files" includes="*.jar"/>
+	</path>
+	<echo message="dist.classpath= ${dist.home}"/>
+	<echo message="tomcat.home = ${tomcat.home}"/>
+	<echo message="conf.home = ${conf.home}"/>
+	<path id="tomcat.classpath">
+		<fileset dir="${tomcat.home}" id="tomcat.files">
+			<include name="catalina-ant.jar"/>
+			<include name="servlet-api.jar"/>
+		</fileset>	
+	</path>
+
+	<path id="ant-contrib.classpath">
+		<fileset dir="${ant-contrib.home}" id="ant-contrib.files">
+			<include name="ant-contrib-0.6.jar"/>
+		</fileset>
+	</path>
+	<path id="lib.classpath">
+		<fileset dir="${lib.home}" id="**/*.jar"/>
+	</path>
+
+
+	<!-- ******************************************************************* -->
+	<!-- * Task Definitions                                                * -->
+	<!-- ******************************************************************* -->
+	<!-- * This area identifies the external ant tasks that we want to be  * -->
+	<!-- * able to use.  Of particular interest are the tomcat tasks,      * -->
+	<!-- * which can be used for automatic deployment, as well as the      * -->
+	<!-- * ant-contrib tasks which contain additional useful ant routines. * -->
+	<!-- ******************************************************************* -->
+	<taskdef name="tomcat-stop" classname="org.apache.catalina.ant.StopTask">
+		<classpath refid="tomcat.classpath"/>
+	</taskdef>
+
+	<taskdef name="tomcat-start" classname="org.apache.catalina.ant.StartTask">
+		<classpath refid="tomcat.classpath"/>
+	</taskdef>
+
+	<taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
+		<classpath refid="tomcat.classpath"/>
+	</taskdef>
+
+	<taskdef name="tomcat-undeploy" classname="org.apache.catalina.ant.UndeployTask">
+		<classpath refid="tomcat.classpath"/>
+	</taskdef>
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath refid="ant-contrib.classpath"/>
+	</taskdef>
+
+
+	<!-- ******************************************************************* -->
+	<!-- * Targets                                                         * -->
+	<!-- ******************************************************************* -->
+	<!-- * The meat of the ant build file, each target is an action that   * -->
+	<!-- * you want to be able to perform.                                 * -->
+	<!-- ******************************************************************* -->
+	<target name="clean"
+		description="Removes the built classes." >
+		<delete dir="${dist.home}" />
+		<delete dir="${admin.home}" />
+	</target>
+
+
+	<target name="doc"
+			description="Builds javadoc documentation." >
+		<javadoc destdir="${docs.home}/api"
+ 				sourcepath="${src.home}"
+				source="1.5"
+				windowtitle="Intranet API Documentation" >
+			<classpath refid="tomcat.classpath"/>
+			<classpath refid="log4j.classpath"/>
+			<classpath refid="hibernate.classpath"/>
+			<classpath refid="jsf.classpath"/>
+						
+			<fileset dir="${src.home}">
+				<include name="ca/**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="build"
+			description="Builds class tree from sources." >
+		<mkdir dir="${bin.home}"/>
+		<echo message="Using conf.home = ${conf.home}" />
+		<javac source="1.5" 
+			   debug="true" 
+			   deprecation="true"
+			   destdir="${bin.home}"
+			   fork="true"
+			   srcdir="${src.home}">
+			<classpath refid="tomcat.classpath"/>
+			<classpath refid="log4j.classpath"/>
+			<classpath refid="lib.classpath"/>
+			<classpath refid="hibernate.classpath"/>
+			<classpath refid="jsf.classpath"/>
+		</javac>
+	</target>
+
+	<target name="dist"
+			depends="build"
+			description="Creates war archive to deploy application" >
+		<!-- Copy configuration files into classes dir (so they're in the classpath) -->
+		<copy overwrite="yes" todir="${dist.home}/WEB-INF/classes">
+			<fileset dir="${conf.home}" includes="**/*.properties" />
+			<fileset dir="${conf.home}" includes="**/*.cfg.xml" />
+		</copy>
+		<!-- Copy context.xml to META-INF -->
+		<copy overwrite="yes" file="${conf.home}/context.xml" tofile="${dist.home}/META-INF/context.xml" />
+		<!-- Copy web.xml to WEB-INF -->
+		<copy overwrite="yes" file="${conf.home}/web.xml" tofile="${dist.home}/WEB-INF/web.xml" />
+		<!-- Copy *some of the* libraries into lib dir -->
+		<copy overwrite="yes" todir="${dist.home}/WEB-INF/lib">
+			<fileset dir="${commons.home}" includes="**/*" />
+			<fileset dir="${cas.home}" includes="**/*" />
+			<fileset dir="${jdbc.home}" includes="**/*" />
+			<fileset dir="${log4j.home}" includes="**/*" />
+			<fileset dir="${hibernate.home}" includes="**/*" />
+			<fileset dir="${jsf.home}" includes="**/*" />
+			<fileset dir="${mail.home}" includes="**/*" />
+			<fileset dir="${jexcelapi.home}" includes="**/*" />
+			<fileset dir="${lib.home}" includes="activation.jar" />
+			<fileset dir="${lib.home}" includes="xalan.jar" />
+            <fileset dir="${lib.home}" includes="xml-apis.jar" />
+			<fileset dir="${lib.home}" includes="providerutil.jar" />
+			<fileset dir="${lib.home}" includes="jndi.jar" />
+		</copy>
+		<!-- Copy web stuff into deploy root -->
+		<copy overwrite="yes" todir="${dist.home}">
+			<fileset dir="${basedir}/web" includes="**/*" />
+		</copy>
+		<!-- jar up -->
+		<jar destfile="${basedir}/${dist.name}.war" compress="true">
+			<fileset dir="${dist.home}" />
+		</jar>
+	</target>
+
+	<target name="deploy"
+	 		description="Deploys to remote tomcat instances."
+			depends="dist">
+		<foreach list="${machines}"
+  				 target="_deploy-single"
+				 param="identifier" />
+	</target>
+
+	<target name="_deploy-single"
+			description="Deploys web app to a single tomcat instance from passed in identifier variable" >
+		<!-- get specific properties from passed in machine name -->
+		<propertycopy property="current.manager.url" from="${identifier}.manager.url" />
+		<propertycopy property="current.manager.username" from="${identifier}.manager.username" />
+		<propertycopy property="current.manager.password" from="${identifier}.manager.password" />
+		<propertycopy property="current.manager.path" from="${identifier}.manager.path" />
+		<echo message="Preparing to deploy to ${identifier}" />
+		<!-- stop the current service -->
+		<trycatch>
+			<try>
+				<tomcat-stop url="${current.manager.url}"
+						username="${current.manager.username}"
+						password="${current.manager.password}"
+							path="${current.manager.path}"/>
+			</try>
+			<catch>
+			</catch>
+		</trycatch>
+		<!-- undeploy the old war -->
+		<trycatch>
+			<try>
+				<tomcat-undeploy url="${current.manager.url}"
+								 username="${current.manager.username}"
+								 password="${current.manager.password}"
+								 path="${current.manager.path}"/>
+			</try>
+			<catch>
+			</catch>
+		</trycatch>
+		<!-- deploy the new war -->
+		<trycatch>
+			<try>
+				<echo message="Trying to deploy to ${current.manager.url}${current.manager.path}" />
+				<tomcat-deploy url="${current.manager.url}"
+							   username="${current.manager.username}"
+							   password="${current.manager.password}"
+							   war="${basedir}/${dist.name}.war"
+							   path="${current.manager.path}"/>
+				<echo message="Deployed to ${current.manager.path}" />
+			</try>
+			<catch>
+				<echo message="Couldn't deploy to ${current.manager.path}" />
+			</catch>
+		</trycatch>
+	</target>
+	
+	<target name="test" depends="dist">
+		<java classname="ca.usask.chat.test.Test" fork="true">
+			<classpath refid="test.classpath"/>
+		</java>
+	</target>
+		
+	<target name="run-test" depends="dist">
+	    <java classname="ca.usask.ocd.ldap.LdapConnection" fork="true">
+			<classpath path="${bin.home}"/>
+			<classpath refid="log4j.classpath"/>
+		</java>	
+	</target>
+</project>

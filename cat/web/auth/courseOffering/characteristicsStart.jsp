@@ -1,0 +1,174 @@
+<%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*, java.text.NumberFormat"%>
+<jsp:include page="/header.jsp"/>
+<div id="content-and-context" style="overflow:auto;">
+			<div class="wrapper" style="overflow:auto;"> 
+				<div id="content" style="overflow:auto;"> 
+<%
+CourseManager cm = CourseManager.instance();
+String courseOfferingId = request.getParameter("course_offering_id") ;
+CourseOffering courseOffering = cm.getCourseOfferingById(Integer.parseInt(courseOfferingId));
+ProgramManager pm = ProgramManager.instance();
+DepartmentManager dm = DepartmentManager.instance();
+OutcomeManager om = OutcomeManager.instance();
+String programId = (String)session.getAttribute("programId");
+int programIdParameter = HTMLTools.getInt(request.getParameter("program_id"));
+if(programIdParameter > -1)
+{
+	session.setAttribute("programId",""+programIdParameter);
+	programId = ""+programIdParameter; 
+}
+if(!HTMLTools.isValid(programId))
+{
+	%>
+<div id="breadcrumbs"><p><a href="http://www.usask.ca/gmcte/">The Gwenna Moss Centre for Teaching Effectiveness</a> &gt; 
+		<a href="/currimap">Curriculum Mapping</a> &gt; <a href="/cat/auth/myCourses.jsp">My Courses</a> &gt; 
+</div>  
+<%
+}
+else
+{
+	Program program2 = pm.getProgramById(Integer.parseInt(programId));
+	String programLink = "";
+	programLink = "<a href=\"/cat/auth/programView/programWrapper.jsp?program_id="+programId+"\">"+program2.getName()+"</a> &gt; ";
+	Course course = courseOffering.getCourse();
+	programLink += "<a href=\"/cat/auth/programView/courseCharacteristicsWrapper.jsp?program_id="+programId+"&course_id="+course.getId()+"\">"+course.getSubject()+" "+ course.getCourseNumber()+"</a> &gt; ";
+	%>
+
+			
+						<div id="breadcrumbs"><p><a href="http://www.usask.ca/gmcte/">The Gwenna Moss Centre for Teaching Effectiveness</a> &gt; 
+							<a href="/currimap">Curriculum Alignment Tool</a> &gt; <%=programLink%> CourseOffering characteristics</p></div>  
+						<div id="CourseOfferingCharacteristicsDiv" class="module" style="overflow:auto;">
+	<%
+	
+}
+out.println("Currently selected Program :");
+List<Department> departments = cm.getDepartmentForCourseOffering(courseOffering);
+List<Program> programs = new ArrayList<Program>();
+Program bogus = new Program();
+bogus.setId(-1);
+bogus.setName("Please select a Program");
+programs.add(bogus);
+for(Department dep : departments)
+{
+	programs.addAll(dm.getProgramOrderedByNameForDepartment(dep));
+}
+out.println(HTMLTools.createSelect("programToSet", programs, "Id", "Name", programId, "setProgramStartId("+courseOfferingId+")"));
+
+if(!HTMLTools.isValid(programId))
+{
+	return;
+}
+Program program = pm.getProgramById(Integer.parseInt(programId));
+
+
+List<Feature> featureList = cm.getFeatures();
+List<String> completion = new ArrayList<String>(featureList.size());
+List<CourseOutcome> outcomeList = om.getOutcomesForCourseOffering(courseOffering);
+List<LinkProgramProgramOutcome> programOutcomeLinklist = pm.getLinkProgramOutcomeForProgram(program);
+for(Feature f: featureList)
+{
+	if(f.getFileName().equals("editableTeachingMethods"))
+	{
+		int count = 0;
+		List<TeachingMethod> list = cm.getAllTeachingMethods();
+		for(TeachingMethod tm : list)
+		{
+			if (cm.getLinkTeachingMethodByData(courseOffering, tm) != null)
+				count++;
+		}
+		if(count == 0)
+			completion.add(f.getDisplayIndex()-1,"No data entered");
+		else
+			completion.add(f.getDisplayIndex()-1, count +" out of " + list.size() + " Instructional Merhods have a value entered");
+	}
+	else if(f.getFileName().equals("assessmentMethods"))
+	{
+		NumberFormat formatter = NumberFormat.getInstance();
+		formatter.setMaximumFractionDigits(1);
+		double total = 0.0;
+		List<LinkCourseOfferingAssessment> list = cm.getAssessmentsForCourseOffering(courseOffering);
+		for(LinkCourseOfferingAssessment l : list)	
+		{
+			total = total + l.getWeight();
+		}
+		if(list.size() == 0)
+			completion.add(f.getDisplayIndex()-1,"No data entered");
+		else
+			completion.add(f.getDisplayIndex()-1, list.size() + " Assessment Methods have been entered, totalling " + formatter.format(total) +" %");
+	}
+	else if(f.getFileName().equals("outcomes"))
+	{
+		if(outcomeList.size() == 0)
+			completion.add(f.getDisplayIndex()-1,"No data entered");
+		else
+	    	completion.add(f.getDisplayIndex()-1, outcomeList.size() + " Course Learning Outcomes have been added");
+	}
+	else if(f.getFileName().equals("outcomeAssessmentMapping"))
+	{
+		List<LinkAssessmentCourseOutcome> list = om.getLinkAssessmentCourseOutcomes(Integer.parseInt(courseOfferingId));
+		if(list.size() == 0)
+			completion.add(f.getDisplayIndex()-1,"No data entered");
+		else
+		    completion.add(f.getDisplayIndex()-1, list.size() + " links between Course Learning Outcomes and Assessment methods have been added");
+	}
+	else if(f.getFileName().equals("outcomesMapping"))
+	{
+		
+		 int count = 0;
+		 for(LinkProgramProgramOutcome l : programOutcomeLinklist)
+		 {
+			LinkCourseOfferingContributionProgramOutcome contributionLink = pm.getCourseOfferingContributionLinksForProgramOutcome(courseOffering, l);
+			if(contributionLink != null)
+			{
+				count++;
+			}
+		 }
+		 if(count == 0)
+			completion.add(f.getDisplayIndex()-1,"No data entered");
+		 else
+		    completion.add(f.getDisplayIndex()-1, count+" out of "+ programOutcomeLinklist.size() + " program outcomes have a contribution assigned");
+	}
+	else if(f.getFileName().equals("programOutcomeContributions"))
+	{
+		 int count = 0;
+		 for(LinkProgramProgramOutcome l : programOutcomeLinklist)
+		 {
+			List<LinkCourseOutcomeProgramOutcome> links = pm.getCourseOutcomeLinksForProgramOutcome(courseOffering, l.getProgramOutcome());
+			count = count + links.size();
+		 }
+		 if(count == 0)
+				completion.add(f.getDisplayIndex()-1,"No data entered");
+		 else
+		    completion.add(f.getDisplayIndex()-1, count+" links have been made between Course Learning outcomes and "+ programOutcomeLinklist.size() + " program outcomes");
+	}
+	else if(f.getFileName().equals("completionTime"))
+	{
+		 TimeItTook timeItTook = courseOffering.getTimeItTook();
+		 if(timeItTook == null)
+			 completion.add(f.getDisplayIndex()-1,"No data entered");
+		 else
+			 completion.add(f.getDisplayIndex()-1, timeItTook.getName());
+	}
+}
+
+%>
+					<h2>Characteristics of course offering <%=courseOffering.getCourse().getSubject()%> <%=courseOffering.getCourse().getCourseNumber()%> section 
+							<%=courseOffering.getSectionNumber()%> 
+					 (<%=courseOffering.getTerm()%>) <%=courseOffering.getNumStudents()%> students</h2>
+					<table>
+					<tr><th>Section</th><th>Data</th></tr>
+					<%
+					for(int i = 0; i< featureList.size(); i++)
+					{
+						Feature f = featureList.get(i);%>
+					<tr><td><a href="/cat/auth/courseOffering/characteristicsWizzard.jsp?course_offering_id=<%=courseOfferingId%>&feature=<%=(i+1)%>"><%=f.getName()%></a></td><td><%=completion.get(i)%></td></tr>
+					<%} %>
+					
+					</table>
+					<a href="/cat/auth/courseOffering/characteristicsWrapper.jsp?course_offering_id=<%=courseOfferingId%>">Summary</a>
+					</div>
+					<div id="modifyDiv" class="fake-input" style="display:none;"></div>
+				</div>
+			</div>
+		</div>
+<jsp:include page="/footer.jsp"/>	
