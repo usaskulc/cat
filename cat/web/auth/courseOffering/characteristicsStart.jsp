@@ -21,7 +21,7 @@ if(!HTMLTools.isValid(programId))
 {
 	%>
 <div id="breadcrumbs"><p><a href="http://www.usask.ca/gmcte/">The Gwenna Moss Centre for Teaching Effectiveness</a> &gt; 
-		<a href="/currimap">Curriculum Mapping</a> &gt; <a href="/cat/auth/myCourses.jsp">My Courses</a> &gt; 
+		<a href="/cat">Curriculum Mapping</a> &gt; <a href="/cat/auth/myCourses.jsp">My Courses</a> &gt; 
 </div>  
 <%
 }
@@ -36,7 +36,7 @@ else
 
 			
 						<div id="breadcrumbs"><p><a href="http://www.usask.ca/gmcte/">The Gwenna Moss Centre for Teaching Effectiveness</a> &gt; 
-							<a href="/currimap">Curriculum Alignment Tool</a> &gt; <%=programLink%> CourseOffering characteristics</p></div>  
+							<a href="/cat">Curriculum Alignment Tool</a> &gt; <%=programLink%> CourseOffering characteristics</p></div>  
 						<div id="CourseOfferingCharacteristicsDiv" class="module" style="overflow:auto;">
 	<%
 	
