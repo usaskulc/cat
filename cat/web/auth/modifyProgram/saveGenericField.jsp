@@ -26,7 +26,6 @@ if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
 		
 		if(fieldName.equals("name"))
 		{
-			existingValue = group.getName()==null?"":group.getName();
 			fieldSize= (OrganizationOutcomeGroup.class.getMethod("getName")).getAnnotation(Length.class).max();
 		}
 		else 
@@ -43,12 +42,10 @@ if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
 		if(fieldName.equals("name"))
 		{
 			fieldSize= (OrganizationOutcome.class.getMethod("getName")).getAnnotation(Length.class).max();
-			existingValue = o.getName()==null?"":o.getName();
 		}
 		else if(fieldName.equals("description"))
 		{
 			fieldSize= (OrganizationOutcome.class.getMethod("getDescription")).getAnnotation(Length.class).max();
-			existingValue = o.getDescription()==null?"":o.getDescription();
 		}
 		else 
 		{
@@ -64,7 +61,6 @@ if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
 		
 		if(fieldName.equals("name"))
 		{
-			existingValue = group.getName()==null?"":group.getName();
 			fieldSize= (ProgramOutcomeGroup.class.getMethod("getName")).getAnnotation(Length.class).max();
 		}
 		else 
