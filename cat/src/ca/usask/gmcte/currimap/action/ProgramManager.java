@@ -368,6 +368,7 @@ public class ProgramManager
 			return false;
 		}
 	}
+	@SuppressWarnings("unchecked")
 	public boolean removeProgramOutcome(int outcomeLinkId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -375,6 +376,15 @@ public class ProgramManager
 		try
 		{
 		LinkProgramProgramOutcome l = (LinkProgramProgramOutcome) session.get(LinkProgramProgramOutcome.class, outcomeLinkId);
+		List<LinkCourseOfferingContributionProgramOutcome> offeringLinks = (List<LinkCourseOfferingContributionProgramOutcome>)session.createQuery("FROM LinkCourseOfferingContributionProgramOutcome l where l.linkProgramOutcome.id=:linkId")
+				.setParameter("linkId",  outcomeLinkId).list();
+		if(offeringLinks != null)
+		{
+			for(LinkCourseOfferingContributionProgramOutcome li :offeringLinks)
+			{
+				session.delete(li);
+			}
+		}
 		session.delete(l);
 				session.getTransaction().commit();
 		return true;
