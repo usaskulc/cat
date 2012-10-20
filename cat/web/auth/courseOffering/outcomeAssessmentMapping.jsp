@@ -27,6 +27,10 @@ formatter.setMaximumFractionDigits(1);
 <p>
 This section gathers information on how your course learning outcomes are being assessed 
 including any alignment between your goals for students' learning and how they demonstrate that learning.
+<br/>
+To link a course learning outcome to an assessment, select one of your course learning outcomes from the
+ drop-down menu and then in the same row select the relevant assessment. 
+ Repeat using both drop-down menus for additional entries.
 </p>
 <div>
 	<table cellpadding="0" cellspacing="0" border="1">

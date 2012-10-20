@@ -65,6 +65,24 @@ if(linkId > -1)
 				</div>
 			</div>
 			<hr/>
+				
+				
+			<div class="formElement">
+				<div class="label">Students must submit/attempt this course-work to proceed in the program/course:</div>
+				<div class="field">
+						<input type="radio" name="criterion_submitted" <%=editing?(link.getCriterionSubmitted().equalsIgnoreCase("N")?"checked=\"checked\"":""):"checked=\"checked\"" %> value="N"> No<br/>
+						<input type="radio" name="criterion_submitted" <%=editing?(link.getCriterionCompleted().equalsIgnoreCase("Y")?"checked=\"checked\"":""):"" %> value="Y"> Yes
+				</div>
+			</div>
+			<hr/>
+			<div class="formElement">
+			<div class="label">Students must complete this course-work to proceed in the program/course:</div>
+				<div class="field">
+						<input type="radio" name="criterion_completed" <%=editing?(link.getCriterionCompleted().equalsIgnoreCase("N")?"checked=\"checked\"":""):"checked=\"checked\"" %> value="N"> No<br/>
+						<input type="radio" name="criterion_completed" <%=editing?(link.getCriterionCompleted().equalsIgnoreCase("Y")?"checked=\"checked\"":""):"" %> value="Y"> Yes
+				</div>
+			</div>
+			<hr/>
 			<div class="formElement">
 				<div class="label">Due/occur:</div>
 				<div class="field">
@@ -79,7 +97,7 @@ if(linkId > -1)
 			<hr/>
 			<div class="formElement">
 			<div class="label"><input type="button" name="saveLinkCourseOfferingAssessmentMethodButton" id="saveLinkCourseOfferingAssessmentMethodButton" value="Save" 
-						onclick="saveOffering(new Array(<%=requiredParameters%>'assessmentWeight','when'),new Array(<%=requiredParameters%>'assessmentWeight','when','additional_info','course_offering_id','criterion_level'),'LinkCourseOfferingAssessmentMethod');" /></div>
+						onclick="saveOffering(new Array(<%=requiredParameters%>'assessmentWeight','when'),new Array(<%=requiredParameters%>'assessmentWeight','when','additional_info','course_offering_id','criterion_level','criterion_exists','criterion_submitted','criterion_completed'),'LinkCourseOfferingAssessmentMethod');" /></div>
 			<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 			<div class="spacer"> </div>
 		</div>

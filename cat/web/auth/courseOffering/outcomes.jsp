@@ -44,7 +44,7 @@ int maxOutcomes = 20;
 <p>This section gathers information about your goals for the course, 
 specifically those abilities, knowledge, and values for which you anticipate
  evidence of in students as they complete your course. 
- You may enter up to <%=maxOutcomes%> by clicking on <i><b>add course learning outcome</b></i> to add an entry. 
+ You may enter up to <%=maxOutcomes%> course learning outcomes one-at-a time by clicking on <i><b>add course learning outcome</b></i> to add each entry.
 Each entry may contain no more than 400 characters (less than 10 outcomes recommended). 
 </p>
 

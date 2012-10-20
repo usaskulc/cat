@@ -25,6 +25,9 @@ else if(HTMLTools.isValid(outcomeParameter))
 }
 %>
 <hr/>
+<p>
+Type in one course learning outcome then click save. Return to this add outcome window to enter additional outcomes. Each entry may contain no more than 400 characters (less than 10 outcomes recommended).
+</p>
 <form name="newCourseOfferingOutcomeForm" id="newCourseOfferingOutcomeForm" method="post" action="" >
 	<input type="hidden" name="objectClass" id="objectClass" value="CourseOfferingOutcome"/>
 	<input type="hidden" name="course_offering_id" id="course_offering_id" value="<%=courseOfferingId%>"/>

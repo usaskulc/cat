@@ -164,7 +164,7 @@ public class CourseManager
 			return false;
 		}
 	}
-	public boolean updateLinkCourseOfferingAssessment(int id, double weight, int whenId,String criterionExists, double criterionLevel,String[] additionQuestionResponses, String additionalInfo)
+	public boolean updateLinkCourseOfferingAssessment(int id, double weight, int whenId,String criterionExists, double criterionLevel,String criterionSubmitted, String criterionCompleted,String[] additionQuestionResponses, String additionalInfo)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -179,6 +179,8 @@ public class CourseManager
 		o.setAdditionalInfo(additionalInfo);
 		o.setCriterionExists(criterionExists);
 		o.setCriterionLevel(criterionLevel);
+		o.setCriterionCompleted(criterionCompleted);
+		o.setCriterionSubmitted(criterionSubmitted);
 		session.merge(o);
 		session.getTransaction().commit();
 		return true;
@@ -300,7 +302,7 @@ public class CourseManager
 	}
 	
 	
-	public boolean saveLinkCourseOfferingAssessment(int courseOfferingId,int assessmentId, double weight, int whenId,String criterionExists, double criterionLevel,String[] additionQuestionResponses,String additionalInfo)
+	public boolean saveLinkCourseOfferingAssessment(int courseOfferingId,int assessmentId, double weight, int whenId,String criterionExists, double criterionLevel,String criterionSubmitted, String criterionCompleted,String[] additionQuestionResponses,String additionalInfo)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -317,6 +319,8 @@ public class CourseManager
 		o.setCriterionExists(criterionExists);
 		o.setCriterionLevel(criterionLevel);
 		o.setAdditionalInfo(additionalInfo);
+		o.setCriterionCompleted(criterionCompleted);
+		o.setCriterionSubmitted(criterionSubmitted);
 		session.save(o);
 		this.createNewAdditionalAssessmentOptions(o, additionQuestionResponses, session);
 		session.getTransaction().commit();

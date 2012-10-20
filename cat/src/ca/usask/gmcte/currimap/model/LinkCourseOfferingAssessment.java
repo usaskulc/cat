@@ -30,6 +30,8 @@ public class LinkCourseOfferingAssessment implements java.io.Serializable
 	private AssessmentTimeOption when;
 	private String additionalInfo;
 	private String criterionExists;
+	private String criterionSubmitted;
+	private String criterionCompleted;
 	private double criterionLevel;
 	
 
@@ -138,6 +140,24 @@ public class LinkCourseOfferingAssessment implements java.io.Serializable
 
 	public void setCriterionLevel(double criterionLevel) {
 		this.criterionLevel = criterionLevel;
+	}
+	@Column(name = "criterion_submit_required", nullable = false, length = 1)
+	@Length(max = 1)
+	public String getCriterionSubmitted() {
+		return criterionSubmitted;
+	}
+
+	public void setCriterionSubmitted(String criterionSubmitted) {
+		this.criterionSubmitted = criterionSubmitted;
+	}
+	@Column(name = "criterion_completion_required", nullable = false, length = 1)
+	@Length(max = 1)
+	public String getCriterionCompleted() {
+		return criterionCompleted;
+	}
+
+	public void setCriterionCompleted(String criterionCompleted) {
+		this.criterionCompleted = criterionCompleted;
 	}
 
 }

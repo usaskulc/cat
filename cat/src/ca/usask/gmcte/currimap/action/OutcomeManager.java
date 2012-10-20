@@ -311,8 +311,8 @@ public class OutcomeManager
 			
 			session.refresh(link);
 			session.delete(link);
-			CourseOutcome toDelete = (CourseOutcome)session.get(CourseOutcome.class, outcomeId);
-			session.delete(toDelete);
+		//	CourseOutcome toDelete = (CourseOutcome)session.get(CourseOutcome.class, outcomeId);
+		//	session.delete(toDelete);
 			session.getTransaction().commit();
 			return true;
 		}

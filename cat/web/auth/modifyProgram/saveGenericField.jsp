@@ -15,6 +15,89 @@ String fieldName = request.getParameter("field_name");
 int id = HTMLTools.getInt( request.getParameter("id"));
 String newValue = request.getParameter("new_value");
 
+int fieldSize = 0;
+if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
+{
+	if(object.equals("OrganizationOutcomeGroup"))
+	{
+		OrganizationOutcomeGroup group = new OrganizationOutcomeGroup(); 
+		if( id > -1 )
+			group = OrganizationManager.instance().getOrganizationOutcomeGroupById(id);
+		
+		if(fieldName.equals("name"))
+		{
+			existingValue = group.getName()==null?"":group.getName();
+			fieldSize= (OrganizationOutcomeGroup.class.getMethod("getName")).getAnnotation(Length.class).max();
+		}
+		else 
+		{
+			out.println("Unable to find field["+fieldName+"]");
+		}
+	}
+	else if(object.equals("OrganizationOutcome"))
+	{
+		OrganizationOutcome o =  new OrganizationOutcome();
+		if(id > -1)
+			o = OrganizationManager.instance().getOrganizationOutcomeById(id);
+		
+		if(fieldName.equals("name"))
+		{
+			fieldSize= (OrganizationOutcome.class.getMethod("getName")).getAnnotation(Length.class).max();
+			existingValue = o.getName()==null?"":o.getName();
+		}
+		else if(fieldName.equals("description"))
+		{
+			fieldSize= (OrganizationOutcome.class.getMethod("getDescription")).getAnnotation(Length.class).max();
+			existingValue = o.getDescription()==null?"":o.getDescription();
+		}
+		else 
+		{
+			out.println("Unable to find field["+fieldName+"]");
+		}
+
+	}
+	else if(object.equals("ProgramOutcomeGroup"))
+	{
+		ProgramOutcomeGroup group = new ProgramOutcomeGroup(); 
+		if( id > -1 )
+			group = ProgramManager.instance().getProgramOutcomeGroupById(id);
+		
+		if(fieldName.equals("name"))
+		{
+			existingValue = group.getName()==null?"":group.getName();
+			fieldSize= (ProgramOutcomeGroup.class.getMethod("getName")).getAnnotation(Length.class).max();
+		}
+		else 
+		{
+			out.println("Unable to find field["+fieldName+"]");
+		}
+	}
+	else if(object.equals("ProgramOutcome"))
+	{
+		ProgramOutcome o =  new ProgramOutcome();
+		if(id > -1)
+			o = ProgramManager.instance().getProgramOutcomeById(id);
+		
+		if(fieldName.equals("name"))
+		{
+			fieldSize= (ProgramOutcome.class.getMethod("getName")).getAnnotation(Length.class).max();
+		}
+		else if(fieldName.equals("description"))
+		{
+			fieldSize= (ProgramOutcome.class.getMethod("getDescription")).getAnnotation(Length.class).max();
+		}
+		else 
+		{
+			out.println("Unable to find field["+fieldName+"]");
+		}
+
+	}
+	else 
+	{
+		out.println("Unable to find object["+object+"]");
+	}
+
+}
 
 if(!HTMLTools.isValid(object))
 {
@@ -28,11 +111,17 @@ if(!HTMLTools.isValid(fieldName))
 	return;
 }
 
+if(newValue.length() > fieldSize)
+{
+	out.println("ERROR: You have entered ."+newValue.length()+" characters.  Only "+fieldSize+" characters are allowed");
+	return;
+}
 
 if(object.equals("ProgramOutcomeGroup"))
 {
 	if(fieldName.equals("name"))
 	{
+		
 		if(id > -1)
 		{
 			if(ProgramManager.instance().saveProgramOutcomeGroupNameById(newValue,id))

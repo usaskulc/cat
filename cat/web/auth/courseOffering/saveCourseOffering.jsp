@@ -58,6 +58,8 @@ else if(object.equals("LinkCourseOfferingAssessmentMethod"))
 	
 	String criterionExists = request.getParameter("criterion_exists");
 	String criterionLevel = request.getParameter("criterion_level");
+	String criterionSubmitted = request.getParameter("criterion_submitted");
+	String criterionCompleted = request.getParameter("criterion_completed");
 	
 	
 	int id = HTMLTools.getInt(request.getParameter("assessment_link_id"));
@@ -67,7 +69,7 @@ else if(object.equals("LinkCourseOfferingAssessmentMethod"))
 	String[] additionalQuestionAnswers = request.getParameterValues("additionalQuestionAnswer");
 	if(id > -1)
 	{
-		if(manager.updateLinkCourseOfferingAssessment(id,Double.parseDouble(weight),Integer.parseInt(when),criterionExists,Double.parseDouble(criterionLevel),additionalQuestionAnswers,additionalInfo))
+		if(manager.updateLinkCourseOfferingAssessment(id,Double.parseDouble(weight),Integer.parseInt(when),criterionExists,Double.parseDouble(criterionLevel),criterionSubmitted,criterionCompleted,additionalQuestionAnswers,additionalInfo))
 		{
 			out.println("Assessment info updated");
 		}
@@ -76,7 +78,7 @@ else if(object.equals("LinkCourseOfferingAssessmentMethod"))
 			out.println("There was a problem updating the assessment info!");
 		}
 	}
-	else if(manager.saveLinkCourseOfferingAssessment(Integer.parseInt(courseOfferingId), Integer.parseInt(assessmentId), Double.parseDouble(weight), Integer.parseInt(when),criterionExists,Double.parseDouble(criterionLevel),additionalQuestionAnswers,additionalInfo))
+	else if(manager.saveLinkCourseOfferingAssessment(Integer.parseInt(courseOfferingId), Integer.parseInt(assessmentId), Double.parseDouble(weight), Integer.parseInt(when),criterionExists,Double.parseDouble(criterionLevel),criterionSubmitted,criterionCompleted,additionalQuestionAnswers,additionalInfo))
 	{
 		out.println("Assessment info added");
 	}
