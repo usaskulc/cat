@@ -42,6 +42,18 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 					parameters += "&criterion_exists=" + $(this).val();
 				}
 			});
+			$("[name^='criterion_completed']").each(function(index) {
+				if($(this).is("input:radio") && $(this).attr("checked")!= null && $(this).attr("checked") == "checked")
+				{
+					parameters += "&criterion_completed=" + $(this).val();
+				}
+			});
+			$("[name^='criterion_submitted']").each(function(index) {
+				if($(this).is("input:radio") && $(this).attr("checked")!= null && $(this).attr("checked") == "checked")
+				{
+					parameters += "&criterion_submitted=" + $(this).val();
+				}
+			});
 			var assessmentLinkId =  $("#assessment_link_id").val();
 			if(assessmentLinkId != null)
 				parameters+= "&assessment_link_id="+assessmentLinkId;

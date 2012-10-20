@@ -97,7 +97,7 @@ if(linkId > -1)
 			<hr/>
 			<div class="formElement">
 			<div class="label"><input type="button" name="saveLinkCourseOfferingAssessmentMethodButton" id="saveLinkCourseOfferingAssessmentMethodButton" value="Save" 
-						onclick="saveOffering(new Array(<%=requiredParameters%>'assessmentWeight','when'),new Array(<%=requiredParameters%>'assessmentWeight','when','additional_info','course_offering_id','criterion_level','criterion_exists','criterion_submitted','criterion_completed'),'LinkCourseOfferingAssessmentMethod');" /></div>
+						onclick="saveOffering(new Array(<%=requiredParameters%>'assessmentWeight','when'),new Array(<%=requiredParameters%>'assessmentWeight','when','additional_info','course_offering_id','criterion_level'),'LinkCourseOfferingAssessmentMethod');" /></div>
 			<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 			<div class="spacer"> </div>
 		</div>
