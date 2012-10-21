@@ -11,7 +11,7 @@ if(linkId > -1)
 {
 	link = cm.getLinkCourseOfferingAssessmentById(linkId);
 	editing = true;
-	requiredParameters = "";
+	//requiredParameters = "";
 }
 
 %>
@@ -19,11 +19,6 @@ if(linkId > -1)
 <div id="addAssessmentMethodDiv"  class="fake-input">
 	<form name="addAssessmentMethodForm" id="assessmentMethodForm" method="post" action="" >
 			<input type="hidden" name="objectClass" id="objectClass" value="LinkCourseOfferingAssessmentMethod"/>
-			<%
-			if(editing)
-			{%>
-			<input type="hidden" name="assessment_link_id" id="assessment_link_id" value="<%=linkId%>"/>
-			<%} %>
 			<input type="hidden" name="course_offering_id" id="course_offering_id" value="<%=courseOfferingId%>"/>
 			<div class="formElement">
 				<div class="label">Select the format that best describes your assessment method:</div>

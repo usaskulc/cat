@@ -229,11 +229,16 @@ function openEdit()
 {
 	var text = "";
 	$("#outerEditDiv").show();
+	var scrollY = getScrollY();
 	$("#outerEditDiv").css("top",getScrollY()+50);
 	
 	$("#outerEditDiv").width($(window).width()-200);
 	$("#outerEditDiv").height($(window).height()-100);
-	
+
+	$("#closeLinkDiv").css("top", scrollY+50);
+    $("#closeLinkDiv").css("left",$(window).width()-160);
+    $("#closeLinkDiv").css("width",100);
+    $("#closeLinkDiv").show();
 	var disable = $("#disableDiv");
 	disable.height($(document).innerHeight());
 	disable.width($(document).innerWidth());
@@ -278,6 +283,7 @@ function closeEdit()
 	}
 	var text = "";
 	$("#outerEditDiv").hide();
+	$("#closeLinkDiv").hide();
 	var disable = $("#disableDiv");
 	disable.height(0);
 	disable.width(0);

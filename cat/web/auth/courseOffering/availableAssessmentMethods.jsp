@@ -15,27 +15,20 @@ LinkCourseOfferingAssessment o = new LinkCourseOfferingAssessment();
 CourseOffering courseOffering = new CourseOffering();
 
 boolean linkLoaded = false;
+String assessmentId = null;
 if(assessmentMethodLinkId > -1)
 {
 	o = cm.getLinkAssessmentById(assessmentMethodLinkId);
 	linkLoaded = true;
 	courseOffering = o.getCourseOffering();
 	courseOfferingId = ""+courseOffering.getId();
+	assessmentId = ""+ o.getAssessment().getId();
 }
 else 
 {
 	courseOffering = cm.getCourseOfferingById(Integer.parseInt(courseOfferingId));
 }
-if(!linkLoaded)
-{
-	out.println(HTMLTools.createSelectAssessmentMethods("assessmentMethod", cm.getAssessments(), createdAssessment!=null ?""+createdAssessment.getId():null));
-}
-else
-{
-	%>
-		<%=o.getAssessment().getName()%>
-	<%
-}
+out.println(HTMLTools.createSelectAssessmentMethods("assessmentMethod", cm.getAssessments(),assessmentId));
 	
 %>
 		

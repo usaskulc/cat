@@ -64,16 +64,13 @@ padding-left:20px;
 	z-index:999;
 }
 .headerBar{
-	-moz-border-top-right-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	border-top-right-radius: 5px;
-	position:relative;
-	right:-10px;
-	top:-10px;
+	position:absolute;
+	right:600px;
+	top:110px;
 	width:100px important!;
 	height:25px;
-	text-align:right;
 	z-index:2000;
+	display:none;
 }
 .footerBar{
 	-moz-border-bottom-right-radius: 5px;

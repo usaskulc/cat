@@ -181,13 +181,14 @@ clicked.filter(current).length)
 				</ul>
 			</div>
 		</div>
-		<div class="editFloat" id="outerEditDiv">
-			<div  class="headerBar"><a href="javascript:closeEdit();" id="closeLink" >Close <img src="/cat/images/closer.png" style="padding-right:5px;padding-top:5px;"/></a></div>
+		<div  class="headerBar" id="closeLinkDiv"><a href="javascript:closeEdit();" id="closeLink" >Close <img src="/cat/images/closer.png" style="padding-right:5px;padding-top:5px;"/></a></div>
 		
+		<div class="editFloat" id="outerEditDiv">
+			
 			<div id="editDiv" >
 			
 			</div>
-			<div  class="footerBar"><a href="javascript:closeEdit();" id="closeLink2" >Close <img src="/cat/images/closer.png" style="padding-right:5px;padding-bottom:0px;"/></a></div>
+			<!-- <div  class="footerBar"><a href="javascript:closeEdit();" id="closeLink2" >Close <img src="/cat/images/closer.png" style="padding-right:5px;padding-bottom:0px;"/></a></div> -->
 		
 		</div>
 		<div class="disableEverything" id="disableDiv"></div>

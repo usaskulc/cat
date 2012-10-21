@@ -164,7 +164,7 @@ public class CourseManager
 			return false;
 		}
 	}
-	public boolean updateLinkCourseOfferingAssessment(int id, double weight, int whenId,String criterionExists, double criterionLevel,String criterionSubmitted, String criterionCompleted,String[] additionQuestionResponses, String additionalInfo)
+	public boolean updateLinkCourseOfferingAssessment(int id, int assessmentId,double weight, int whenId,String criterionExists, double criterionLevel,String criterionSubmitted, String criterionCompleted,String[] additionQuestionResponses, String additionalInfo)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -174,6 +174,7 @@ public class CourseManager
 		deleteExistingAdditionalAssessmentOptions(o,session);
 		createNewAdditionalAssessmentOptions(o,additionQuestionResponses,session);
 		AssessmentTimeOption when = (AssessmentTimeOption) session.get(AssessmentTimeOption.class, whenId);
+		Assessment assessment = (Assessment) session.get(Assessment.class, assessmentId);
 		o.setWhen(when);
 		o.setWeight(weight);
 		o.setAdditionalInfo(additionalInfo);
@@ -181,6 +182,7 @@ public class CourseManager
 		o.setCriterionLevel(criterionLevel);
 		o.setCriterionCompleted(criterionCompleted);
 		o.setCriterionSubmitted(criterionSubmitted);
+		o.setAssessment(assessment);
 		session.merge(o);
 		session.getTransaction().commit();
 		return true;

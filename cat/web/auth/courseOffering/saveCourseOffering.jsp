@@ -69,7 +69,7 @@ else if(object.equals("LinkCourseOfferingAssessmentMethod"))
 	String[] additionalQuestionAnswers = request.getParameterValues("additionalQuestionAnswer");
 	if(id > -1)
 	{
-		if(manager.updateLinkCourseOfferingAssessment(id,Double.parseDouble(weight),Integer.parseInt(when),criterionExists,Double.parseDouble(criterionLevel),criterionSubmitted,criterionCompleted,additionalQuestionAnswers,additionalInfo))
+		if(manager.updateLinkCourseOfferingAssessment(id,Integer.parseInt(assessmentId),Double.parseDouble(weight),Integer.parseInt(when),criterionExists,Double.parseDouble(criterionLevel),criterionSubmitted,criterionCompleted,additionalQuestionAnswers,additionalInfo))
 		{
 			out.println("Assessment info updated");
 		}
