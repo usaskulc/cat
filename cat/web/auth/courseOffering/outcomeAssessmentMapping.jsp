@@ -29,7 +29,7 @@ This section gathers information on how your course learning outcomes are being 
 including any alignment between your goals for students' learning and how they demonstrate that learning.
 <br/>
 To link a course learning outcome to an assessment, select one of your course learning outcomes from the
- drop-down menu and then in the same row select the relevant assessment. 
+ drop-down menu and then in the same row select the relevant assessment. Click "Add".
  Repeat using both drop-down menus for additional entries.
 </p>
 <div>

@@ -49,6 +49,10 @@ else
 				if(!hasParent && access)
 				{%>
 				<li><a href="/cat/auth/programView/organizationOfferingsWrapper.jsp?organization_id=<%=o.getId()%>" target="_blank">Data Completion table (opens in a new tab or window, <b>may take some time to load</b>)</a></li>
+				<%}
+				if(access)
+				{%>
+				<li><a href="/cat/auth/modifyProgram/organizationExport.jsp?organization_id=<%=o.getId()%>" target="_blank">Data Export(under construction)</a></li>
 				<%} %>
 			</ul>		
 		</div>

@@ -109,7 +109,7 @@ public class HibernateUtil
 		log.error("Exception ocurred during SQL processing\n "
 				+ stackString.toString());
 	}
-	public static String getListAsString(String field, List<String> list , boolean addAnd)
+	public static String getListAsString(String field, List<String> list , boolean addAnd, boolean quote)
 	{
 		if(list == null || list.isEmpty())
 			return "";
@@ -122,14 +122,20 @@ public class HibernateUtil
 				first = false;
 			else
 				sb.append(",");
-			sb.append("'");
+			if(quote) sb.append("'");
 			sb.append(s);
-			sb.append("'");	
+			if(quote) sb.append("'");	
 		}
 		sb.append(")");
 		if(addAnd)
 			sb.append(" AND ");
 		return sb.toString();
+	}
+
+	public static String getListAsString(String field, List<String> list , boolean addAnd)
+	{
+		
+		return getListAsString(field, list ,addAnd, true);
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
+import ca.usask.gmcte.currimap.model.Course;
 import ca.usask.gmcte.currimap.model.CourseAttribute;
 import ca.usask.gmcte.currimap.model.CourseAttributeValue;
 import ca.usask.gmcte.currimap.model.CourseOffering;
@@ -308,6 +309,24 @@ public class OrganizationManager
 			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
 			return false;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Course> getAllCourses(Organization o)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<Course> toReturn = null;
+		try
+		{
+			toReturn = (List<Course>) session.createQuery("SELECT distinct l.course FROM LinkCourseProgram l WHERE l.program.organization.id=:orgId ORDER BY l.course.subject, l.course.courseNumber").setParameter("orgId",o.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
 	}
 	
 	@SuppressWarnings("unchecked")

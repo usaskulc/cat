@@ -892,6 +892,25 @@ public class CourseManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
+	public List<CourseOffering> getCourseOfferingsForCourses(List<String> courseList)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<CourseOffering> toReturn = null;
+		try
+		{
+	
+			toReturn = (List<CourseOffering>) session.createQuery("FROM CourseOffering co WHERE " + HibernateUtil.getListAsString("co.course.id" , courseList, false, false) +" ORDER BY co.course.subject,co.course.courseNumber, co.term, co.sectionNumber").list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<CourseOffering> getCourseOfferingsForCourseWithProgramOutcomeData(Course course)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -989,6 +1008,30 @@ public class CourseManager
 		
 		return toReturn;
 	}
+	@SuppressWarnings("unchecked")
+	public List<LinkCourseOfferingTeachingMethod> getTeachingMethods(List<String> courseIds)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<LinkCourseOfferingTeachingMethod> toReturn = null;
+		try
+		{
+			toReturn =(List<LinkCourseOfferingTeachingMethod>) session.createQuery("FROM LinkCourseOfferingTeachingMethod l WHERE "
+		            + HibernateUtil.getListAsString(" l.courseOffering.course.id ",courseIds, false, false) 
+		            + " ORDER BY l.courseOffering.course.subject, l.courseOffering.course.courseNumber, l.courseOffering.term, l.courseOffering.sectionNumber, l.teachingMethod.name").list();
+			//TreeMap<String, CourseOffering> alreadyFound = new TreeMap<String, CourseOffering>();
+			for(LinkCourseOfferingTeachingMethod link : toReturn)
+			{
+				link.getCourseOffering().getMedium();
+			}
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
 	public List<LinkCourseOfferingTeachingMethod> getTeachingMethods(CourseOffering c)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -1043,6 +1086,7 @@ public class CourseManager
 		}
 		return toReturn;
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	public List<LinkCourseOfferingAssessment> getAssessmentsUsed(int assessmentId)

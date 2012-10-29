@@ -45,7 +45,7 @@ if(linkId > -1)
 			</div>
 			<hr/>
 			<div class="formElement">
-				<div class="label">Students must meet a criterion on this course-work to proceed in the program/course:</div>
+				<div class="label">Students must meet a criterion on this course-work to pass or proceed in the program/course:</div>
 				<div class="field">
 						<input type="radio" name="criterion_exists" <%=editing?(link.getCriterionExists().equalsIgnoreCase("N")?"checked=\"checked\"":""):"checked=\"checked\"" %> value="N"> Not applicable<br/>
 						<input type="radio" name="criterion_exists" <%=editing?(link.getCriterionExists().equalsIgnoreCase("Y")?"checked=\"checked\"":""):"" %> value="Y"> yes
@@ -63,7 +63,7 @@ if(linkId > -1)
 				
 				
 			<div class="formElement">
-				<div class="label">Students must submit/attempt this course-work to proceed in the program/course:</div>
+				<div class="label">Students must submit/attempt this course-work to pass or proceed in the program/course:</div>
 				<div class="field">
 						<input type="radio" name="criterion_submitted" <%=editing?(link.getCriterionSubmitted().equalsIgnoreCase("N")?"checked=\"checked\"":""):"checked=\"checked\"" %> value="N"> No<br/>
 						<input type="radio" name="criterion_submitted" <%=editing?(link.getCriterionCompleted().equalsIgnoreCase("Y")?"checked=\"checked\"":""):"" %> value="Y"> Yes
@@ -71,7 +71,7 @@ if(linkId > -1)
 			</div>
 			<hr/>
 			<div class="formElement">
-			<div class="label">Students must complete this course-work to proceed in the program/course:</div>
+			<div class="label">Students must complete this course-work to pass or proceed in the program/course:</div>
 				<div class="field">
 						<input type="radio" name="criterion_completed" <%=editing?(link.getCriterionCompleted().equalsIgnoreCase("N")?"checked=\"checked\"":""):"checked=\"checked\"" %> value="N"> No<br/>
 						<input type="radio" name="criterion_completed" <%=editing?(link.getCriterionCompleted().equalsIgnoreCase("Y")?"checked=\"checked\"":""):"" %> value="Y"> Yes

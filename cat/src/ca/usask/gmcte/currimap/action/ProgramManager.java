@@ -858,8 +858,8 @@ public class ProgramManager
 		try
 		{
 			String query = "SELECT DISTINCT l.courseOffering FROM LinkCourseOfferingContributionProgramOutcome l where "
-			   + HibernateUtil.getListAsString("l.term",termList,true) +" l.linkProgramOutcome.program.id = :programId AND (l.contribution.calculationValue + l.mastery.calculationValue) > 0";
-			
+			   + HibernateUtil.getListAsString("l.courseOffering.term",termList,true) +" l.linkProgramOutcome.program.id = :programId AND (l.contribution.calculationValue + l.mastery.calculationValue) > 0";
+			logger.error(query);
 			 tempList = (List<CourseOffering>)session
 					 .createQuery(query)
 					 .setParameter("programId",program.getId()).list();
