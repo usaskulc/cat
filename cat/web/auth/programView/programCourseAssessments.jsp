@@ -88,7 +88,7 @@ for(LinkCourseProgram courseLink : courseLinks)
 {
 	Course c = courseLink.getCourse();
 	CourseClassification classification = courseLink.getCourseClassification();
-	out.println("Course="+c.getCourseNumber() + "index="+ ((c.getCourseNumber()/100) -1) +" "+classification.getName());
+	//out.println("Course="+c.getCourseNumber() + "index="+ ((c.getCourseNumber()/100) -1) +" "+classification.getName());
 	int index = (c.getCourseNumber()/100) -1;
 	if (index > 4) // 800 or 900
 		index -= 2;

@@ -2,14 +2,13 @@
 
 <h2>My Course Within this Program</h2>
 <p>
-This section is used to "map" your course to the overall program outcomes in your academic unit 
-(previously identified as part of the curriculum development process). 
-The first column lists the program outcome category and the second column describes the program outcome. 
-In the column titled "Extent of Exposure", select from the pull down menu the extent to which students in 
-your course are exposed to activities, assessments, and materials that address that program outcome.  
-In the final "Depth of Mastery" column, select from the pull down menu the level of mastery 
-towards a program outcome that your course aims to have students reach by the end of the course. 
-For example, an introductory course related to a program outcome may specify a high amount of exposure at an emergent level. 
+This section is used to "map" your course to the overall program outcomes 
+in your academic unit (previously identified as part of the curriculum development process).
+ The first column lists the program outcome category and the second column describes the program outcome.
+  In the column titled "Emphasis", select the extent of instructional emphasis your course places
+   on that program outcome. In the final "Depth" column, select from the pull down menu the level of
+    depth at which your course addresses that program outcome. For example, an introductory course
+     related to a program outcome may specify a low amount of emphasis at an introductory depth.
 </p>
 <%
 String courseOfferingId = request.getParameter("course_offering_id");
