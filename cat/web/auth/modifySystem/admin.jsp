@@ -8,6 +8,11 @@
 	
 					
 					<div id="administration" class="module" style="overflow:auto;"><h1>Administration</h1>
+							
+						<div id="adminDepartmentsDiv">
+							<jsp:include page="adminDepartments.jsp"/>
+						</div>
+						
 						<div id="accessPermissions">
 							<jsp:include page="accessPermissions.jsp"/>
 						</div>
@@ -18,8 +23,7 @@
 						<div id="assessmentMethodAdmin" class="module" style="overflow:auto;">
 							<jsp:include page="assessmentMethodAdmin.jsp"/>
 						</div>
-						
-						
+
 						
 					</div>
 				</div>

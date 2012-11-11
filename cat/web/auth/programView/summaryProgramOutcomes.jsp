@@ -34,7 +34,7 @@ if(courseLinks.isEmpty())
 }
 %>
 <hr/>
-<h3>Courses' Contribution to Program Outcomes</h3>
+
 <br>
 <strong>Indicated below is the instructional emphasis and depth for each of these outcomes in your course on the following scales</strong>
 <br/><b>Emphasis:</b>

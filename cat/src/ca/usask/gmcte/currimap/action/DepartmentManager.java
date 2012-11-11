@@ -11,6 +11,7 @@ import ca.usask.gmcte.currimap.model.CharacteristicType;
 import ca.usask.gmcte.currimap.model.Course;
 import ca.usask.gmcte.currimap.model.CourseOutcome;
 import ca.usask.gmcte.currimap.model.Department;
+import ca.usask.gmcte.currimap.model.LinkCourseDepartment;
 import ca.usask.gmcte.currimap.model.LinkCourseProgram;
 import ca.usask.gmcte.currimap.model.LinkDepartmentCharacteristicType;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome;
@@ -22,22 +23,45 @@ public class DepartmentManager
 	private static DepartmentManager instance;
 	private static Logger logger = Logger.getLogger(DepartmentManager.class);
 
-	public boolean save(String name)
+	public boolean save(String name, String systemName)
 	{
 		Department c = this.getDepartmentByName(name);
-		if(c != null) //already exists, done.
-		{
-			return true;
-		}
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
-		c = new Department();
-		c.setName(name);
-		session.save(c);
-				session.getTransaction().commit();
-		return true;
+			if(c != null) //already exists, update.
+			{
+				c.setLdapName(systemName);
+				session.merge(c);
+				return true;
+			}
+			c = new Department();
+			c.setName(name);
+			c.setLdapName(systemName);
+			session.save(c);
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
+	public boolean update(int id, String name, String systemName)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			Department c = (Department)session.get(Department.class,  id);
+			c.setName(name);
+			c.setLdapName(systemName);
+			session.save(c);
+			session.getTransaction().commit();
+			return true;
 		}
 		catch(Exception e)
 		{
@@ -359,6 +383,56 @@ public class DepartmentManager
 		}
 		return toReturn;
 	}
+	public boolean addCourseToDepartment(String subject, String courseNumber, int departmentId)
+	{
+		
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			 Department dept = (Department) session.get(Department.class, departmentId);
+			 Course course = CourseManager.instance().getCourseBySubjectAndNumber(subject, courseNumber,session);
+			 LinkCourseDepartment newLink = new LinkCourseDepartment();
+			 newLink.setCourse(course);
+			 newLink.setDepartment(dept);
+			 session.save(newLink);
+			 session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+
+	}
+	public boolean removeCourseFromDepartment(String subject, String courseNumber, int departmentId)
+	{
+		
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			 Course course = CourseManager.instance().getCourseBySubjectAndNumber(subject, courseNumber,session);
+			 LinkCourseDepartment toDelete = (LinkCourseDepartment)session.createQuery("FROM LinkCourseDepartment WHERE department.id=:deptId and course.id=:courseId")
+					 .setParameter("deptId",departmentId)
+					 .setParameter("courseId",course.getId())
+					 .uniqueResult();
+			 
+			 session.delete(toDelete);
+			 session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<String> getUsedCourseOutcomeIdsForDepartment(Department d)
 	{

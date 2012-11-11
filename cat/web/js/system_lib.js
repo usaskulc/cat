@@ -23,8 +23,20 @@ function saveSystem(requiredParameterArray, parameterArray,type)
 		{	
 			parameters += "&parentObjectId="+parentObjectId;
 		}
+		if(object=="DepartmentCourses")
+		{
+			$("[name^='course_number_checkbox_']").each(function(index) {
+				if(($(this).is("input:checkbox") || $(this).is("input:radio")) && $(this).attr("checked")!= null && $(this).attr("checked") == "checked")
+				{
+					parameters += "&" + $(this).attr("name")+ "=true";
+				}
+			});	
+		}
+		
+		
 		parameters += readParameters(parameterArray);
 		//alert(parameters);
+		//alert(object);
 		$.ajax({
 			type: 		"post",
 			url: 		"/cat/auth/modifySystem/saveSystem.jsp",
@@ -63,11 +75,21 @@ function saveSystem(requiredParameterArray, parameterArray,type)
 					var organizationId = $("#organization_id").val();
 					loadURLIntoId("/cat/organization.jsp?organization_id="+organizationId,"#Organization_"+organizationId);
 				}
-				
+				else if(object == "DepartmentCourses")
+				{
+					$("#messageDiv").hide();
+					$("#message2Div").show();
+					$("#message2Div").html(msg);
+				}
+				else if(object == "Department")
+				{
+					loadURLIntoId("/cat/auth/modifySystem/adminDepartments.jsp","#adminDepartmentsDiv");
+					
+				}
 				
 				$('#saveButton').removeAttr("disabled");
 				setTimeout("clearMessage();",500);
-				if(object != "Course" && object!="NewProgramOutcome")
+				if(object != "Course" && object!="NewProgramOutcome" && object!="DepartmentCourses" && object != "Department")
 				{
 					setTimeout("closeEdit()",2000);
 				}
@@ -102,7 +124,33 @@ function addDepartment(name)
 	});
 
 }
-
+function editDepartment(id)
+{
+	var deptId = -1
+	if(id != null)
+	{
+		var selectBox = $("#"+id);
+		deptId = selectBox.val();
+	}
+	loadModify("/cat/auth/modifySystem/editDepartment.jsp?department_id="+deptId);
+}
+function loadDeptCourseNumbers(id,departmentId)
+{
+	var selectBox = $("#"+id);
+	
+	loadURLIntoId("/cat/auth/modifySystem/existingCourseSelector.jsp?subjectParameter="+selectBox.val()+"&department_id="+departmentId,"#assignCoursesDiv");
+}
+function selectCourses(which)
+{
+	if(which == 'all')
+	{
+		$('[name^="course_number_checkbox_"]').attr("checked",true);
+	}
+	else
+	{
+		$('[name^="course_number_checkbox_"]').attr("checked",false);
+	}	
+}
 function editGenericSystemField(id, object,field_name, divToReload, urlToLoadOnComplete,additionalData)
 {
 	resetChanges();

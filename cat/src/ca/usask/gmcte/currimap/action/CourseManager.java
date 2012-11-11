@@ -1618,6 +1618,31 @@ public class CourseManager
 		}
 		return toReturn;
 	}
+	@SuppressWarnings("unchecked")
+	public List<String> getCourseNumbersForSubjectAndDepartment(String subject, int departmentId)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<String> toReturn  = new ArrayList<String>();
+		try
+		{
+			List<Integer> intValuesList = (List<Integer>)session.createQuery("select distinct l.course.courseNumber from LinkCourseDepartment l WHERE l.course.subject=:subject AND l.department.id=:deptId order by l.course.courseNumber" )
+					.setParameter("subject",subject)
+					.setParameter("deptId",departmentId)
+					.list();
+		
+			for(Integer n : intValuesList)
+			{
+				toReturn.add(n.toString());
+			}
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
 	public boolean copyDataFromOfferingToOffering(int sourceOffering, int targetOffering, int programId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();

@@ -81,7 +81,7 @@ for(String term: availableTerms)
 </div>
 
 
-
+<h3>Courses' Contribution to Program Outcomes</h3>
 <div id="summaryProgramOutcomesDiv">
 	<jsp:include page="summaryProgramOutcomes.jsp"/>
 </div>
