@@ -53,6 +53,7 @@
 	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingOutcomeCharacteristic"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseProgram"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkProgramProgramOutcomeCharacteristic"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingTeachingMethod"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseDepartment"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkDepartmentCharacteristicType"/>

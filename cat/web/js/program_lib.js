@@ -164,7 +164,10 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 					
 					loadURLIntoId("/cat/auth/modifyProgram/courseDepartments.jsp?program_id="+programId+"&course_id="+courseId,"#courseDepartmentsDiv");
 				}
-				
+				else if (object=="ProgramOutcomeWithCharacteristics")
+				{
+					
+				}
 				
 				$('#saveButton').removeAttr("disabled");
 				setTimeout("clearMessage();",500);
@@ -343,6 +346,31 @@ function removeProgramOutcome(program_id,link_id)
 	});
 
 }
+function removeProgramOutcome(program_id,link_id, department_id)
+{
+
+	$.ajax({
+		type: 		"post",
+		url: 		"/cat/auth/modifyProgram/removeProgramOutcome.jsp?link_id="+link_id+"&program_id="+program_id,
+		success:	function(msg) 
+		{
+			$("#messageDiv").html(msg);
+			$("#messageDiv").show();
+			if(msg.indexOf("ERROR") >=0)
+			{
+				alert("There was a problem saving the data! "+msg);
+			}
+			else
+			{
+				$("#messageDiv").html(msg);
+			}
+			loadURLIntoId("/cat/auth/programView/programOutcomes.jsp?program_id="+program_id,"#programOutcomesDiv");
+			resetChanges();
+		}
+	});
+
+}
+
 function removeProgramCourse(program_id,link_id)
 {
 	if(!confirm("Are you sure you want to remove the Course from this program ?"))
@@ -745,7 +773,7 @@ function gatherAssessmentData(programId, checkboxJavascript)
 	}
 	parameters += getSelectedTerms();
 	
-	console.log(parameters);
+	//console.log(parameters);
 	loadSummaryBarGraphData(parameters);
 	loadSummaryTeachingMethodBarGraphData(parameters);
 	resetChanges();

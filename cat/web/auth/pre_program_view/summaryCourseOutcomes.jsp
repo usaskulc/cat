@@ -38,8 +38,8 @@ if(offeringsWithData.isEmpty())
 
 %>
 <hr/>
-<strong>The contributions listed below represent the data entered in the Course Offerings. (<%=offeringsWithData.size()%> out of <%=offerings.size()%> sections have mapping data entered)</strong>
-<br/>Extent of Exposure values : 
+<strong>Indicated below are the instructional emphasis and depth values for each of these outcomes in your course on the following scalest. The data entered in the Course Offerings. (<%=offeringsWithData.size()%> out of <%=offerings.size()%> sections have mapping data entered)</strong>
+<br/>Emphasis: 
 <%
 boolean firstOption = true;
 for( ContributionOptionValue optionValue : optionValues)
@@ -52,7 +52,7 @@ for( ContributionOptionValue optionValue : optionValues)
 }
 
 %>
-<br/>Depth of Mastery values
+<br/>Depth
 <%
 for( MasteryOptionValue optionValue : masteryValues)
 {
@@ -71,8 +71,8 @@ for( MasteryOptionValue optionValue : masteryValues)
 	<tr>
 		<th>Category</th>
 		<th>Program Outcome</th>
-		<th>Extent of<br/>Exposure</th>
-		<th>Depth of<br/>Mastery</th>
+		<th>Emphasis</th>
+		<th>Depth</th>
 	</tr>
 	
 <%

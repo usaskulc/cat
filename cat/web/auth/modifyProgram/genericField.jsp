@@ -5,10 +5,14 @@ String fieldName = request.getParameter("field_name");
 String object = request.getParameter("object");
 String existingValue = "";
 int fieldSize = 0;
+String display="";
+
+
 if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
 {
 	if(object.equals("OrganizationOutcomeGroup"))
 	{
+		
 		OrganizationOutcomeGroup group = new OrganizationOutcomeGroup(); 
 		if( id > -1 )
 			group = OrganizationManager.instance().getOrganizationOutcomeGroupById(id);
@@ -22,9 +26,11 @@ if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
 		{
 			out.println("Unable to find field["+fieldName+"]");
 		}
+		display="Enter Organization Outcome Group. Maximum of ("+ fieldSize+" characters)";
 	}
 	else if(object.equals("OrganizationOutcome"))
 	{
+		
 		OrganizationOutcome o =  new OrganizationOutcome();
 		if(id > -1)
 			o = OrganizationManager.instance().getOrganizationOutcomeById(id);
@@ -43,10 +49,12 @@ if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
 		{
 			out.println("Unable to find field["+fieldName+"]");
 		}
+		display="Enter Organzation Outcome. Maximum of ("+ fieldSize+" characters)";
 
 	}
 	else if(object.equals("ProgramOutcomeGroup"))
 	{
+		
 		ProgramOutcomeGroup group = new ProgramOutcomeGroup(); 
 		if( id > -1 )
 			group = ProgramManager.instance().getProgramOutcomeGroupById(id);
@@ -60,6 +68,7 @@ if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
 		{
 			out.println("Unable to find field["+fieldName+"]");
 		}
+		display="Enter Program Outcome Group. Maximum of ("+ fieldSize+" characters)";
 	}
 	else if(object.equals("ProgramOutcome"))
 	{
@@ -81,6 +90,8 @@ if(HTMLTools.isValid(object) && HTMLTools.isValid(fieldName))
 		{
 			out.println("Unable to find field["+fieldName+"]");
 		}
+		display = "Type in one course learning outcome then click save. Return to this add outcome window to enter additional outcomes. Each entry may contain no more than "+fieldSize+" characters.";
+		
 
 	}
 	else 
@@ -116,6 +127,9 @@ while(e.hasMoreElements())
 	}
 }
 %>
+<p>
+<%= display%>
+</p>
 
 <form name="genericFieldForm" id="genericFieldForm" method="post" action="" >
 	
@@ -144,12 +158,74 @@ while(e.hasMoreElements())
 		<div class="error" id="new_valueMessage" style="padding-left:10px;"></div>
 		<div class="spacer"> </div>
 	</div>
+	<%
+	int departmentId = HTMLTools.getInt(request.getParameter("department_id"));
+	
+	if(object.equals("ProgramOutcome")  && departmentId > -1)
+	{
+		int programId = HTMLTools.getInt(request.getParameter("program_id"));
+		Program program = ProgramManager.instance().getProgramById(programId);
+		
+	boolean editing = HTMLTools.isValid(existingValue);
+	String parameterString = "";
+	Department department = DepartmentManager.instance().getDepartmentById(departmentId);
+	List<CharacteristicType> charTypes = department.getCharacteristicTypes();
+	List<Characteristic> outcomeCharacteristics = new ArrayList<Characteristic>();
+	OutcomeManager om = OutcomeManager.instance();
+	ProgramOutcome outcome = null;
+	if(editing)
+	{
+		outcomeCharacteristics = om.getCharacteristicsForProgramOutcome(program,outcome, department);
+	}
+	for(int i=0; i< charTypes.size() ; i++)
+	{
+		CharacteristicType temp = charTypes.get(i);
+		int selectedId = -1;
+		for(Characteristic charac: outcomeCharacteristics)
+		{
+			if(charac.getCharacteristicType().getId() == temp.getId())
+				selectedId = charac.getId();
+		}
+		
+		%>
+			<jsp:include page="/auth/modifyProgram/characteristicType.jsp">
+				<jsp:param name="selectedId" value="<%=selectedId%>" />
+				<jsp:param name="charTypeId" value="<%=temp.getId()%>"/>
+				<jsp:param name="index" value="<%=i%>"/>
+			</jsp:include>
+		<% 
+		parameterString += ",'characteristic_"+i+"','characteristic_type_"+i+"'";
+	}
+	%>
+	<input type="hidden" name="department_id" id="department_id" value="<%=departmentId%>"/>
+	<input type="hidden" name="program_id" id="program_id" value="<%=programId%>"/>
+	
+	<input type="hidden" name="char_count" id="char_count" value="<%=charTypes.size()%>"/>
+	<br/>
+	<div class="formElement">
+		<div class="label"><input type="button" 
+				   name="saveCourseOfferingOutcomeButton" 
+				   id="saveCourseOfferingOutcomeButton" 
+				   value="Save" 
+				   onclick="saveProgram(new Array('new_value'),
+				   				new Array('new_value'<%=parameterString%>,'department_id','program_id','program_outcome_group_id','char_count','outcome_id'),'ProgramOutcomeWithCharacteristics');" /></div>
+		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
+		<div class="spacer"> </div>
+	</div>
+	<%}
+	else
+	{
+	%>
+	
+	
+	
 	<br/>
 	<div class="formElement">
 		<div class="label"><input type="button" name="saveButton" id="saveButton" value="Save" onclick="saveGenericProgramField(new Array('new_value'),new Array('new_value','id'<%=additionalFieldsToSubmit.toString()%>));" /></div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 	</div>
+	<%} %>
 </form>
 
 		

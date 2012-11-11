@@ -24,8 +24,8 @@ if(courseLinks.isEmpty())
 }
 %>
 <hr/>
-<strong>The Program Outcome contributions listed below represent the contributions from Core and Service courses</strong>
-<br/><b>Extent of Exposure:</b>
+<strong>Indicated below are the instructional emphasis and depth for each of these outcomes in your course on the following scales</strong>
+<br/><b>Emphasis:</b>
 <%
 boolean firstOption = true;
 for( ContributionOptionValue optionValue : optionValues)
@@ -36,7 +36,7 @@ for( ContributionOptionValue optionValue : optionValues)
 		out.println(", ");
 	out.println(optionValue.getCalculationValue() +"="+ optionValue.getName());
 }%>
-<br/><b>Depth of Mastery:</b>
+<br/><b>Depth:</b>
 <%
 firstOption = true;
 for(MasteryOptionValue optionValue : masteryValues)
@@ -54,8 +54,8 @@ for(MasteryOptionValue optionValue : masteryValues)
 		<th>Category</th>
 		<th>Program Outcome</th>
 		<th style="width:100px;">Course</th>
-		<th style="width:50px;">Extent of<br/>Exposure</th>
-		<th style="width:50px;">Depth of<br/>Mastery</th>
+		<th style="width:50px;">Emphasis</th>
+		<th style="width:50px;">Depth</th>
 	</tr>
 	
 <%

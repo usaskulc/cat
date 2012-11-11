@@ -60,8 +60,8 @@ if(groups.isEmpty())
 }
 %>
 <hr/>
-<strong>The contributions listed below represent the extent of which this course offering contributes to the corresponding Program Outcome.</strong>
-<br/>
+<strong>Indicate below what is the instructional emphasis and depth for each of these outcomes in your course on the following scales.</strong>
+<br/>Emphasis: 
 <%
 boolean firstOption = true;
 for( ContributionOptionValue optionValue : optionValues)
@@ -73,8 +73,8 @@ for( ContributionOptionValue optionValue : optionValues)
 	out.println(optionValue.getCalculationValue() +"="+ optionValue.getName());
 }
 %>
-<strong>The mastery depths listed below represent the depth of mastery this course offering is expected to have of the corresponding Program Outcome.</strong>
-<br/>
+
+<br/>Depth: 
 <%
 for( MasteryOptionValue optionValue : masteryOptionValues)
 {
@@ -91,8 +91,8 @@ for( MasteryOptionValue optionValue : masteryOptionValues)
 	<tr>
 		<th>Category</th>
 		<th>Program Outcomes</th>
-		<th>Extent of<br/>Exposure</th>
-		<th>Depth of<br/>Mastery
+		<th>Emphasis</th>
+		<th>Depth</th>
 	</tr>
 	
 <%

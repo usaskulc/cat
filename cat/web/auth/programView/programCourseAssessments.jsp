@@ -88,10 +88,13 @@ for(LinkCourseProgram courseLink : courseLinks)
 {
 	Course c = courseLink.getCourse();
 	CourseClassification classification = courseLink.getCourseClassification();
-	
+	out.println("Course="+c.getCourseNumber() + "index="+ ((c.getCourseNumber()/100) -1) +" "+classification.getName());
+	int index = (c.getCourseNumber()/100) -1;
+	if (index > 4) // 800 or 900
+		index -= 2;
+
 	if(classification.getName().equalsIgnoreCase("required"))
 	{
-		int index = (c.getCourseNumber()/100) -1;
 		if(index < yearCodes.length)
 		{
 			StringBuilder toAddTo = required.get(yearCodes[index]);
@@ -110,7 +113,6 @@ for(LinkCourseProgram courseLink : courseLinks)
 	}
 	else
 	{
-		int index = (c.getCourseNumber()/100) -1;
 		if(index < yearCodes.length)
 		{
 			StringBuilder toAddTo = elective.get(yearCodes[index]);

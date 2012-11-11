@@ -1,6 +1,7 @@
 <%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*"%>
 <%
 String programId = request.getParameter("program_id");
+int departmentId = HTMLTools.getInt(request.getParameter("department_id"));
 OutcomeManager om = OutcomeManager.instance();
 Program program = ProgramManager.instance().getProgramById(Integer.parseInt(programId));
 String outcomeParameter = request.getParameter("outcome");
@@ -29,7 +30,7 @@ String programName = "";
  				out.println(HTMLTools.createSelectProgramOutcomes("outcomeToAdd", list, outcome!=null?""+outcome.getId():null));
  		%>
  		<br/>
- 		<a href="javascript:loadModify('/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>');" class="smaller">Edit outcomes</a>
+ 		<a href="javascript:loadModify('/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>&department_id=<%=departmentId%>');" class="smaller">Create/Modify Program outcomes</a>
 		</div>
 		
 		<div class="error" id="subjectMessage"></div>

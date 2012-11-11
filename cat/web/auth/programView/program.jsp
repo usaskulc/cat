@@ -39,9 +39,11 @@ else
 <%
 if(access)
 {%>
-<a href="javascript:toggleDisplay('manageProgramOutcomes',clientBrowser);"><img src="images/closed_folder_<%=clientBrowser%>.gif" id="manageProgramOutcomes_img">Manage Program Outcomes</a>
+<h3>Program Outcomes</h3>
+<br><br>
+<a href="javascript:toggleDisplay('manageProgramOutcomes',clientBrowser);"><img src="/cat/images/closed_folder_<%=clientBrowser%>.gif" id="manageProgramOutcomes_img">Manage Program Outcomes</a>
 <div id="manageProgramOutcomes_div" style="display:none;">
-	<h3>Manage Program Outcomes</h3>
+	
 	
 	<div id="programOutcomesDiv">
 		<jsp:include page="programOutcomes.jsp"/>
@@ -50,10 +52,23 @@ if(access)
 </div>
 <div>
 
-<input type="button" value="Select All Terms" onClick="selectTerms('all',<%=programId%>);"> &nbsp; <input type="button" value="De-select All Terms" onClick="selectTerms('none',<%=programId%>);">
-<br/>
+
 
 <%}
+%>
+<div id="outcomesMappingDiv">
+	<jsp:include page="outcomesMapping.jsp">
+		<jsp:param value="<%=programId%>" name="program_id"/>	
+	</jsp:include>
+</div>
+<h3>Summary of Course Data</h3>
+<p>
+Summaries are presented for specific terms. Select the terms you would like to review (e.g., 201201 refers to Term 2 starting January 2012).
+</p>
+<form>
+<input type="button" value="Select All Terms" onClick="selectTerms('all',<%=programId%>);"> &nbsp; <input type="button" value="De-select All Terms" onClick="selectTerms('none',<%=programId%>);">
+<br/>
+<%
 List<String> availableTerms = pm.getAllAvailableTerms(o);
 for(String term: availableTerms)
 {
@@ -62,6 +77,7 @@ for(String term: availableTerms)
 	<%
 }
 %>
+</form>
 </div>
 
 
@@ -72,11 +88,7 @@ for(String term: availableTerms)
 
 <div id="outcomes"></div>
 <hr/>
-<div id="outcomesMappingDiv">
-	<jsp:include page="outcomesMapping.jsp">
-		<jsp:param value="<%=programId%>" name="program_id"/>	
-	</jsp:include>
-</div>
+
 <h3>Assessment Distribution and Instructional Strategies</h3>
 <br>
 Select the courses you would like view in the charts below.

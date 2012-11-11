@@ -19,6 +19,7 @@ import ca.usask.gmcte.currimap.model.LinkCourseOfferingOutcomeCharacteristic;
 import ca.usask.gmcte.currimap.model.LinkCourseOutcomeProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkOrganizationOrganizationOutcome;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome;
+import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcomeCharacteristic;
 import ca.usask.gmcte.currimap.model.Organization;
 import ca.usask.gmcte.currimap.model.OrganizationOutcome;
 import ca.usask.gmcte.currimap.model.OrganizationOutcomeGroup;
@@ -34,13 +35,30 @@ public class OutcomeManager
 
 	public boolean saveCharacteristic(int courseOfferingId, int outcomeId, String characteristicValue, String characteristicType, String creatorUserid)
 	{
+		return saveCharacteristic(courseOfferingId, outcomeId, characteristicValue, characteristicType, creatorUserid, false);
+	}
+	
+	public boolean saveCharacteristic(int id, int outcomeId, String characteristicValue, String characteristicType, String creatorUserid, boolean isProgram)
+	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
-			CourseOutcome outcome = (CourseOutcome) session.get(CourseOutcome.class, outcomeId);
-			CourseOffering courseOffering = (CourseOffering)session.get(CourseOffering.class,courseOfferingId);
-			LinkCourseOfferingOutcome lco = getLinkCourseOfferingOutcome(courseOffering, outcome,session);
+			LinkCourseOfferingOutcome lco = null;
+			LinkProgramProgramOutcome lpo = null;
+			if(isProgram)
+			{
+				ProgramOutcome outcome = (ProgramOutcome) session.get(ProgramOutcome.class, outcomeId);
+				Program program = (Program)session.get(Program.class,id);
+				lpo = getLinkProgramProgramOutcome(program, outcome,session);
+					
+			}
+			else
+			{
+				CourseOutcome outcome = (CourseOutcome) session.get(CourseOutcome.class, outcomeId);
+				CourseOffering courseOffering = (CourseOffering)session.get(CourseOffering.class,id);
+				lco = getLinkCourseOfferingOutcome(courseOffering, outcome,session);
+			}
 			CharacteristicType cType =  getCharacteristicTypeById(Integer.parseInt(characteristicType), session);
 			Characteristic characteristic = null;
 			
@@ -52,13 +70,25 @@ public class OutcomeManager
 			{
 				characteristic = this.getCharacteristicByNameAndTypeId(characteristicValue,Integer.parseInt(characteristicType),session);
 			}
-			LinkCourseOfferingOutcomeCharacteristic characteristicLink = new LinkCourseOfferingOutcomeCharacteristic();
-			characteristicLink.setCharacteristic(characteristic);
-			characteristicLink.setCreatedByUserid(creatorUserid);
-			characteristicLink.setCreatedOn(new Date(System.currentTimeMillis()));
-			characteristicLink.setLinkCourseOfferingOutcome(lco);
-			session.save(characteristicLink);
-					session.getTransaction().commit();
+			if(isProgram)
+			{
+				LinkProgramProgramOutcomeCharacteristic characteristicLink = new LinkProgramProgramOutcomeCharacteristic();
+				characteristicLink.setCharacteristic(characteristic);
+				characteristicLink.setCreatedByUserid(creatorUserid);
+				characteristicLink.setCreatedOn(new Date(System.currentTimeMillis()));
+				characteristicLink.setLinkProgramProgramOutcome(lpo);
+				session.save(characteristicLink);
+			}
+			else
+			{
+				LinkCourseOfferingOutcomeCharacteristic characteristicLink = new LinkCourseOfferingOutcomeCharacteristic();
+				characteristicLink.setCharacteristic(characteristic);
+				characteristicLink.setCreatedByUserid(creatorUserid);
+				characteristicLink.setCreatedOn(new Date(System.currentTimeMillis()));
+				characteristicLink.setLinkCourseOfferingOutcome(lco);
+				session.save(characteristicLink);
+			}
+			session.getTransaction().commit();
 			return true;
 		}
 		catch(Exception e)
@@ -93,6 +123,51 @@ public class OutcomeManager
 			characteristicLink.setCreatedByUserid(creatorUserid);
 			characteristicLink.setCreatedOn(new Date(System.currentTimeMillis()));
 			session.merge(characteristicLink);
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
+	public boolean updateProgramOutcomeCharacteristic(int linkId, String characteristicValue, String characteristicType, String creatorUserid)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			LinkProgramProgramOutcome lpo = (LinkProgramProgramOutcome)session.get(LinkProgramProgramOutcome.class, linkId);
+			CharacteristicType cType =  getCharacteristicTypeById(Integer.parseInt(characteristicType), session);
+			Characteristic characteristic = null;
+			
+			if(cType.getValueType().equals("String"))
+			{
+				characteristic = this.getCharacteristicById(Integer.parseInt(characteristicValue),session);
+			}
+			else if(cType.getValueType().equals("Boolean"))
+			{
+				characteristic = this.getCharacteristicByNameAndTypeId(characteristicValue,Integer.parseInt(characteristicType),session);
+			}
+			LinkProgramProgramOutcomeCharacteristic characteristicLink = this.getCharacteristicLinkWithType(cType, lpo,session);
+			if (characteristicLink == null)
+			{
+				characteristicLink = new LinkProgramProgramOutcomeCharacteristic();
+				characteristicLink.setLinkProgramProgramOutcome(lpo);
+				characteristicLink.setCharacteristic(characteristic);
+				characteristicLink.setCreatedByUserid(creatorUserid);
+				characteristicLink.setCreatedOn(new Date(System.currentTimeMillis()));
+				session.save(characteristicLink);
+			}
+			else
+			{
+				characteristicLink.setCharacteristic(characteristic);
+				characteristicLink.setCreatedByUserid(creatorUserid);
+				characteristicLink.setCreatedOn(new Date(System.currentTimeMillis()));
+				session.merge(characteristicLink);
+			}
 			session.getTransaction().commit();
 			return true;
 		}
@@ -287,6 +362,7 @@ public class OutcomeManager
 		}
 	}
 	
+	
 	public boolean deleteCourseOfferingOutcome(int outcomeId, int courseOfferingId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -323,7 +399,57 @@ public class OutcomeManager
 			return false;
 		}
 	}
+	public int saveProgramOutcomeLink(int programId, String outcomeName, int programOutcomeGroupId)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			
+			ProgramOutcome outcome = new ProgramOutcome();
+			ProgramOutcomeGroup programOutcomeGroup = (ProgramOutcomeGroup)session.get(ProgramOutcomeGroup.class,programOutcomeGroupId);
+			outcome.setName(outcomeName);
+			outcome.setDescription("");
+			outcome.setGroup(programOutcomeGroup);
+			session.save(outcome);
+			
+			Program program = (Program)session.get(Program.class,programId);
+			LinkProgramProgramOutcome lpo = new LinkProgramProgramOutcome();
+			lpo.setProgram(program);
+			lpo.setProgramOutcome(outcome);
+		
+			session.save(lpo);
+			session.getTransaction().commit();
+			return outcome.getId();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return -1;
+		}
+	}
 
+	public boolean saveProgramOutcome(String outcomeName, int programOutcomeId)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			
+			ProgramOutcome outcome = (ProgramOutcome)session.get(ProgramOutcome.class, programOutcomeId);
+			outcome.setName(outcomeName);
+			session.merge(outcome);
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
 	public boolean update(String id,String name, String description, String programSpecific)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -370,11 +496,47 @@ public class OutcomeManager
 				.uniqueResult();
 		return link;
 	}
+	public LinkProgramProgramOutcome getLinkProgramProgramOutcomeById(int id)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		LinkProgramProgramOutcome toReturn = null;
+		try
+		{
+			toReturn = (LinkProgramProgramOutcome) session.get(LinkProgramProgramOutcome.class,  id);
+			session.getTransaction().commit();
+			
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+		}
+		return toReturn;
+	}
+	
+	public LinkProgramProgramOutcome getLinkProgramProgramOutcome(Program program, ProgramOutcome outcome, Session session)
+	{
+		LinkProgramProgramOutcome link = (LinkProgramProgramOutcome)session.createQuery("from LinkProgramProgramOutcome lpo WHERE lpo.program.id=:programId and lpo.programOutcome.id=:outcomeId ")
+				.setParameter("programId",program.getId())
+				.setParameter("outcomeId",outcome.getId())
+				.uniqueResult();
+		return link;
+	}
+	
 	public LinkCourseOfferingOutcomeCharacteristic getCharacteristicLinkWithType(CharacteristicType cType, LinkCourseOfferingOutcome lco, Session session)
 	{
 		return (LinkCourseOfferingOutcomeCharacteristic)session
 				.createQuery("FROM LinkCourseOfferingOutcomeCharacteristic WHERE linkCourseOfferingOutcome.id=:lcoId AND characteristic.characteristicType.id=:cTypeId")
 				.setParameter("lcoId", lco.getId())
+				.setParameter("cTypeId",cType.getId())
+				.uniqueResult();
+	}
+	public LinkProgramProgramOutcomeCharacteristic getCharacteristicLinkWithType(CharacteristicType cType, LinkProgramProgramOutcome lpo, Session session)
+	{
+		return (LinkProgramProgramOutcomeCharacteristic)session
+				.createQuery("FROM LinkProgramProgramOutcomeCharacteristic WHERE linkProgramProgramOutcome.id=:lpoId AND characteristic.characteristicType.id=:cTypeId")
+				.setParameter("lpoId", lpo.getId())
 				.setParameter("cTypeId",cType.getId())
 				.uniqueResult();
 	}
@@ -581,7 +743,7 @@ public class OutcomeManager
 		}
 		return list;
 	}
-	
+
 	public List<Characteristic> getCharacteristicsForCourseOfferingOutcome(CourseOffering courseOffering, CourseOutcome o, Department department,Session session)
 	{
 		StringBuilder sql = new StringBuilder();
@@ -609,6 +771,51 @@ public class OutcomeManager
 			.list();
 		return list;
 	}
+	public List<Characteristic> getCharacteristicsForProgramOutcome(Program program, ProgramOutcome o, Department department)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<Characteristic> list = null;
+		try
+		{
+			list = getCharacteristicsForProgramOutcome(program,o,department,session);
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return list;
+	}
+	public List<Characteristic> getCharacteristicsForProgramOutcome(Program program, ProgramOutcome o, Department department,Session session)
+	{
+		StringBuilder sql = new StringBuilder();
+		sql.append("	SELECT {c.*} ");
+		sql.append("     FROM characteristic c, ");
+		sql.append("          link_program_program_outcome_characteristic lcoc, ");
+		sql.append("          link_program_program_outcome lco, ");
+		sql.append("          link_department_characteristic_type ldct ");
+		sql.append("    WHERE lcoc.characteristic_id = c.id ");
+		sql.append("      AND lco.id = lcoc.link_program_program_outcome_id ");
+		sql.append("      AND lco.program_id = :programId ");
+		sql.append("      AND lco.program_outcome_id = :outcomeId ");
+		sql.append("      AND ldct.characteristic_type_id = c.characteristic_type_id ");
+		sql.append("      AND ldct.department_id = :departmentId ");
+		sql.append(" ORDER BY ldct.display_index ");
+		
+		logger.debug(" c="+program.getId()+" o="+o.getId() +"\n"+sql.toString());
+		
+		@SuppressWarnings("unchecked")
+		List<Characteristic> list = (List<Characteristic>)session.createSQLQuery(sql.toString())
+			.addEntity("c",Characteristic.class)
+			.setParameter("programId",program.getId())
+			.setParameter("departmentId",department.getId())
+			.setParameter("outcomeId", o.getId())
+			.list();
+		return list;
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public List<CourseOutcome> getOutcomesForProgramContaining(Program program,String text)
 	{

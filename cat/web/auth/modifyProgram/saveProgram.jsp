@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.model.*,ca.usask.gmcte.currimap.action.*, org.apache.log4j.Logger"%>
+    pageEncoding="UTF-8" import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.model.*,ca.usask.gmcte.currimap.action.*, org.apache.log4j.Logger,org.hibernate.validator.Length"%>
 <%!private static Logger logger = Logger.getLogger("/auth/courseOffering/index.jsp");%>
 <%
 Enumeration e = request.getParameterNames();
@@ -387,6 +387,81 @@ else if (object.equals("LinkCourseDepartment"))
 	{
 		out.println("ERROR: Unable to add Department");
 	}
+}
+else if (object.equals("ProgramOutcomeWithCharacteristics"))
+{
+	int existingOutcomeId = HTMLTools.getInt(request.getParameter("outcome_id"));
+	int linkId = HTMLTools.getInt(request.getParameter("link_id"));
+	int programId = HTMLTools.getInt(request.getParameter("program_id"));
+	int programOutcomeGroupId = HTMLTools.getInt(request.getParameter("program_outcome_group_id"));
+	
+	String characteristicCount = request.getParameter("char_count");
+	int charCount = Integer.parseInt(characteristicCount);
+	String outcomeName = request.getParameter("new_value");
+	OutcomeManager manager = OutcomeManager.instance();
+	String userid=(String)session.getAttribute("edu.yale.its.tp.cas.client.filter.user");
+	int maxFieldSize= (ProgramOutcome.class.getMethod("getName")).getAnnotation(Length.class).max();
+	if(outcomeName.length() > maxFieldSize)
+	{
+		out.println("Maximum length of the outcome is "+maxFieldSize+" characters. The one you entered is "+outcomeName.length()+" characters.");
+		return;
+	}
+	
+	if(linkId < 0 )
+	{
+		boolean allOkay = true;
+		//new outcome link
+		existingOutcomeId = manager.saveProgramOutcomeLink(programId, outcomeName,programOutcomeGroupId);
+		for(int i=0; i < charCount ; i++ )
+		{
+			String charString = request.getParameter("characteristic_"+i);
+			String charType = request.getParameter("characteristic_type_"+i);
+			logger.error("charString = ["+charString+"] charType ("+"characteristic_type_"+i+") = ["+charType+"]");
+			
+			allOkay = allOkay && manager.saveCharacteristic(programId, existingOutcomeId, charString,charType,userid,true);
+			
+		}
+		if(allOkay)
+		{
+			out.println("Outcome added");
+		}
+		else
+		{
+			out.println("ERROR: saving new outcome");
+		}
+	}
+	else
+	{
+		LinkProgramProgramOutcome existing = manager.getLinkProgramProgramOutcomeById(linkId);
+		ProgramOutcome outcome =  existing.getProgramOutcome();
+		if (manager.saveProgramOutcome(outcomeName, outcome.getId()))
+		{
+			boolean allOkay = true;
+			//saving existing
+			for(int i=0; i < charCount ; i++ )
+			{
+				String charString = request.getParameter("characteristic_"+i);
+				String charType = request.getParameter("characteristic_type_"+i);
+				logger.error("charString = ["+charString+"] charType ("+"characteristic_type_"+i+") = ["+charType+"]");
+				
+				allOkay = allOkay && manager.updateProgramOutcomeCharacteristic(linkId, charString,charType,userid);
+				
+			}
+			if(allOkay)
+			{
+				out.println("Outcome updated");
+			}
+			else
+			{
+				out.println("ERROR: saving outcome changes");
+			}
+		}
+		else
+		{
+			out.println("ERROR: Unable to save new Program Outcome text");
+		}
+	}
+	
 }
 else
 {
