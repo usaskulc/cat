@@ -52,8 +52,9 @@ for( ContributionOptionValue optionValue : optionValues)
 }
 
 %>
-<br/>Depth 
+<br/>Depth: 
 <%
+firstOption = true;
 for( MasteryOptionValue optionValue : masteryValues)
 {
 	if(firstOption)

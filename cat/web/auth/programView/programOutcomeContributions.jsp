@@ -35,7 +35,7 @@ if(groups.isEmpty())
 %>
 <hr/>
 <strong>Indicate below what is the instructional emphasis and depth for each of these outcomes in your course on the following scales.</strong>
-<br/>Emphasis
+<br/>Emphasis:
 <%
 boolean firstOption = true;
 for( ContributionOptionValue optionValue : optionValues)
