@@ -1070,6 +1070,23 @@ public class CourseManager
 		}
 		return toReturn;
 	}
+	
+	public List<LinkCourseOfferingAssessment> getAssessmentsForCourses(List<String> courseIds)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<LinkCourseOfferingAssessment> toReturn = null;
+		try
+		{
+			toReturn = getAssessmentsForCourses(courseIds,session);
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
 	public List<LinkCourseOfferingAssessment> getAssessmentsForCourseOffering(CourseOffering c)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -1107,7 +1124,15 @@ public class CourseManager
 		}
 		return toReturn;
 	}
-	
+	@SuppressWarnings("unchecked")
+	public List<LinkCourseOfferingAssessment> getAssessmentsForCourses(List<String> courseIds,Session session)
+	{
+		return (List<LinkCourseOfferingAssessment>) session
+					.createQuery("FROM LinkCourseOfferingAssessment l WHERE  "
+		            + HibernateUtil.getListAsString(" l.courseOffering.course.id ",courseIds, false, false) 
+		            + " ORDER BY l.courseOffering.course.subject, l.courseOffering.course.courseNumber, l.courseOffering.term, l.courseOffering.sectionNumber, l.when.displayIndex")
+					.list();
+	}
 	@SuppressWarnings("unchecked")
 	public List<LinkCourseOfferingAssessment> getAssessmentsForCourseOffering(CourseOffering c,Session session)
 	{

@@ -48,6 +48,22 @@ else if(object.equals("AssessmentMethod"))
 	}
 	
 }
+else if(object.equals("Department"))
+{
+	String departmentName = request.getParameter("name");
+	int id = HTMLTools.getInt(request.getParameter("id"));
+	
+	DepartmentManager manager = DepartmentManager.instance();
+	if(manager.update(id,departmentName, null) )
+	{
+		out.println("Department updated");
+	}
+	else
+	{
+		out.println("There was a problem updating the Department!");
+	}
+	
+}
 else if(object.equals("LinkCourseOfferingAssessmentMethod"))
 {
 	String courseOfferingId = request.getParameter("course_offering_id");

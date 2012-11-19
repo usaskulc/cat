@@ -38,7 +38,8 @@ public class DepartmentManager
 			}
 			c = new Department();
 			c.setName(name);
-			c.setLdapName(systemName);
+			if(systemName != null)
+				c.setLdapName(systemName);
 			session.save(c);
 			session.getTransaction().commit();
 			return true;
@@ -58,7 +59,8 @@ public class DepartmentManager
 		{
 			Department c = (Department)session.get(Department.class,  id);
 			c.setName(name);
-			c.setLdapName(systemName);
+			if(systemName != null)
+				c.setLdapName(systemName);
 			session.save(c);
 			session.getTransaction().commit();
 			return true;

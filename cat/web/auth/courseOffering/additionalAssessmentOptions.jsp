@@ -25,7 +25,7 @@ for(AssessmentFeedbackOptionType question: questions)
 {
 %>
 			<div class="formElement">
-				<div class="label"><%=question.getQuestion()%>:</div>
+				<div class="label"><%=question.getQuestion()%></div>
 				<div class="field">
 				<%
 				String questionType = question.getQuestionType();

@@ -21,7 +21,7 @@ if(linkId > -1)
 			<input type="hidden" name="objectClass" id="objectClass" value="LinkCourseOfferingAssessmentMethod"/>
 			<input type="hidden" name="course_offering_id" id="course_offering_id" value="<%=courseOfferingId%>"/>
 			<%if(editing){ %>
-			<input type="hidden" name="assessment_link_id" id="assessment_link_id" value="<%=linkId%>"/>\
+			<input type="hidden" name="assessment_link_id" id="assessment_link_id" value="<%=linkId%>"/>
 			<%} %>
 			
 			<div class="formElement">

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 import jxl.Workbook;
 import jxl.write.Label;
@@ -21,11 +22,15 @@ import jxl.write.biff.RowsExceededException;
 import ca.usask.gmcte.currimap.action.CourseManager;
 import ca.usask.gmcte.currimap.action.OrganizationManager;
 import ca.usask.gmcte.currimap.action.ProgramManager;
+import ca.usask.gmcte.currimap.model.AssessmentFeedbackOption;
+import ca.usask.gmcte.currimap.model.AssessmentFeedbackOptionType;
+import ca.usask.gmcte.currimap.model.AssessmentTimeOption;
 import ca.usask.gmcte.currimap.model.Course;
 import ca.usask.gmcte.currimap.model.CourseAttribute;
 import ca.usask.gmcte.currimap.model.CourseAttributeValue;
 import ca.usask.gmcte.currimap.model.CourseOffering;
 import ca.usask.gmcte.currimap.model.Department;
+import ca.usask.gmcte.currimap.model.LinkCourseOfferingAssessment;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingTeachingMethod;
 import ca.usask.gmcte.currimap.model.LinkCourseProgram;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome;
@@ -79,8 +84,6 @@ public class ExcelEporter
 		WritableCellFormat wrappedCell = new WritableCellFormat();
 		wrappedCell.setWrap(true);
 		
-		Label constructionLabel = new Label(0, 0, "Coming soon",biggerFormat);
-		assessmentSheet.addCell(constructionLabel);
 		Label constructionLabel2 = new Label(0, 0, "Coming soon",biggerFormat);
 		outcomesSheet.addCell(constructionLabel2);
 		Label constructionLabel3 = new Label(0, 0, "Coming soon",biggerFormat);
@@ -153,6 +156,10 @@ public class ExcelEporter
 		{
 			offeringsSheet.setColumnView(i,  30);
 		}
+		
+		
+		
+		
 		row=0;
 		col=0;
 		courseIdLabel = new Label(col++, row, "course_id",biggerFormat);
@@ -207,6 +214,8 @@ public class ExcelEporter
 		}
 		
 
+		
+		//TEACHING METHODS
 		List<LinkCourseOfferingTeachingMethod> methods = cm.getTeachingMethods(courseIds);
 		
 		row=0;
@@ -246,164 +255,167 @@ public class ExcelEporter
 			col=0;
 		}
 		
-		/*
-		col = mainColumns[3];
-		courseHeaderLabel = new Label(col++, row, "Course",biggerFormat);
-		sheet.addCell(courseHeaderLabel);
-		contributionsHeaderLabel = new Label(col, row, "Contribution-values",biggerFormat);
-		sheet.addCell(contributionsHeaderLabel);
-		sheet.mergeCells(col, row, col+4, row);
 		
-		
-		//start of program outcome-groups
-		row = 6; 
-		col = 0;
-		
-		ProgramManager pm = ProgramManager.instance();
-		Map<String, Integer> offeringCounts = pm.getCourseOfferingCounts(program );
-		List<LinkCourseProgram> courseLinks = pm.getLinkCourseProgramForProgram(program);
+		//ASSESSMENT METHODS
+		List<LinkCourseOfferingAssessment> assessmentList = cm.getAssessmentsForCourses(courseIds);
 
-		List<ProgramOutcomeGroup> groups = pm.getProgramOutcomeGroupsProgram(program);
-		
-		List<ProgramOutcomeCourseContribution> coreContributions = pm.getProgramOutcomeCoreCourseContributionForProgram(program);
-		List<ProgramOutcomeCourseContribution> serviceContributions = pm.getProgramOutcomeServiceCourseContributionForProgram(program);
+		List<AssessmentTimeOption> timeOptionsList = cm.getAssessmentTimeOptions();
+
+		List<String> timeOptions = new ArrayList<String>();
+
+		for(AssessmentTimeOption time : timeOptionsList)
+		{	
+			timeOptions.add(time.getName());
+		}
+		double assessmentSum = 0.0;
 		NumberFormat formatter = NumberFormat.getInstance();
 		formatter.setMaximumFractionDigits(1);
-		for(ProgramOutcomeGroup group : groups)
-		{
-			
-			col = mainColumns[0];
-			List<LinkProgramProgramOutcome> programOutcomes = pm.getProgramOutcomeForGroupAndProgram(program,group);
-			
-			//program outcome group
-			Label groupLabel = new Label(col++, row, group.getName(),wrappedCell);
-			sheet.addCell(groupLabel);
-			
-			
-			for(LinkProgramProgramOutcome programOutcomeLink: programOutcomes)
-			{
-				int coreRow = row;
-				int serviceRow = row;
-				int programOutcomeTotalRow = row;
-				col = mainColumns[1];
-			
-				ProgramOutcome programOutcome = programOutcomeLink.getProgramOutcome();
-				//program outcome
-				Label outcomeLabel = new Label(col++, row, programOutcome.getName(),wrappedCell);
-				sheet.addCell(outcomeLabel);
-				
-				double total = 0.0;
-				
-				for(LinkCourseProgram courseLink :courseLinks)
-				{
-					double coreContribution = 0.0;
-					double serviceContribution = 0.0;
-					int coreColumn = mainColumns[2];
-					int serviceColumn = mainColumns[3];
-					
-					if(isContruibutingCourse(coreContributions, courseLink.getCourse(),programOutcome.getId()))
-					{
-						//put course info and attributes in starting at programCoreOutcomeColumn and programCoreOutcomeRow
-						placeCourseInfo(sheet,coreColumn++, coreRow, null, null, courseLink.getCourse());
-						
-						//put contributions in at programCoreOutcomeColumn + # of attributes and programCoreOutcomeRow
-						coreContribution = placeContributions(sheet,coreColumn, coreRow, coreContributions, programOutcome.getId() ,courseLink.getCourse().getId(),offeringCounts);
-						
-						//increase programCoreOutcomeRow
-						coreRow++;
-					}
-					else if  (isContruibutingCourse(serviceContributions, courseLink.getCourse(),programOutcome.getId()))
-						//this must be a service course
-					{
-						//put course info and attributes in starting at programServiceOutcomeColumn and programServiceOutcomeRow
-						placeCourseInfo(sheet,serviceColumn++, serviceRow, null, null, courseLink.getCourse());
-						
-						//put contributions in at programServiceOutcomeColumn + # of attributes and programServiceOutcomeRow
-						serviceContribution = placeContributions(sheet,serviceColumn, serviceRow, serviceContributions, programOutcome.getId() ,courseLink.getCourse().getId(),offeringCounts);
-						
-						//increase programServiceOutcomeRow
-						serviceRow++;
-					}
-					//next outcome row should be the max of programServiceOutcomeRow and programCoreOutcomeRow
-					total += coreContribution + serviceContribution;
-				}//done looping through courses for this program outcome
-				
-				row = Math.max(serviceRow, coreRow);
-				
-				Number totalNumber = new Number(mainColumns[4],programOutcomeTotalRow, total);
-				sheet.addCell(totalNumber);
-			}
+
+		row=0;
+		col=0;
+		courseIdLabel = new Label(col++, row, "course_id",biggerFormat);
+		assessmentSheet.addCell(courseIdLabel);
+		courseOfferingIdLabel = new Label(col++, row, "course_offering_id",biggerFormat);
+		assessmentSheet.addCell(courseOfferingIdLabel);
 		
-		}
-		row++;
-		col = 0;
-		if(courseAttributes != null && !courseAttributes.isEmpty())
-		{
-			Label courseAttributesLabel = new Label(col, row++, "Course Attributes",biggerFormat);
-			sheet.addCell(courseAttributesLabel);
-			
-			
-			
+		Label assGrpLabel= new Label(col++, row, "Group",biggerFormat);
+		assessmentSheet.addCell(assGrpLabel);
+		Label assNameLabel = new Label(col++, row, "Name",biggerFormat);
+		assessmentSheet.addCell(assNameLabel);
+		Label addInfoLabel = new Label(col++, row, "Addnl Info",biggerFormat);
+		assessmentSheet.addCell(addInfoLabel);
+		Label assWeightLabel = new Label(col++, row, "Weight",biggerFormat);
+		assessmentSheet.addCell(assWeightLabel);
+		Label assCritLabel = new Label(col++, row, "Criterion",biggerFormat);
+		assessmentSheet.addCell(assCritLabel);
+		Label assCritLvlLabel = new Label(col++, row, "Crit Level",biggerFormat);
+		assessmentSheet.addCell(assCritLvlLabel);
+		Label assCritComplLabel = new Label(col++, row, "Crit complete",biggerFormat);
+		assessmentSheet.addCell(assCritComplLabel);
+		Label assCritSubmLabel = new Label(col++, row, "Crit submit",biggerFormat);
+		assessmentSheet.addCell(assCritSubmLabel);
 	
-			int coreColumnHome = 0;
-			int serviceColumnHome = coreColumnHome + 2 + courseAttributes.size();
-			
-			int serviceColumn = serviceColumnHome;
-			int coreColumn = coreColumnHome;
-			
-			Label coreCourseAttributesLabel = new Label(coreColumn, row, "Core courses",biggerFormat);
-			sheet.addCell(coreCourseAttributesLabel);
-			
-			Label serviceCourseAttributesLabel = new Label(serviceColumn, row++, "Service courses",biggerFormat);
-			sheet.addCell(serviceCourseAttributesLabel);
-			
-			
-			Label courseNameHeaderLabel = new Label(coreColumn++, row, "Course",biggerFormat);
-			sheet.addCell(courseNameHeaderLabel);
-			courseNameHeaderLabel = new Label(serviceColumn++, row, "Course",biggerFormat);
-			sheet.addCell(courseNameHeaderLabel);
-			
-			for(CourseAttribute courseAttribute: courseAttributes)
+		TreeMap<String,List<AssessmentFeedbackOption>> additionalInfoOptions = new TreeMap<String,List<AssessmentFeedbackOption>>();
+		
+		List<AssessmentFeedbackOptionType> questions = cm.getAssessmentFeedbackQuestions();
+		for(AssessmentFeedbackOptionType q : questions)
+		{
+			List<AssessmentFeedbackOption> options = cm.getAssessmentOptionsForQuestion(q.getId());
+			additionalInfoOptions.put(""+q.getId(), options);
+			String type = q.getQuestionType(); //"select","checkbox","radio"
+			Label questionNameLabel = new Label(col++, row, q.getQuestion(), wrappedCell);
+			assessmentSheet.addCell(questionNameLabel);
+			if(type.equals("checkbox")) //there could be multiple options
 			{
-				Label labelToAdd = new Label(coreColumn++, row, courseAttribute.getName(),biggerFormat);
-				sheet.addCell(labelToAdd);
-				labelToAdd = new Label(serviceColumn++, row, courseAttribute.getName(),biggerFormat);
-				sheet.addCell(labelToAdd);
+				
+				col--;
+				assessmentSheet.mergeCells(col,row, col+options.size()-1,row);
+				
+				for(AssessmentFeedbackOption option : options)
+				{
+					Label questionOptionLabel = new Label(col++, row+1, option.getName(), wrappedCell);
+					assessmentSheet.addCell(questionOptionLabel);	
+				}	
+			}
+		}
+		
+		for(int i = 0; i< 5; i++)
+		{
+			assessmentSheet.setColumnView(i,  30);
+		}
+		for(int i = 5; i< 10; i++)
+		{
+			assessmentSheet.setColumnView(i,  15);
+		}
+		row+=2;
+		
+		
+		for (LinkCourseOfferingAssessment item : assessmentList)
+		{
+			col=0;
+			Label courseLabel = new Label(col++, row, ""+item.getCourseOffering().getCourse().getId());
+			assessmentSheet.addCell(courseLabel);
 			
+			Label idLabel = new Label(col++, row, ""+item.getCourseOffering().getId(),wrappedCell);
+			assessmentSheet.addCell(idLabel);
+			
+			Label group = new Label(col++, row, ""+item.getAssessment().getGroup().getShortName(),wrappedCell);
+			assessmentSheet.addCell(group);
+			Label name = new Label(col++, row, ""+item.getAssessment().getName(),wrappedCell);
+			assessmentSheet.addCell(name);
+			Label additionalInfo = new Label(col++, row, HTMLTools.isValid(item.getAdditionalInfo())?item.getAdditionalInfo():"", wrappedCell);
+			assessmentSheet.addCell(additionalInfo);
+			
+			Label weight = new Label(col++, row, ""+item.getWeight(), wrappedCell);
+			assessmentSheet.addCell(weight);
+			String criterion = item.getCriterionExists();
+			Label criterionLabel =  new Label(col++, row, criterion, wrappedCell);
+			assessmentSheet.addCell(criterionLabel);
+			
+			if(criterion.equalsIgnoreCase("Y"))
+			{
+				Label criterionLevel = new Label(col++, row, ""+item.getCriterionLevel(), wrappedCell);
+				assessmentSheet.addCell(criterionLevel);
+				Label criterionCompl = new Label(col++, row, ""+item.getCriterionCompleted(), wrappedCell);
+				assessmentSheet.addCell(criterionCompl);
+				Label criterionSubm = new Label(col++, row, ""+item.getCriterionSubmitted(), wrappedCell);
+				assessmentSheet.addCell(criterionSubm);
+			}
+			else
+			{
+				col+=3;
+			}
+			
+			List<AssessmentFeedbackOption> selectedOptions = cm.getAssessmentOptionsSelectedForLinkOffering(item.getId());
+
+			TreeMap<String ,AssessmentFeedbackOption> optionIdMapping = new TreeMap<String ,AssessmentFeedbackOption>();
+			for(AssessmentFeedbackOption selectedOption: selectedOptions )
+			{
+				optionIdMapping.put(""+selectedOption.getId(),selectedOption);
+			}
+			for(AssessmentFeedbackOptionType q : questions)
+			{
+				List<AssessmentFeedbackOption> options = additionalInfoOptions.get(""+q.getId());
+				String type = q.getQuestionType(); //"select","checkbox","radio"
+				if(type.equals("select") || type.equals("radio") )
+				{
+					for(AssessmentFeedbackOption option : options)
+					{
+						if(optionIdMapping.containsKey(""+option.getId()))
+						{
+							Label optionResponseLabel = new Label(col, row, option.getName(), wrappedCell);
+							assessmentSheet.addCell(optionResponseLabel);
+						
+						}
+					}
+					col++;
+				}
+				else
+				{
+					for(AssessmentFeedbackOption option : options)
+					{
+						if(optionIdMapping.containsKey(""+option.getId()))
+						{
+							Label questionOptionLabel = new Label(col++, row, "1", wrappedCell);
+							assessmentSheet.addCell(questionOptionLabel);	
+						}
+						else
+						{
+							Label questionOptionLabel = new Label(col++, row, "0", wrappedCell);
+							assessmentSheet.addCell(questionOptionLabel);	
+						}
+					}	
+				}
 			}
 			row++;
-			col = 0;
-			int coreRow = row;
-			int serviceRow = row; 
-			
-			for(LinkCourseProgram courseLink :courseLinks)
-			{
-				serviceColumn = serviceColumnHome;
-				coreColumn = coreColumnHome;
-				List<Department> depts = CourseManager.instance().getDepartmentForCourse(courseLink.getCourse());
-				boolean deptMatches = false;
-				for(Department dept: depts)
-				{
-					if(dept.getId() == program.getOrganization().getDepartment().getId() || dept.getId() == organization.getDepartment().getId())
-						deptMatches = true;
-				}
-				List<CourseAttributeValue> attributeValues = CourseManager.instance().getCourseAttributeValues(courseLink.getCourse().getId(), program.getId());
-				
-				if(deptMatches) //core course
-				{
-					placeCourseInfo(sheet,coreColumn, coreRow++ , courseAttributes, attributeValues, courseLink.getCourse());
-						
-				}
-				else // service course
-				{
-					placeCourseInfo(sheet,serviceColumn, serviceRow++ , courseAttributes, attributeValues, courseLink.getCourse());
-				}
-			}
+
 		}
-		
-		
-		*/
-		
+		col=0;
+
+
+
+
+
 		workbook.write();
 		workbook.close(); 
 		return file;
