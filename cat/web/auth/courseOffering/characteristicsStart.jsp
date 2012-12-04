@@ -79,7 +79,7 @@ for(Feature f: featureList)
 		if(count == 0)
 			completion.add(f.getDisplayIndex()-1,"No data entered");
 		else
-			completion.add(f.getDisplayIndex()-1, count +" out of " + list.size() + " Instructional Merhods have a value entered");
+			completion.add(f.getDisplayIndex()-1, count +" out of " + list.size() + " Instructional Methods have a value entered");
 	}
 	else if(f.getFileName().equals("assessmentMethods"))
 	{
