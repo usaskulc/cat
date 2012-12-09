@@ -126,9 +126,11 @@ function clearMessages(requiredParameterArray)
 	}
 	
 }
-function clearMessage()
+function clearMessage(id)
 {
-	$('#messageDiv').fadeOut(3000);
+	if(id==null)
+		id="#messageDiv";
+	$(id).fadeOut(3000);
 }
 
 function loadModifyIntoDivWithReload(url,targetDiv,toReloadDivParam)

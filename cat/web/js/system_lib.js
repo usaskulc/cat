@@ -124,6 +124,33 @@ function addDepartment(name)
 	});
 
 }
+function deleteOrganization(id)
+{
+	$.ajax({
+		type: 		"post",
+		url: 		"/cat/auth/modifySystem/saveSystem.jsp?action=delete&object=Organization&id="+id,
+		success:	function(msg) 
+		{
+			
+			$("#message2Div").show();
+			$('html, body').animate({
+			    scrollTop: $("#message2Div").offset().top-400
+			   }, 1000);
+			$("#message2Div").html(msg);
+			setTimeout("clearMessage('#message2Div');",5000);
+			if(msg.indexOf("ERROR") >=0)
+			{
+			}
+			else
+			{
+				loadURLIntoId("/cat/auth/modifySystem/accessPermissions.jsp","#accessPermissions");
+			}
+			
+		}
+	});
+
+}
+
 function editDepartment(id)
 {
 	var deptId = -1

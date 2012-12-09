@@ -51,7 +51,7 @@ public class OrganizationOutcome implements java.io.Serializable, Comparable<Org
 
 	@Column(name = "name", nullable = false, length = 100)
 	@NotNull
-	@Length(max = 100)
+	@Length(max = 200)
 	public String getName()
 	{
 		return this.name;

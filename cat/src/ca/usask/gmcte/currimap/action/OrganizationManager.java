@@ -80,6 +80,25 @@ public class OrganizationManager
 			return false;
 		}
 	}
+	public boolean deleteOrganization(String id)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+	
+			Organization o = (Organization) session.get(Organization.class, Integer.parseInt(id));
+			session.delete(o);
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
 	public boolean saveOrganizationOutcomeGroupNameById(String value, int organizationOutcomeGroupId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();

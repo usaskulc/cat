@@ -23,17 +23,57 @@ else if(object.equals("Organization"))
 	String id = request.getParameter("id");
 	String departmentId = request.getParameter("department");
 	String parentId = request.getParameter("parent_organization_id");
-	
+	String action = request.getParameter("action");
 	OrganizationManager manager = OrganizationManager.instance();
 	if(id != null)
 	{
-		if(manager.update(id,name,Integer.parseInt(departmentId)))
+		if(action.equals("delete"))
 		{
-			out.println("Organization updated");
+			Organization org = manager.getOrganizationById(Integer.parseInt(id));
+			List<OrganizationOutcomeGroup> groups = manager.getOrganizationOutcomeGroupsForOrg(org);
+			if(groups!=null && !groups.isEmpty())
+			{
+				out.println("ERROR: Organization still has outcome groups associated with it");
+				return;
+			}
+			List<OrganizationAdmin> admins = PermissionsManager.instance().getAdminsForOrganization(id);
+			if(admins!=null && !admins.isEmpty())
+			{
+				out.println("ERROR: Organization still has admins associated with it");
+				return;
+			}
+			List<Organization> children = manager.getChildOrganizationsOrderedByName(org);
+			if(children!=null && !children.isEmpty())
+			{
+				out.println("ERROR: Organization still has child-organizations");
+				return;
+			}
+			List<LinkOrganizationOrganizationOutcome> linkedOutcomes = manager.getLinkOrganizationOrganizationOutcomeForOrg(org);
+			if(linkedOutcomes!=null && !linkedOutcomes.isEmpty())
+			{
+				out.println("ERROR: Organization still has outcomes linked to it");
+				return;
+			}
+					
+			if(manager.deleteOrganization(id))
+			{
+				out.println("Organization deleted");
+			}
+			else
+			{
+				out.println("ERROR: Unable to delete Organization");
+			}
 		}
 		else
 		{
-			out.println("There was a problem updating the organization!");
+			if(manager.update(id,name,Integer.parseInt(departmentId)))
+			{
+				out.println("Organization updated");
+			}
+			else
+			{
+				out.println("There was a problem updating the organization!");
+			}
 		}
 	}
 	else if(manager.save(name,parentId, Integer.parseInt(departmentId)))

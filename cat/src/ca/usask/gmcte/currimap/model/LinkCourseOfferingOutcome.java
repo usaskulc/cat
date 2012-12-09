@@ -62,7 +62,7 @@ public class LinkCourseOfferingOutcome implements java.io.Serializable
 		this.id = id;
 	}
 
-		@ManyToOne(fetch = FetchType.LAZY)
+		@ManyToOne(fetch = FetchType.EAGER)
 		@JoinColumn(name = "course_offering_id", nullable = false)
 		@NotNull
 	public CourseOffering getCourseOffering()

@@ -1,6 +1,10 @@
 <%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*"%>
 <h3>Mapping of Program Outcomes to Organization Outcomes</h3>
 <br/>
+After entering in your program outcomes above using the Manage Program Outcomes link, 
+indicate which of your program outcomes link to the organizational outcomes of your College or University. 
+To indicate a link between an organization outcome and a program outcome, click "Add/delete link".
+<br/>
 <%
 int programId = HTMLTools.getInt(request.getParameter("program_id"));
 
@@ -57,7 +61,7 @@ if(groups.isEmpty())
 				first = false;
 			%>
 			<td><span title="<%=HTMLTools.isValid(organizationOutcome.getDescription())?organizationOutcome.getDescription():"No description"%>"><%=organizationOutcome.getName()%></span>
-			<a href="javascript:loadModify('/cat/auth/modifyProgram/editOutcomeMapping.jsp?program_id=<%=programId%>&organization_outcome_id=<%=organizationOutcome.getId()%>')" class="smaller">Edit</a>
+			<a href="javascript:loadModify('/cat/auth/modifyProgram/editOutcomeMapping.jsp?program_id=<%=programId%>&organization_outcome_id=<%=organizationOutcome.getId()%>')" class="smaller">Add/delete link</a>
 			</td>
 			<%
 			List<LinkProgramOutcomeOrganizationOutcome> links = om.getProgramOutcomeLinksForOrganizationOutcome(program, organizationOutcome);

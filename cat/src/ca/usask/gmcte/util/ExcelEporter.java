@@ -21,16 +21,21 @@ import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 import ca.usask.gmcte.currimap.action.CourseManager;
 import ca.usask.gmcte.currimap.action.OrganizationManager;
+import ca.usask.gmcte.currimap.action.OutcomeManager;
 import ca.usask.gmcte.currimap.action.ProgramManager;
 import ca.usask.gmcte.currimap.model.AssessmentFeedbackOption;
 import ca.usask.gmcte.currimap.model.AssessmentFeedbackOptionType;
 import ca.usask.gmcte.currimap.model.AssessmentTimeOption;
+import ca.usask.gmcte.currimap.model.Characteristic;
+import ca.usask.gmcte.currimap.model.CharacteristicType;
 import ca.usask.gmcte.currimap.model.Course;
 import ca.usask.gmcte.currimap.model.CourseAttribute;
 import ca.usask.gmcte.currimap.model.CourseAttributeValue;
 import ca.usask.gmcte.currimap.model.CourseOffering;
+import ca.usask.gmcte.currimap.model.CourseOutcome;
 import ca.usask.gmcte.currimap.model.Department;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingAssessment;
+import ca.usask.gmcte.currimap.model.LinkCourseOfferingOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingTeachingMethod;
 import ca.usask.gmcte.currimap.model.LinkCourseProgram;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome;
@@ -84,8 +89,6 @@ public class ExcelEporter
 		WritableCellFormat wrappedCell = new WritableCellFormat();
 		wrappedCell.setWrap(true);
 		
-		Label constructionLabel2 = new Label(0, 0, "Coming soon",biggerFormat);
-		outcomesSheet.addCell(constructionLabel2);
 		Label constructionLabel3 = new Label(0, 0, "Coming soon",biggerFormat);
 		assessmentToOutcomeSheet.addCell(constructionLabel3);
 		Label constructionLabel4 = new Label(0, 0, "Coming soon",biggerFormat);
@@ -286,6 +289,8 @@ public class ExcelEporter
 		assessmentSheet.addCell(addInfoLabel);
 		Label assWeightLabel = new Label(col++, row, "Weight",biggerFormat);
 		assessmentSheet.addCell(assWeightLabel);
+		Label assWhenLabel = new Label(col++, row, "When",biggerFormat);
+		assessmentSheet.addCell(assWhenLabel);
 		Label assCritLabel = new Label(col++, row, "Criterion",biggerFormat);
 		assessmentSheet.addCell(assCritLabel);
 		Label assCritLvlLabel = new Label(col++, row, "Crit Level",biggerFormat);
@@ -348,6 +353,8 @@ public class ExcelEporter
 			
 			Label weight = new Label(col++, row, ""+item.getWeight(), wrappedCell);
 			assessmentSheet.addCell(weight);
+			Label when = new Label(col++, row, ""+item.getWhen().getName(), wrappedCell);
+			assessmentSheet.addCell(when);
 			String criterion = item.getCriterionExists();
 			Label criterionLabel =  new Label(col++, row, criterion, wrappedCell);
 			assessmentSheet.addCell(criterionLabel);
@@ -411,10 +418,73 @@ public class ExcelEporter
 
 		}
 		col=0;
-
-
-
-
+		
+		//COURSE OUTCOMES
+		row=0;
+		col=0;
+		courseIdLabel = new Label(col++, row, "course_id",biggerFormat);
+		outcomesSheet.addCell(courseIdLabel);
+		courseOfferingIdLabel = new Label(col++, row, "course_offering_id",biggerFormat);
+		outcomesSheet.addCell(courseOfferingIdLabel);
+	
+		Label outcomeLabel= new Label(col++, row, "Course Outcome",biggerFormat);
+		outcomesSheet.addCell(outcomeLabel);
+		
+		Label outcomeIdLabel= new Label(col++, row, "Course Outcome ID",biggerFormat);
+		outcomesSheet.addCell(outcomeIdLabel);
+		
+		Department department = organization.getDepartment();  
+		List<CharacteristicType> characteristicTypes = department.getCharacteristicTypes();
+		for(CharacteristicType charType: characteristicTypes)
+		{
+			Label charTypeQuestionLabel= new Label(col++, row,charType.getQuestionDisplay(),wrappedCell);
+			outcomesSheet.addCell(charTypeQuestionLabel);
+		}
+		// set columns to 30 chars
+		for(int i = 0; i< col; i++)
+		{
+			outcomesSheet.setColumnView(i,  30);
+		}
+		OutcomeManager outcomeManager = OutcomeManager.instance();
+		List<LinkCourseOfferingOutcome> outcomes = outcomeManager.getOutcomesForCourses(courseIds);
+		row++;
+		
+		for(LinkCourseOfferingOutcome oLink : outcomes)
+		{
+			col=0;
+			Label courseLabel = new Label(col++, row, ""+oLink.getCourseOffering().getCourse().getId());
+			outcomesSheet.addCell(courseLabel);
+			
+			Label idLabel = new Label(col++, row, ""+oLink.getCourseOffering().getId(),wrappedCell);
+			outcomesSheet.addCell(idLabel);
+			Label outcomeTextLabel= new Label(col++, row, oLink.getCourseOutcome().getName(),wrappedCell);
+			outcomesSheet.addCell(outcomeTextLabel);
+			Label outIdLabel = new Label(col++, row, ""+oLink.getId(),wrappedCell);
+			outcomesSheet.addCell(outIdLabel);
+		
+			List<Characteristic> outcomeCharacteristics = outcomeManager.getCharacteristicsForCourseOfferingOutcome(oLink.getCourseOffering(),oLink.getCourseOutcome(), department);
+				
+			for(CharacteristicType charType: characteristicTypes)
+			{
+				
+				boolean found = false;
+				for (Characteristic c : outcomeCharacteristics)
+				{
+					if(c.getCharacteristicType().getId() == charType.getId())
+					{
+						Label charTypeValueLabel= new Label(col++, row,c.getName(),wrappedCell);
+						outcomesSheet.addCell(charTypeValueLabel);
+						found = true;
+					}
+				}
+				if(!found)
+				{
+					Label charTypeValueLabel= new Label(col++, row,"not known",wrappedCell);
+					outcomesSheet.addCell(charTypeValueLabel);
+				}
+			}
+			row++;
+		}
 
 		workbook.write();
 		workbook.close(); 
@@ -587,9 +657,6 @@ public class ExcelEporter
 			Label courseAttributesLabel = new Label(col, row++, "Course Attributes",biggerFormat);
 			sheet.addCell(courseAttributesLabel);
 			
-			
-			
-	
 			int coreColumnHome = 0;
 			int serviceColumnHome = coreColumnHome + 2 + courseAttributes.size();
 			

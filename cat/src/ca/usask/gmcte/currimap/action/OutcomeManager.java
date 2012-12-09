@@ -991,8 +991,24 @@ public class OutcomeManager
 		return toReturn;
 	}
 
-	
-
+	@SuppressWarnings("unchecked")
+	public List<LinkCourseOfferingOutcome> getOutcomesForCourses(List<String> courseIds)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<LinkCourseOfferingOutcome> toReturn = null;
+		try
+		{
+			toReturn =  (List<LinkCourseOfferingOutcome>)session.createQuery("FROM LinkCourseOfferingOutcome l WHERE "
+		            + HibernateUtil.getListAsString(" l.courseOffering.course.id ",courseIds, false, false) 
+		            + " ORDER BY l.courseOffering.course.subject, l.courseOffering.course.courseNumber, l.courseOffering.term, l.courseOffering.sectionNumber,l.id").list();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
 	public List<CourseOutcome> getOutcomesForCourseOffering(CourseOffering courseOffering)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
