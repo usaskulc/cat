@@ -27,7 +27,7 @@ else if(object.equals("Organization"))
 	OrganizationManager manager = OrganizationManager.instance();
 	if(id != null)
 	{
-		if(action.equals("delete"))
+		if(action!=null && action.equals("delete"))
 		{
 			Organization org = manager.getOrganizationById(Integer.parseInt(id));
 			List<OrganizationOutcomeGroup> groups = manager.getOrganizationOutcomeGroupsForOrg(org);

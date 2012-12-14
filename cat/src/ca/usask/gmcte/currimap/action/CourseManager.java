@@ -1874,6 +1874,25 @@ public class CourseManager
 		return toReturn;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<CourseOffering> getTeachingCourseOfferings(String userid)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+	
+		List<CourseOffering> toReturn = new ArrayList<CourseOffering>();
+		
+		try
+		{
+			toReturn = session.createQuery("SELECT l.courseOffering FROM LinkCourseOfferingInstructor l WHERE l.instructor.userid=:userid ORDER BY l.courseOffering.course.subject, l.courseOffering.course.courseNumber, l.courseOffering.term, l.courseOffering.sectionNumber")
+					.setParameter("userid", userid).list();
+		}
+		catch(Exception e)
+		{
+			logger.error("Something went wrong while retrieveing sections taught by "+userid,e);
+		}
+		return toReturn;
+	}
 	public List<String[]> getTeachingCourses(String userid)
 	{
 		List<String[]> toReturn = new ArrayList<String[]>();

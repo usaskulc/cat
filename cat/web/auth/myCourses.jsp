@@ -26,7 +26,7 @@ You are someone who teaches in a program that is undertaking a curriculum develo
 <h4><i>How will this be used?</i></h4>
 A curriculum planning initiative will use this course inventory to be able to conveniently view the outcomes across the entire current curriculum and, then, begin to assess how well these match with the desired program outcomes.  This is the information that allows such a group to discuss what adjustments and alignments are necessary.  
 <h4><i>What do I need to do?</i></h4>
-A system administrator has set the tool for your academic unit's use. When you sign in, you will see the courses you have taught in the past 24 months.   If you have taught several, your local leader will advise you which courses you are asked to enter.   
+A system administrator has set the tool for your academic unit's use. When you sign in, you will see the courses you have taught recently.   If you have taught several, your local leader will advise you which courses you are asked to enter.   
 <h4><i>What will I need to complete the tool?</i></h4>
 <ul>
 	<li>Your syllabus from your course, and other course materials for identifying your teaching methods, assessments and course learning outcomes.</li>
@@ -39,7 +39,7 @@ You may find that completing this tool helps you think about some aspects of you
 	<%
 	CourseManager cm = CourseManager.instance();
 String userid=(String)session.getAttribute("edu.yale.its.tp.cas.client.filter.user");
-List<String[]> sections = CourseManager.instance().getTeachingCourses(userid);
+List<CourseOffering> sections = CourseManager.instance().getTeachingCourseOfferings(userid);
 if(sections ==null || sections.isEmpty())
 {
 	out.println("You don't appear to have taught any sections recently");
@@ -47,26 +47,15 @@ if(sections ==null || sections.isEmpty())
 }
 else
 {
-	for(String[] sectionData : sections)
+	for(CourseOffering offering : sections)
 	{
 		
 		
-		CourseOffering offering = cm.getOfferingByData(sectionData[0],sectionData[1],sectionData[2],sectionData[3]);
-		if(offering !=null)
-		{
 		%>
 		<li><a href="/cat/auth/courseOffering/characteristicsStart.jsp?course_offering_id=<%=offering.getId()%>">
-					<%=sectionData[1]%> <%=sectionData[2]%> section <%=sectionData[3]%> (<%=sectionData[0]%>)
+					<%=offering.getCourse().getSubject()%> <%=offering.getCourse().getCourseNumber()%> section <%=offering.getSectionNumber()%> (<%=offering.getTerm()%>)
 				</a></li>
 		<%
-		}
-		else
-		{
-			%>
-			<li>	<%=sectionData[1]%> <%=sectionData[2]%> section <%=sectionData[3]%> (<%=sectionData[0]%>) (Currently not available)</li>
-			
-			<%
-		}
 	}
 }
 %>
