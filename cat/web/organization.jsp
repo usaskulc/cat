@@ -52,7 +52,7 @@ else
 				<%}
 				if(access)
 				{%>
-				<li><a href="/cat/auth/modifyProgram/organizationExport.jsp?organization_id=<%=o.getId()%>" target="_blank">Data Export(under construction)</a></li>
+				<li><a href="/cat/auth/modifyProgram/organizationExport.jsp?organization_id=<%=o.getId()%>" target="_blank">Data Export(under construction)</a> The data can be analyzed in excel using tools such as filters, sorts, vlookup and counts, or can be translated and combined for use in other software.</li>
 				<%} %>
 			</ul>		
 		</div>

@@ -50,7 +50,7 @@ public class LinkProgramProgramOutcome implements java.io.Serializable
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "program_id", nullable = false)
 	@NotNull
 	public Program getProgram()

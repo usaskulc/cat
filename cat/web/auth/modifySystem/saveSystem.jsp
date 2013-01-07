@@ -30,7 +30,7 @@ else if(object.equals("Organization"))
 		if(action!=null && action.equals("delete"))
 		{
 			Organization org = manager.getOrganizationById(Integer.parseInt(id));
-			List<OrganizationOutcomeGroup> groups = manager.getOrganizationOutcomeGroupsForOrg(org);
+			List<OrganizationOutcomeGroup> groups = manager.getOrganizationOutcomeGroupsForOrgForDelete(org);
 			if(groups!=null && !groups.isEmpty())
 			{
 				out.println("ERROR: Organization still has outcome groups associated with it");

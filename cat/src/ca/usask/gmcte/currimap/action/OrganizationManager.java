@@ -711,6 +711,23 @@ public class OrganizationManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
+	public List<OrganizationOutcomeGroup> getOrganizationOutcomeGroupsForOrgForDelete(Organization o)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<OrganizationOutcomeGroup> toReturn = null;
+		try
+		{
+			toReturn = (List<OrganizationOutcomeGroup>)session.createQuery("FROM OrganizationOutcomeGroup o WHERE o.organizationSpecific = 'Y' AND o.organizationId = :orgId").setParameter("orgId",o.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
 	public List<LinkOrganizationOrganizationOutcome> getLinkOrganizationOrganizationOutcomeForOrg(Organization o)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();

@@ -402,6 +402,14 @@ public class CharacteristicManager
 		Characteristic c = (Characteristic) session.get(Characteristic.class, id);
 		return c;
 	}
+	public CharacteristicType getFirstCharacteristicType(Session session)
+	{
+		@SuppressWarnings("unchecked")
+		List<CharacteristicType> list= (List<CharacteristicType>) session.createQuery("FROM CharacteristicType ORDER BY id").list();
+		if(list!=null && !list.isEmpty())
+			return list.get(0);
+		return null;
+	}
 	public CharacteristicType getCharacteristicTypeById(String id)
 	{
 		return getCharacteristicTypeById(Integer.parseInt(id));

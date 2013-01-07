@@ -99,7 +99,7 @@ Select the courses you would like view in the charts below.
 
 </div>
 <%
-if(access)
+if(false && access)
 {%>
 <a href="/cat/auth/modifyProgram/programExport.jsp?program_id=<%=programId%>" class="smaller">Export to Excel (under construction)</a>
 <%} %>

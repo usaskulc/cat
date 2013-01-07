@@ -22,7 +22,7 @@ initiative in which an academic unit seeks to understand what is currently
 offered to students in the curriculum and how what is offered meets established or renewed program goals.  
 The information entered in this tool makes a vital contribution to curriculum mapping. 
 <h4><i>Why me?</i></h4>
-You are someone who teaches in a program that is undertaking a curriculum development, renewal, or innovation process.   Courses you have taught in the past 24 months are highlighted below.  When you click on a course, you will enter the Course Information Page where you can input information about the course.
+You are someone who teaches in a program that is undertaking a curriculum development, renewal, or innovation process.   Courses you have taught previously are highlighted below.  When you click on a course, you will enter the Course Information Page where you can input information about the course.
 <h4><i>How will this be used?</i></h4>
 A curriculum planning initiative will use this course inventory to be able to conveniently view the outcomes across the entire current curriculum and, then, begin to assess how well these match with the desired program outcomes.  This is the information that allows such a group to discuss what adjustments and alignments are necessary.  
 <h4><i>What do I need to do?</i></h4>

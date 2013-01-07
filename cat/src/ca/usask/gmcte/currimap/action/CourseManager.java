@@ -2473,6 +2473,24 @@ public class CourseManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
+	public List<Course> getCoursesForDepartment(Department d)
+	{
+		List<Course> toReturn = null;
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+
+			toReturn = (List<Course>) session.createQuery("SELECT l.course FROM LinkCourseDepartment l WHERE l.department.id= :deptId ORDER BY lower(l.course.id)").setParameter("deptId", d.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
 	public List<LinkCourseDepartment> getDepartmentLinksForCourse(Course course)
 	{
 		List<LinkCourseDepartment> toReturn = null;

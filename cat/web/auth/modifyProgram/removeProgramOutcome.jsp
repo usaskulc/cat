@@ -9,7 +9,7 @@ if(manager.removeProgramOutcome(Integer.parseInt(linkId)))
 }
 else
 {
-	out.println("ERROR: removing outcomer");
+	out.println("ERROR: removing outcome");
 }
 %>
 		

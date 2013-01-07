@@ -638,7 +638,25 @@ public class OutcomeManager
 		}
 		return c;
 	}
-	
+	@SuppressWarnings("unchecked")
+	public List<LinkAssessmentCourseOutcome> getLinkAssessmentCourseOutcomesForCourses(List<String> courseIds)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<LinkAssessmentCourseOutcome> toReturn = null;
+		try
+		{
+			toReturn =  (List<LinkAssessmentCourseOutcome>)session.createQuery("FROM LinkAssessmentCourseOutcome l WHERE "
+		            + HibernateUtil.getListAsString(" l.courseOffering.course.id ",courseIds, false, false) 
+		            + " ORDER BY l.courseOffering.course.subject, l.courseOffering.course.courseNumber, l.courseOffering.term, l.courseOffering.sectionNumber,l.id").list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
 	public List<LinkAssessmentCourseOutcome> getLinkAssessmentCourseOutcomes(int courseOfferingId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();

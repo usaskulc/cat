@@ -40,7 +40,16 @@ public class DepartmentManager
 			c.setName(name);
 			if(systemName != null)
 				c.setLdapName(systemName);
+			
 			session.save(c);
+			CharacteristicType defaultType = CharacteristicManager.instance().getFirstCharacteristicType(session);
+			if(defaultType !=null)
+			{
+				LinkDepartmentCharacteristicType link = new LinkDepartmentCharacteristicType();
+				link.setDepartment(c);
+				link.setCharacteristicType(defaultType);	
+				session.save(link);
+			}
 			session.getTransaction().commit();
 			return true;
 		}
