@@ -24,6 +24,7 @@ import ca.usask.gmcte.currimap.model.LinkCourseOutcomeProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseProgram;
 import ca.usask.gmcte.currimap.model.LinkDepartmentCharacteristicType;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome;
+import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcomeCharacteristic;
 import ca.usask.gmcte.currimap.model.MasteryOptionValue;
 import ca.usask.gmcte.currimap.model.Organization;
 import ca.usask.gmcte.currimap.model.Program;
@@ -376,17 +377,26 @@ public class ProgramManager
 		try
 		{
 		LinkProgramProgramOutcome l = (LinkProgramProgramOutcome) session.get(LinkProgramProgramOutcome.class, outcomeLinkId);
+		
+		//delete associated characteristics
+		List<LinkProgramProgramOutcomeCharacteristic> chars = session.createQuery("FROM LinkProgramProgramOutcomeCharacteristic WHERE linkProgramProgramOutcome.id=:linkId").setParameter("linkId", outcomeLinkId).list();
+		for(LinkProgramProgramOutcomeCharacteristic linkedChar : chars )
+		{
+			session.delete(linkedChar);
+		}
 		List<LinkCourseOfferingContributionProgramOutcome> offeringLinks = (List<LinkCourseOfferingContributionProgramOutcome>)session.createQuery("FROM LinkCourseOfferingContributionProgramOutcome l where l.linkProgramOutcome.id=:linkId")
 				.setParameter("linkId",  outcomeLinkId).list();
 		if(offeringLinks != null)
 		{
 			for(LinkCourseOfferingContributionProgramOutcome li :offeringLinks)
 			{
+				
+				
 				session.delete(li);
 			}
 		}
 		session.delete(l);
-				session.getTransaction().commit();
+		session.getTransaction().commit();
 		return true;
 		}
 		catch(Exception e)
