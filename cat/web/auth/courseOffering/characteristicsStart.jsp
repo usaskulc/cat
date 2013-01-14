@@ -8,7 +8,7 @@ CourseManager cm = CourseManager.instance();
 String courseOfferingId = request.getParameter("course_offering_id") ;
 CourseOffering courseOffering = cm.getCourseOfferingById(Integer.parseInt(courseOfferingId));
 ProgramManager pm = ProgramManager.instance();
-DepartmentManager dm = DepartmentManager.instance();
+OrganizationManager dm = OrganizationManager.instance();
 OutcomeManager om = OutcomeManager.instance();
 String programId = (String)session.getAttribute("programId");
 int programIdParameter = HTMLTools.getInt(request.getParameter("program_id"));
@@ -42,15 +42,15 @@ else
 	
 }
 out.println("Currently selected Program :");
-List<Department> departments = cm.getDepartmentForCourseOffering(courseOffering);
+List<Organization> organizations = cm.getOrganizationForCourseOffering(courseOffering);
 List<Program> programs = new ArrayList<Program>();
 Program bogus = new Program();
 bogus.setId(-1);
 bogus.setName("Please select a Program");
 programs.add(bogus);
-for(Department dep : departments)
+for(Organization dep : organizations)
 {
-	programs.addAll(dm.getProgramOrderedByNameForDepartment(dep));
+	programs.addAll(dm.getProgramOrderedByNameForOrganization(dep));
 }
 out.println(HTMLTools.createSelect("programToSet", programs, "Id", "Name", programId, "setProgramStartId("+courseOfferingId+")"));
 

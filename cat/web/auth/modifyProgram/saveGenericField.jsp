@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.model.*,ca.usask.gmcte.currimap.action.*, org.apache.log4j.Logger, org.apache.log4j.Logger,org.hibernate.validator.Length"%>
-<%!private static Logger logger = Logger.getLogger("/auth/department/saveGenericField.jsp");%>
+<%!private static Logger logger = Logger.getLogger("/auth/organization/saveGenericField.jsp");%>
 <%
 Enumeration e = request.getParameterNames();
 while(e.hasMoreElements())

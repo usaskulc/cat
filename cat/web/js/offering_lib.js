@@ -81,7 +81,7 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 				//if add org, reload whole thing id allOrganizations
 				//console.log("object="+object);
 				//console.log("objectId="+objectId);
-				var departmentId = $("#department_id").val();
+				var organizationId = $("#organization_id").val();
 				if(object == "LinkCourseOfferingAssessmentMethod")
 				{
 					var courseOfferingId = $("#course_offering_id").val();
@@ -97,7 +97,7 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 				else if(object == "CourseOfferingOutcome")
 				{
 					var courseOfferingId = $("#course_offering_id").val();
-					loadURLIntoId("/cat/auth/courseOffering/outcomes.jsp?department_id="+departmentId+"&course_offering_id="+courseOfferingId,"#outcomesDiv");
+					loadURLIntoId("/cat/auth/courseOffering/outcomes.jsp?organization_id="+organizationId+"&course_offering_id="+courseOfferingId,"#outcomesDiv");
 					loadURLIntoId("/cat/auth/courseOffering/outcomesMapping.jsp?course_offering_id="+courseOfferingId,"#outcomesMappingDiv");
 					
 				}
@@ -114,7 +114,7 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 					if(courseOfferingId != null && courseOfferingId.length > 0)
 					{
 						var charId = $("#char_id").val();
-						loadURLIntoId("/cat/auth/courseOffering/addOutcome.jsp?department_id="+departmentId+"&course_offering_id="+courseOfferingId+"&char_id="+charId+"&outcome="+escape(newOutcomeName),"#editDiv");
+						loadURLIntoId("/cat/auth/courseOffering/addOutcome.jsp?organization_id="+organizationId+"&course_offering_id="+courseOfferingId+"&char_id="+charId+"&outcome="+escape(newOutcomeName),"#editDiv");
 					}
 					else
 					{
@@ -123,8 +123,8 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 				}
 				else if (object == "EditCourseOutcome")
 				{
-					var deptId = $("#department_id").val();
-					loadModify("/cat/auth/courseOffering/department.jsp?department_id="+deptId);
+					var deptId = $("#organization_id").val();
+					loadModify("/cat/auth/courseOffering/organization.jsp?organization_id="+deptId);
 				}				
 				else if(object=="CourseOutcomeProgramOutcome")
 				{
@@ -189,6 +189,7 @@ function editOutcomeAssessment(courseOfferingId, linkToDelete)
 	});
 
 }
+
 function deleteOutcomeMapping(courseOfferingId,programOutcomeId,existingLinkId)
 {
 	$.ajax({
@@ -429,12 +430,12 @@ function removeCourseOfferingOutcome(course_offering_id,outcome_id)
 
 }
 
-function addCharacteristicToDepartment(charId, deptId)
+function addCharacteristicToOrganization(charId, deptId)
 {
 	$("#"+toReloadDiv).show();
 	$.ajax({
 		type: 		"post",
-		url: 		"/cat/auth/courseOffering/addCharacteristicToDepartment.jsp?charId="+charId+"&department_id="+deptId ,
+		url: 		"/cat/auth/courseOffering/addCharacteristicToOrganization.jsp?charId="+charId+"&organization_id="+deptId ,
 		success:	function(msg) 
 		{
 			if(msg.indexOf("ERROR") >=0)
@@ -443,7 +444,7 @@ function addCharacteristicToDepartment(charId, deptId)
 			}
 			else
 			{
-				loadURLIntoId("/cat/auth/courseOffering/department.jsp?department_id="+deptId,"#editDiv");
+				loadURLIntoId("/cat/auth/courseOffering/organization.jsp?organization_id="+deptId,"#editDiv");
 				$("#messageDiv").html(msg);
 			}
 			resetChanges();
@@ -485,7 +486,7 @@ function editCharacteristic(charId,charTypeId,command,target)
 		}
 	});
 }
-function moveCharacteristicType(departmentId,charTypeId,direction)
+function moveCharacteristicType(organizationId,charTypeId,direction)
 {
 	if(direction != 'down' && direction != 'up' && !confirm("Are you sure you want to remove this characteristic? Any assignments of this characteristic of this type to a course offering will be removed!"))
 	{
@@ -494,7 +495,7 @@ function moveCharacteristicType(departmentId,charTypeId,direction)
 
 	$.ajax({
 		type: 		"post",
-		url: 		"/cat/auth/courseOffering/moveCharacteristicType.jsp?department_id="+departmentId+"&charTypeId="+charTypeId+"&direction="+direction ,
+		url: 		"/cat/auth/courseOffering/moveCharacteristicType.jsp?organization_id="+organizationId+"&charTypeId="+charTypeId+"&direction="+direction ,
 		success:	function(msg) 
 		{
 			if(msg.indexOf("ERROR") >=0)
@@ -503,7 +504,28 @@ function moveCharacteristicType(departmentId,charTypeId,direction)
 			}
 			else
 			{
-				loadURLIntoId("/cat/auth/courseOffering/departmentCharacteristics.jsp?department_id="+departmentId,"#departmentCharacteristicsDiv");
+				loadURLIntoId("/cat/auth/courseOffering/organizationCharacteristics.jsp?organization_id="+organizationId,"#organizationCharacteristicsDiv");
+				$("#messageDiv").html(msg);
+			}
+			resetChanges();
+		}
+	});
+}
+
+function moveOutcome(toMoveId,courseOfferingId,direction)
+{
+	$.ajax({
+		type: 		"post",
+		url: 		"/cat/auth/courseOffering/moveOutcome.jsp?course_offering_id="+courseOfferingId+"&outcome_id="+toMoveId+"&direction="+direction ,
+		success:	function(msg) 
+		{
+			if(msg.indexOf("ERROR") >=0)
+			{
+				alert("There was a problem saving the data! "+msg);
+			}
+			else
+			{
+				loadURLIntoId("/cat/auth/courseOffering/outcomes.jsp?course_offering_id="+courseOfferingId,"#outcomesDiv");
 				$("#messageDiv").html(msg);
 			}
 			resetChanges();

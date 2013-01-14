@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -21,14 +20,13 @@ import ca.usask.gmcte.currimap.model.CourseAttribute;
 import ca.usask.gmcte.currimap.model.CourseAttributeValue;
 import ca.usask.gmcte.currimap.model.CourseClassification;
 import ca.usask.gmcte.currimap.model.CourseOffering;
-import ca.usask.gmcte.currimap.model.Department;
 import ca.usask.gmcte.currimap.model.Feature;
 import ca.usask.gmcte.currimap.model.Instructor;
 import ca.usask.gmcte.currimap.model.InstructorAttribute;
 import ca.usask.gmcte.currimap.model.InstructorAttributeValue;
 import ca.usask.gmcte.currimap.model.LinkAssessmentCourseOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseAssessmentFeedbackOption;
-import ca.usask.gmcte.currimap.model.LinkCourseDepartment;
+import ca.usask.gmcte.currimap.model.LinkCourseOrganization;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingAssessment;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingContributionProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingInstructor;
@@ -45,7 +43,6 @@ import ca.usask.gmcte.currimap.model.Time;
 import ca.usask.gmcte.currimap.model.TimeItTook;
 import ca.usask.gmcte.util.HTMLTools;
 import ca.usask.gmcte.util.HibernateUtil;
-import ca.usask.ocd.ldap.LdapConnection;
 
 public class CourseManager
 {
@@ -490,18 +487,18 @@ public class CourseManager
 		return  (Course)session.createQuery("from Course where upper(subject)=:subject and courseNumber=:courseNumber").setParameter("subject",subject.toUpperCase()).setParameter("courseNumber", Integer.parseInt(number)).uniqueResult();
 	}
 	
-	public boolean addDepartmentToCourse(int departmentId, int courseId)
+	public boolean addOrganizationToCourse(int organizationId, int courseId)
 	{
 		
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
-			 Department dept = (Department) session.get(Department.class, departmentId);
+			Organization o = (Organization) session.get(Organization.class, organizationId);
 			 Course course = (Course) session.get(Course.class, courseId);
-			 LinkCourseDepartment newLink = new LinkCourseDepartment();
+			 LinkCourseOrganization newLink = new LinkCourseOrganization();
 			 newLink.setCourse(course);
-			 newLink.setDepartment(dept);
+			 newLink.setOrganization(o);
 			 session.save(newLink);
 			 session.getTransaction().commit();
 			return true;
@@ -514,7 +511,7 @@ public class CourseManager
 		}
 
 	}
-	public boolean addInstructorToCourseOffering(String userid, int courseOfferingId)
+	public boolean addInstructorToCourseOffering(String userid, int courseOfferingId,String first, String last)
 	{
 		
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -527,6 +524,8 @@ public class CourseManager
 				 inst = new Instructor();
 				 inst.setUserid(userid);
 			 }
+			 inst.setFirstName(first);
+			 inst.setLastName(last);
 			 CourseOffering courseOffering = (CourseOffering) session.get(CourseOffering.class, courseOfferingId);
 			 LinkCourseOfferingInstructor newLink = new LinkCourseOfferingInstructor();
 			 newLink.setCourseOffering(courseOffering);
@@ -543,14 +542,14 @@ public class CourseManager
 		}
 
 	}
-	public boolean removeDepartmentFromCourse(int linkId)
+	public boolean removeOrganizationFromCourse(int linkId)
 	{
 		
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
-			LinkCourseDepartment link = (LinkCourseDepartment) session.get(LinkCourseDepartment.class, linkId);
+			LinkCourseOrganization link = (LinkCourseOrganization) session.get(LinkCourseOrganization.class, linkId);
 			
 			 session.delete(link);
 			 session.getTransaction().commit();
@@ -1644,16 +1643,16 @@ public class CourseManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
-	public List<String> getCourseNumbersForSubjectAndDepartment(String subject, int departmentId)
+	public List<String> getCourseNumbersForSubjectAndOrganization(String subject, int organizationId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		List<String> toReturn  = new ArrayList<String>();
 		try
 		{
-			List<Integer> intValuesList = (List<Integer>)session.createQuery("select distinct l.course.courseNumber from LinkCourseDepartment l WHERE l.course.subject=:subject AND l.department.id=:deptId order by l.course.courseNumber" )
+			List<Integer> intValuesList = (List<Integer>)session.createQuery("select distinct l.course.courseNumber from LinkCourseOrganization l WHERE l.course.subject=:subject AND l.organization.id=:orgId order by l.course.courseNumber" )
 					.setParameter("subject",subject)
-					.setParameter("deptId",departmentId)
+					.setParameter("orgId",organizationId)
 					.list();
 		
 			for(Integer n : intValuesList)
@@ -1677,7 +1676,7 @@ public class CourseManager
 	
 			CourseOffering target = this.getCourseOfferingById(targetOffering,session);
 			CourseOffering source = this.getCourseOfferingById(sourceOffering,session);
-			Department dept = this.getDepartmentForCourse(source.getCourse(),session).get(0);
+			Organization org = this.getOrganizationForCourse(source.getCourse(),session).get(0);
 		
 			//TeachingMethods
 			List<LinkCourseOfferingTeachingMethod> teachingMethods = this.getTeachingMethods(source,session);
@@ -1718,7 +1717,7 @@ public class CourseManager
 				newLink.setCourseOffering(target);
 				newLink.setCourseOutcome(outcomeLink.getCourseOutcome());
 				session.save(newLink);
-				List<Characteristic> outcomeCharacteristics = OutcomeManager.instance().getCharacteristicsForCourseOfferingOutcome(source, outcomeLink.getCourseOutcome(), dept,session);
+				List<Characteristic> outcomeCharacteristics = OutcomeManager.instance().getCharacteristicsForCourseOfferingOutcome(source, outcomeLink.getCourseOutcome(), org,session);
 				for(Characteristic characteristic : outcomeCharacteristics)
 				{
 					LinkCourseOfferingOutcomeCharacteristic newCharLink = new LinkCourseOfferingOutcomeCharacteristic();
@@ -1896,20 +1895,7 @@ public class CourseManager
 	public List<String[]> getTeachingCourses(String userid)
 	{
 		List<String[]> toReturn = new ArrayList<String[]>();
-		
-		try
-		{
-			LdapConnection ldap = LdapConnection.instance();
-			ArrayList<String> sections = ldap.getTeachingGroups(userid);
-			for(String section : sections )
-			{
-				toReturn.add(section.split("_"));	
-			}
-		}
-		catch(Exception e)
-		{
-			logger.error("Something went wrong while retrieveing sections taught by "+userid,e);
-		}
+
 		HashMap<String,CourseOffering> instructorOfferings = PermissionsManager.instance().getOfferingsForUser(userid, new HashMap<String,Organization>());
 		for(CourseOffering courseOffering : instructorOfferings.values())
 		{
@@ -1955,63 +1941,24 @@ public class CourseManager
 		StringBuilder output = new StringBuilder();
 		
 		Course course = offering.getCourse();
-		List<String> userids = new ArrayList<String>();
-		try
-		{
-			StringBuilder groupName = new StringBuilder();
-			
-			groupName.append(offering.getTerm());
-			groupName.append("_");
-			groupName.append(course.getSubject());
-			groupName.append("_");
-			groupName.append(course.getCourseNumber());
-			groupName.append("_");
-			groupName.append(offering.getSectionNumber());
-			groupName.append("_leaders");
-			LdapConnection ldapConnection = LdapConnection.instance();
-			userids = ldapConnection.getGroupMembers(groupName.toString());
-			logger.error(groupName.toString());
-		}
-		catch(Exception e)
-		{
-			output.append("Unable to retrieve instructor(s) from ldap! ");
-		}	
-		List<LinkCourseOfferingInstructor> dbInstructors = this.getCourseOfferingInstructors(offering.getId());
-		for(LinkCourseOfferingInstructor instr : dbInstructors)
-		{
-			if(!userids.contains(instr.getInstructor().getUserid()))
-			{
-				userids.add(instr.getInstructor().getUserid());
-			}
-		}
 		
-		if(userids.size()> 0 )
+		List<LinkCourseOfferingInstructor> dbInstructors = this.getCourseOfferingInstructors(offering.getId());
+		if(dbInstructors.size()> 0 )
 		{
 			output.append("Instructors : ");
 		}
-		for(int i= 0 ; i < userids.size() ; i++)
+		boolean firstInstructor = true;
+		for(LinkCourseOfferingInstructor instr : dbInstructors)
 		{
-			String userid = userids.get(i);
-			try
-			{
-				LdapConnection ldapConnection = LdapConnection.instance();
-				TreeMap<String,String> data = ldapConnection.getUserData(userid);	
-				output.append(data.get("givenName"));
-				output.append(" ");
-				output.append(data.get("sn"));
+			if(!firstInstructor)
+				output.append(" , ");
+			firstInstructor = false;
+			output.append(instr.getInstructor().getInstructorDisplay());
 			
-			}
-			catch(Exception e)
-			{
-				output.append("Error retrieving name");
-			}	
-			
-			output.append("( ");
-			output.append(userid);
 			int programIdInt = HTMLTools.getInt(programId);
 			if(programIdInt > -1)
 			{
-				List<InstructorAttributeValue> attrValues = getInstructorAttributeValues(userid, programIdInt);
+				List<InstructorAttributeValue> attrValues = getInstructorAttributeValues(instr.getInstructor().getUserid(), programIdInt);
 				String prevAttr = "";
 				if(attrValues != null  && !attrValues.isEmpty())
 				{
@@ -2044,16 +1991,10 @@ public class CourseManager
 				output.append("<a href=\"javascript:loadModify('/cat/auth/modifyProgram/modifyInstructorAttributes.jsp?program_id=");
 				output.append(programId);
 				output.append("&userid=");
-				output.append(userid);
+				output.append(instr.getInstructor().getUserid());
 				output.append("&course_id=");
 				output.append(course.getId());
 				output.append("');\"><img src=\"/cat/images/edit_16.gif\" alt=\"Edit Instructor Attributes\" title=\"Edit Instructor Attributes\"></a>");
-			}
-			output.append(" ) ");
-			
-			if(i < userids.size() -1)
-			{
-				output.append(" , ");
 			}
 		}
 
@@ -2449,21 +2390,21 @@ public class CourseManager
 	}
 
 
-	public List<Department> getDepartmentForCourseOffering(CourseOffering offering)
+	public List<Organization> getOrganizationForCourseOffering(CourseOffering offering)
 	{
 		Course c = offering.getCourse();
-		return getDepartmentForCourse(c);
+		return getOrganizationForCourse(c);
 	}
 	
-	public List<Department> getDepartmentForCourse(Course course)
+	public List<Organization> getOrganizationForCourse(Course course)
 	{
-		List<Department> toReturn = null;
+		List<Organization> toReturn = null;
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
 
-			toReturn = getDepartmentForCourse(course,session);
+			toReturn = getOrganizationForCourse(course,session);
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
@@ -2473,7 +2414,7 @@ public class CourseManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
-	public List<Course> getCoursesForDepartment(Department d)
+	public List<Course> getCoursesForOrganization(Organization d)
 	{
 		List<Course> toReturn = null;
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -2481,7 +2422,7 @@ public class CourseManager
 		try
 		{
 
-			toReturn = (List<Course>) session.createQuery("SELECT l.course FROM LinkCourseDepartment l WHERE l.department.id= :deptId ORDER BY lower(l.course.id)").setParameter("deptId", d.getId()).list();
+			toReturn = (List<Course>) session.createQuery("SELECT l.course FROM LinkCourseOrganization l WHERE l.organization.id= :orgId ORDER BY lower(l.course.id)").setParameter("orgId", d.getId()).list();
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
@@ -2491,15 +2432,15 @@ public class CourseManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
-	public List<LinkCourseDepartment> getDepartmentLinksForCourse(Course course)
+	public List<LinkCourseOrganization> getOrganizationLinksForCourse(Course course)
 	{
-		List<LinkCourseDepartment> toReturn = null;
+		List<LinkCourseOrganization> toReturn = null;
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
 			
-			toReturn = session.createQuery("FROM LinkCourseDepartment WHERE course.id = :courseId ORDER BY lower(department.name)").setParameter("courseId", course.getId()).list();
+			toReturn = session.createQuery("FROM LinkCourseOrganization WHERE course.id = :courseId ORDER BY lower(organization.name)").setParameter("courseId", course.getId()).list();
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
@@ -2510,17 +2451,17 @@ public class CourseManager
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Department> getDepartmentForCourse(Course course,Session session)
+	public List<Organization> getOrganizationForCourse(Course course,Session session)
 	{
-		List<Department> toReturn = null;
+		List<Organization> toReturn = null;
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select {d.*} ");
-		sql.append("   from department d ");
-		sql.append("		 ,link_course_department lcd");
-		sql.append(" where lcd.department_id = d.id");
+		sql.append("   from organization d ");
+		sql.append("		 ,link_course_organization lcd");
+		sql.append(" where lcd.organization_id = d.id");
 		sql.append("   and lcd.course_id = :courseId");
-		toReturn = (List<Department>)session.createSQLQuery(sql.toString())
-				.addEntity("d",Department.class)
+		toReturn = (List<Organization>)session.createSQLQuery(sql.toString())
+				.addEntity("d",Organization.class)
 				.setParameter("courseId",course.getId())
 				.list();
 		return toReturn;

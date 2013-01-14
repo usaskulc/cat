@@ -1,6 +1,6 @@
 <%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*, java.text.NumberFormat"%>
 <%
-String departmentId = request.getParameter("department_id") ;
+String organizationId = request.getParameter("organization_id") ;
 String courseOfferingId = request.getParameter("course_offering_id") ;
 
 @SuppressWarnings("unchecked")

@@ -7,13 +7,17 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
+import ca.usask.gmcte.currimap.model.Characteristic;
+import ca.usask.gmcte.currimap.model.CharacteristicType;
 import ca.usask.gmcte.currimap.model.Course;
 import ca.usask.gmcte.currimap.model.CourseAttribute;
 import ca.usask.gmcte.currimap.model.CourseAttributeValue;
 import ca.usask.gmcte.currimap.model.CourseOffering;
-import ca.usask.gmcte.currimap.model.Department;
+import ca.usask.gmcte.currimap.model.CourseOutcome;
 import ca.usask.gmcte.currimap.model.InstructorAttribute;
 import ca.usask.gmcte.currimap.model.InstructorAttributeValue;
+import ca.usask.gmcte.currimap.model.LinkCourseOrganization;
+import ca.usask.gmcte.currimap.model.LinkOrganizationCharacteristicType;
 import ca.usask.gmcte.currimap.model.LinkOrganizationOrganizationOutcome;
 import ca.usask.gmcte.currimap.model.LinkProgramOutcomeOrganizationOutcome;
 import ca.usask.gmcte.currimap.model.Organization;
@@ -30,23 +34,31 @@ public class OrganizationManager
 	private static OrganizationManager instance;
 	private static Logger logger = Logger.getLogger(OrganizationManager.class);
 
-	public boolean save(String name, String parentId,int departmentId)
+	public boolean save(String name, String parentId,String systemName)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
 		Organization o = new Organization();
+		o.setName(name);
+		o.setActive("Y");
+		o.setSystemName(systemName);
 		if(HTMLTools.isValid(parentId))
 		{
 			Organization parent = (Organization) session.get(Organization.class,Integer.parseInt(parentId));
 			o.setParentOrganization(parent);
 		}
-		Department department  = (Department)session.get(Department.class,departmentId);
-		o.setDepartment(department);
-		o.setName(name);
+		CharacteristicType defaultType = CharacteristicManager.instance().getFirstCharacteristicType(session);
+		if(defaultType !=null)
+		{
+			LinkOrganizationCharacteristicType link = new LinkOrganizationCharacteristicType();
+			link.setOrganization(o);
+			link.setCharacteristicType(defaultType);	
+			session.save(link);
+		}
 		session.save(o);
-				session.getTransaction().commit();
+		session.getTransaction().commit();
 		return true;
 		}
 		catch(Exception e)
@@ -57,7 +69,7 @@ public class OrganizationManager
 		}
 	}
 
-	public boolean update(String id, String name, int departmentId)
+	public boolean update(String id, String name, String systemName, String active)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -67,8 +79,8 @@ public class OrganizationManager
 		Organization o = (Organization) session.get(Organization.class,
 				Integer.parseInt(id));
 		o.setName(name);
-		Department department  = (Department)session.get(Department.class,departmentId);
-		o.setDepartment(department);
+		o.setActive(active);
+		o.setSystemName(systemName);
 		session.merge(o);
 				session.getTransaction().commit();
 		return true;
@@ -159,7 +171,22 @@ public class OrganizationManager
 			return false;
 		}
 	}
-	
+	public Organization getOrganizationByName(String name)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		Organization c = null;
+		try
+		{
+			c = (Organization) session.createQuery("FROM Organization WHERE name=:name").setParameter("name",name).uniqueResult();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return c;
+	}
 	public boolean saveNewOrganizationOutcomeNameAndGroup(String value, int organizationOutcomeGroupId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -261,8 +288,8 @@ public class OrganizationManager
 	@SuppressWarnings("unchecked")
 	public List<CourseOffering> getOrganizationOfferings(Organization o, Session session)
 	{
-		return (List<CourseOffering>) session.createQuery("FROM CourseOffering co WHERE co.course.id in (SELECT l.course.id FROM LinkCourseDepartment l WHERE l.department.id = :deptId) order by co.course.subject, co.course.courseNumber, co.term, co.sectionNumber")
-					.setParameter("deptId",o.getDepartment().getId()).list();
+		return (List<CourseOffering>) session.createQuery("FROM CourseOffering co WHERE co.course.id in (SELECT l.course.id FROM LinkCourseOrganization l WHERE l.organization.id = :orgId) order by co.course.subject, co.course.courseNumber, co.term, co.sectionNumber")
+					.setParameter("orgId",o.getId()).list();
 	}
 	
 	
@@ -489,15 +516,16 @@ public class OrganizationManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
-	public List<Organization> getParentOrganizationsOrderedByName()
+	public List<Organization> getParentOrganizationsOrderedByName(boolean activeOnly)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		List<Organization> list = null;
 		try
 		{
-			list = (List<Organization>) session.createQuery(
-					"from Organization WHERE parentOrganization is null order by name").list();
+			String query = activeOnly?"from Organization WHERE parentOrganization is null AND active='Y' order by name":
+			"from Organization WHERE parentOrganization is null order by name";
+			list = (List<Organization>) session.createQuery(query).list();
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
@@ -508,15 +536,15 @@ public class OrganizationManager
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Organization> getAllOrganizations()
+	public List<Organization> getAllOrganizations(boolean activeOnly)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		List<Organization> list = null;
 		try
 		{
-			list = (List<Organization>) session.createQuery(
-					"from Organization order by lower(name)").list();
+			String query = activeOnly?"from Organization WHERE active='Y' order by lower(name)":"from Organization order by lower(name)";
+			list = (List<Organization>) session.createQuery(query).list();
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
@@ -526,33 +554,16 @@ public class OrganizationManager
 		return list;
 	}
 	@SuppressWarnings("unchecked")
-	public List<Department> getAllDepartments()
-	{
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
-		List<Department> list = null;
-		try
-		{
-			list = (List<Department>) session.createQuery(
-					"from Department order by lower(name)").list();
-			session.getTransaction().commit();
-		}
-		catch(Exception e)
-		{
-			HibernateUtil.logException(logger, e);
-		}
-		return list;
-	}
-	@SuppressWarnings("unchecked")
-	public List<Organization> getChildOrganizationsOrderedByName(Organization o)
+	public List<Organization> getChildOrganizationsOrderedByName(Organization o, boolean activeOnly)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		List<Organization> list = null;
 		try
 		{
+			String query=activeOnly ? "from Organization WHERE parentOrganization.id=:orgId AND active='Y' order by name" : "from Organization WHERE parentOrganization.id=:orgId order by name";
 			list = (List<Organization>) session
-					.createQuery("from Organization WHERE parentOrganization.id=:orgId order by name")
+					.createQuery(query)
 					.setParameter("orgId",o.getId())
 					.list();
 			session.getTransaction().commit();
@@ -809,6 +820,329 @@ public class OrganizationManager
 		}
 		return toReturn;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CharacteristicType> getOrganizationCharacteristicTypes(Organization o)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<CharacteristicType> toReturn = null;
+		try
+		{
+			toReturn = (List<CharacteristicType>)session
+			.createQuery("select ct from CharacteristicType ct, LinkOrganizationCharacteristicType ldct where ldct.organization.id=:orgId and ldct.characteristicType = ct order by ldct.displayIndex")
+			.setParameter("orgId",o.getId())
+			.list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CharacteristicType> getCandidateCharacteristicTypes(List<Integer> alreadyUsed)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<CharacteristicType> toReturn = null;
+		try
+		{
+			StringBuilder queryString = new StringBuilder("select ct from CharacteristicType ct ");
+			if(alreadyUsed.size()>0)
+			{
+				queryString.append("where ct.id not in (");
+				queryString.append(inString(alreadyUsed));
+				queryString.append(") ");
+			}
+			queryString.append(" order by ct.name");
+			toReturn = (List<CharacteristicType>)session.createQuery(queryString.toString()).list();
+			session.getTransaction().commit();
+			}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	public boolean addCharacteristicToOrganization(int charId, int deptId)
+	{
+		boolean createSuccessful = false;
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			Organization o = (Organization) session.get(Organization.class, deptId);
+			CharacteristicType cType = (CharacteristicType) session.get(CharacteristicType.class,charId);
+			LinkOrganizationCharacteristicType link  = new LinkOrganizationCharacteristicType();
+			int max = 0;
+			try
+			{
+				max = (Integer)session.createQuery("select max(displayIndex) from LinkOrganizationCharacteristicType l where l.organization.id = :orgId").setParameter("orgId",o.getId()).uniqueResult();
+			}
+			catch(Exception e)
+			{
+				logger.error("unable to determine max!",e);
+			}
+			
+			link.setDisplayIndex(max+1);
+			link.setCharacteristicType(cType);
+			link.setOrganization(o);
+			//p.getLinkProgramCharacteristicTypes().add(link);
+			session.persist(link);
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		createSuccessful = true;
+		return createSuccessful;
+	}
+	public boolean moveCharacteristicType(int id, int charTypeId, String direction)
+	{
+		//when moving up, find the one to be moved (while keeping track of the previous one) and swap display_index values
+		//when moving down, find the one to be moved, swap displayIndex values of it and the next one
+		//when deleting, reduce all links following one to be deleted by 1
+		boolean done = false;
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			@SuppressWarnings("unchecked")
+			List<LinkOrganizationCharacteristicType> existing = (List<LinkOrganizationCharacteristicType>)session.createQuery("select l from LinkDepartmentCharacteristicType l where l.department.id = :deptId order by l.displayIndex").setParameter("deptId",id).list();
+			if(direction.equals("up"))
+			{
+				LinkOrganizationCharacteristicType prev = null;
+				for(LinkOrganizationCharacteristicType link : existing)
+				{
+					if(link.getCharacteristicType().getId() == charTypeId && prev!=null)
+					{
+						int swap = prev.getDisplayIndex();
+						prev.setDisplayIndex(link.getDisplayIndex());
+						link.setDisplayIndex(swap);
+						session.merge(prev);
+						session.merge(prev);
+						done = true;
+						break;
+					}
+					prev = link;
+				}
+			}
+			else if(direction.equals("down"))
+			{
+				LinkOrganizationCharacteristicType prev = null;
+				for(LinkOrganizationCharacteristicType link : existing)
+				{
+					if(prev !=null)
+					{
+						int swap = prev.getDisplayIndex();
+						prev.setDisplayIndex(link.getDisplayIndex());
+						link.setDisplayIndex(swap);
+						session.merge(prev);
+						session.merge(link);
+						done = true;
+						break;
+					}
+					if(link.getCharacteristicType().getId() == charTypeId)
+					{
+						prev = link;
+					}
+					
+				}
+			}
+			else if(direction.equals("delete"))
+			{
+				LinkOrganizationCharacteristicType toDelete = null;
+				for(LinkOrganizationCharacteristicType link : existing)
+				{
+					if(toDelete !=null)
+					{
+						link.setDisplayIndex(link.getDisplayIndex()-1);
+						session.merge(link);
+					}
+					if(link.getCharacteristicType().getId() == charTypeId)
+					{
+						toDelete = link;
+					}
+					
+				}
+				if(toDelete !=null)
+				{
+						session.delete(toDelete);
+						done = true;
+				}
+			}
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+		return done;
+	}
+	@SuppressWarnings("unchecked")
+	public List<CharacteristicType> setOrganizationCharacteristicTypes(Organization o)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<CharacteristicType> toReturn = null;
+		try
+		{
+			toReturn = (List<CharacteristicType>)session.createQuery("select ct from CharacteristicType ct, LinkOrganizationCharacteristicType lpct where lpct.organization.id=:orgId and lpct.characteristicType = ct  order by lpct.displayIndex")
+					.setParameter("orgId",o.getId()).list();
+			o.setCharacteristicTypes(toReturn);
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
+	public List<Characteristic> getCharacteristicsForType(CharacteristicType ct)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<Characteristic> toReturn = null;
+		try
+		{
+			toReturn = (List<Characteristic>)session.createQuery("select c from Characteristic c where c.characteristicType.id = :ctId order by c.displayIndex").setParameter("ctId",ct.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
+	public List<Program> getProgramOrderedByNameForOrganizationLinkedToCourse(Organization org, Course course)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<Program> list = null;
+		try
+		{
+			list = (List<Program>) session.createQuery("FROM Program p WHERE p.organization.id=:orgId and p.id in (SELECT l.program.id FROM LinkCourseProgram l WHERE l.course.id=:courseId) order by lower(name)")
+					.setParameter("orgId",org.getId())
+					.setParameter("courseId", course.getId())
+					.list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return list;
+	}
+	
+	public boolean addCourseToOrganization(String subject, String courseNumber, int organizationId)
+	{
+		
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			Organization o = (Organization) session.get(Organization.class, organizationId);
+			 Course course = CourseManager.instance().getCourseBySubjectAndNumber(subject, courseNumber,session);
+			 LinkCourseOrganization newLink = new LinkCourseOrganization();
+			 newLink.setCourse(course);
+			 newLink.setOrganization(o);
+			 session.save(newLink);
+			 session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+
+	}
+	public boolean removeCourseFromOrganization(String subject, String courseNumber, int organizationId)
+	{
+		
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			 Course course = CourseManager.instance().getCourseBySubjectAndNumber(subject, courseNumber,session);
+			 LinkCourseOrganization toDelete = (LinkCourseOrganization)session.createQuery("FROM LinkCourseOrganization WHERE organization.id=:orgId and course.id=:courseId")
+					 .setParameter("orgId",organizationId)
+					 .setParameter("courseId",course.getId())
+					 .uniqueResult();
+			 
+			 session.delete(toDelete);
+			 session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Program> getProgramOrderedByNameForOrganization(Organization o)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<Program> list = null;
+		try
+		{
+			list = (List<Program>) session.createQuery("FROM Program p WHERE p.organization.id=:orgId order by lower(name)").setParameter("orgId",o.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return list;
+	}
+	public CourseOutcome getCourseOutcomeById(int id)
+    {
+            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            CourseOutcome c = null;
+            try
+            {
+                    c = (CourseOutcome) session.get(CourseOutcome.class, id);
+                    session.getTransaction().commit();
+            }
+            catch(Exception e)
+            {
+                    HibernateUtil.logException(logger, e);
+            }
+            return c;
+    }
+	public boolean saveCourseOutcomeValue(CourseOutcome o , String name)
+    {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            try
+            {
+            	o.setName(name);
+            	session.merge(o);
+                    session.getTransaction().commit();
+            	return true;
+            }
+            catch(Exception e)
+            {
+                    HibernateUtil.logException(logger, e);
+                    try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+                    return false;
+            }
+    }
 
 	public OrganizationManager()
 	{
@@ -824,5 +1158,17 @@ public class OrganizationManager
 		return instance;
 
 	}
+	public String inString(List<Integer> in)
+	{
+		StringBuilder sb = new StringBuilder();
+		for(int i : in)
+		{
+			sb.append(",");
+			sb.append(i);
+			
+		}
+		return sb.substring(1);
+	}
+
 
 }

@@ -32,7 +32,6 @@ import ca.usask.gmcte.currimap.model.Course;
 import ca.usask.gmcte.currimap.model.CourseAttribute;
 import ca.usask.gmcte.currimap.model.CourseAttributeValue;
 import ca.usask.gmcte.currimap.model.CourseOffering;
-import ca.usask.gmcte.currimap.model.Department;
 import ca.usask.gmcte.currimap.model.LinkAssessmentCourseOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseContributionProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingAssessment;
@@ -83,7 +82,7 @@ public class ExcelEporter
 		WritableSheet courseToProgramSheet = workbook.createSheet("Course OC -> Program OC", sheetIndex++); 
 		
 		CourseManager cm =  CourseManager.instance();
-		List<Course> homeCourses = cm.getCoursesForDepartment(organization.getDepartment());
+		List<Course> homeCourses = cm.getCoursesForOrganization(organization);
 		Map<String,Course> homeCourseMapping = new TreeMap<String,Course>(); 
 		for(Course c: homeCourses)
 		{
@@ -511,8 +510,8 @@ public class ExcelEporter
 		Label outcomeIdLabel= new Label(col++, row, "Course Outcome ID",biggerFormat);
 		outcomesSheet.addCell(outcomeIdLabel);
 		
-		Department department = organization.getDepartment();  
-		List<CharacteristicType> characteristicTypes = department.getCharacteristicTypes();
+		
+		List<CharacteristicType> characteristicTypes = organization.getCharacteristicTypes();
 		for(CharacteristicType charType: characteristicTypes)
 		{
 			Label charTypeQuestionLabel= new Label(col++, row,charType.getQuestionDisplay(),wrappedCell);
@@ -540,7 +539,7 @@ public class ExcelEporter
 			Label outIdLabel = new Label(col++, row, ""+oLink.getCourseOutcome().getId(),wrappedCell);
 			outcomesSheet.addCell(outIdLabel);
 		
-			List<Characteristic> outcomeCharacteristics = outcomeManager.getCharacteristicsForCourseOfferingOutcome(oLink.getCourseOffering(),oLink.getCourseOutcome(), department);
+			List<Characteristic> outcomeCharacteristics = outcomeManager.getCharacteristicsForCourseOfferingOutcome(oLink.getCourseOffering(),oLink.getCourseOutcome(), organization);
 				
 			for(CharacteristicType charType: characteristicTypes)
 			{
@@ -932,16 +931,16 @@ public class ExcelEporter
 			{
 				serviceColumn = serviceColumnHome;
 				coreColumn = coreColumnHome;
-				List<Department> depts = CourseManager.instance().getDepartmentForCourse(courseLink.getCourse());
-				boolean deptMatches = false;
-				for(Department dept: depts)
+				List<Organization> orgs = CourseManager.instance().getOrganizationForCourse(courseLink.getCourse());
+				boolean orgMatches = false;
+				for(Organization org: orgs)
 				{
-					if(dept.getId() == program.getOrganization().getDepartment().getId() || dept.getId() == organization.getDepartment().getId())
-						deptMatches = true;
+					if(org.getId() == program.getOrganization().getId())
+						orgMatches = true;
 				}
 				List<CourseAttributeValue> attributeValues = CourseManager.instance().getCourseAttributeValues(courseLink.getCourse().getId(), program.getId());
 				
-				if(deptMatches) //core course
+				if(orgMatches) //core course
 				{
 					placeCourseInfo(sheet,coreColumn, coreRow++ , courseAttributes, attributeValues, courseLink.getCourse());
 						

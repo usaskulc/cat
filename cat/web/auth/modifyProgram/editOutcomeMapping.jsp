@@ -7,7 +7,7 @@ int organizationOutcomeId = HTMLTools.getInt(request.getParameter("organization_
 ProgramManager pm = ProgramManager.instance();
 Program program = pm.getProgramById(programId);
 
-DepartmentManager dm = DepartmentManager.instance();
+OrganizationManager dm = OrganizationManager.instance();
 OrganizationManager om = OrganizationManager.instance();
 OutcomeManager ocm = OutcomeManager.instance();
 boolean access = true;

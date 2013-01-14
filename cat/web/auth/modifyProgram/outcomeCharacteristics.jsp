@@ -69,7 +69,7 @@ Main characteristic : <%=characteristic.getName()%> (<%=characteristic.getDescri
 	<div class="formElement">
 		<div class="label">Outcome:</div>
 		<div class="field"> <input type="text" style="width: 200px;" value="" id="Outcome" class="ac_input"/> 
-		<a href="javascript:loadModifyIntoDiv('/cat/auth/department/newOutcome.jsp?program_id=<%=programId%>','newOutcomeDiv');" class="smaller">
+		<a href="javascript:loadModifyIntoDiv('/cat/auth/organization/newOutcome.jsp?program_id=<%=programId%>','newOutcomeDiv');" class="smaller">
 				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
 				Add an outcome (the one I need doesn't show up) 
 			</a>
@@ -86,7 +86,7 @@ Main characteristic : <%=characteristic.getName()%> (<%=characteristic.getDescri
 	{
 		CharacteristicType temp = charTypes.get(i);
 		%>
-			<jsp:include page="/auth/department/characteristicType.jsp">
+			<jsp:include page="/auth/organization/characteristicType.jsp">
 				<jsp:param name="charTypeId" value="<%=temp.getId()%>"/>
 				<jsp:param name="index" value="<%=i%>"/>
 			</jsp:include>

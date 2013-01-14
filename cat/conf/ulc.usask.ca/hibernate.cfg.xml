@@ -45,7 +45,6 @@
 	<mapping class="ca.usask.gmcte.currimap.model.CourseAttribute"/>
 	<mapping class="ca.usask.gmcte.currimap.model.CourseAttributeValue"/>
 	<mapping class="ca.usask.gmcte.currimap.model.CourseClassification"/>
-	<mapping class="ca.usask.gmcte.currimap.model.Department"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingAssessment"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkAssessmentCourseOutcome"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingContributionProgramOutcome"/>
@@ -55,8 +54,8 @@
 	<mapping class="ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkProgramProgramOutcomeCharacteristic"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOfferingTeachingMethod"/>
-	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseDepartment"/>
-	<mapping class="ca.usask.gmcte.currimap.model.LinkDepartmentCharacteristicType"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseOrganization"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkOrganizationCharacteristicType"/>
 	<mapping class="ca.usask.gmcte.currimap.model.Organization"/>
 	<mapping class="ca.usask.gmcte.currimap.model.OrganizationAdmin"/>
 	<mapping class="ca.usask.gmcte.currimap.model.ProgramOutcome"/>
@@ -78,7 +77,6 @@
 	<mapping class="ca.usask.gmcte.currimap.model.TimeItTook"/>
 	<mapping class="ca.usask.gmcte.currimap.model.AssessmentTimeOption"/>
 	<mapping class="ca.usask.gmcte.currimap.model.TeachingMethodPortionOption"/>
-	<mapping class="ca.usask.gmcte.currimap.model.CourseOutcomeGroup" />
 	<mapping class="ca.usask.gmcte.currimap.model.LinkCourseAssessmentFeedbackOption"/>
 	<mapping class="ca.usask.gmcte.currimap.model.AssessmentFeedbackOption"/>
 	<mapping class="ca.usask.gmcte.currimap.model.AssessmentFeedbackOptionType"/>

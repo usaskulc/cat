@@ -2,16 +2,16 @@
 <%
 int id = HTMLTools.getInt(request.getParameter("id"));
 String value = "";
-String deptId = request.getParameter("department_id");
+String deptId = request.getParameter("organization_id");
 if(id >= 0)
 {
-	CourseOutcome outcome = DepartmentManager.instance().getCourseOutcomeById(id);
+	CourseOutcome outcome = OrganizationManager.instance().getCourseOutcomeById(id);
 	value = outcome.getName();
 }
 %>
 
 <form name="genericFieldForm" id="genericFieldForm" method="post" action="" >
-	<input type="hidden" name="department_id" id="department_id" value="<%=deptId%>" />
+	<input type="hidden" name="organization_id" id="organization_id" value="<%=deptId%>" />
 	<% if(id >= 0)
 		{
 			%><input type="hidden" name="id" id="id" value="<%=id%>"/>

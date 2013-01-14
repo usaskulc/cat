@@ -23,7 +23,7 @@ function saveSystem(requiredParameterArray, parameterArray,type)
 		{	
 			parameters += "&parentObjectId="+parentObjectId;
 		}
-		if(object=="DepartmentCourses")
+		if(object=="OrganizationCourses")
 		{
 			$("[name^='course_number_checkbox_']").each(function(index) {
 				if(($(this).is("input:checkbox") || $(this).is("input:radio")) && $(this).attr("checked")!= null && $(this).attr("checked") == "checked")
@@ -32,7 +32,16 @@ function saveSystem(requiredParameterArray, parameterArray,type)
 				}
 			});	
 		}
+		if(object=="Organization")
+		{
+			$("[name^='active']").each(function(index) {
 		
+			if( $(this).is("input:radio") && $(this).attr("checked")!= null && $(this).attr("checked") == "checked")
+			{
+				parameters += "&active=" + $(this).val();
+			}
+			});	
+		}
 		
 		parameters += readParameters(parameterArray);
 		//alert(parameters);
@@ -58,7 +67,7 @@ function saveSystem(requiredParameterArray, parameterArray,type)
 				//console.log("object="+object);
 				//console.log("objectId="+objectId);
 				var programId = $("#program_id").val();
-				var departmentId = $("#department_id").val();
+				var organizationId = $("#organization_id").val();
 				if(object == "Organization")
 				{
 					if(objectId != null && objectId.length > 0)
@@ -75,21 +84,25 @@ function saveSystem(requiredParameterArray, parameterArray,type)
 					var organizationId = $("#organization_id").val();
 					loadURLIntoId("/cat/organization.jsp?organization_id="+organizationId,"#Organization_"+organizationId);
 				}
-				else if(object == "DepartmentCourses")
+				else if(object == "OrganizationCourses")
 				{
 					$("#messageDiv").hide();
 					$("#message2Div").show();
 					$("#message2Div").html(msg);
 				}
-				else if(object == "Department")
+				else if(object == "Organization")
 				{
-					loadURLIntoId("/cat/auth/modifySystem/adminDepartments.jsp","#adminDepartmentsDiv");
+					loadURLIntoId("/cat/auth/modifySystem/adminOrganizations.jsp","#adminOrganizationsDiv");
 					
 				}
-				
+				else if(object == "Instructor")
+				{
+					loadURLIntoId("/cat/auth/modifySystem/adminInstructors.jsp","#instructorAdmin");
+					
+				}
 				$('#saveButton').removeAttr("disabled");
 				setTimeout("clearMessage();",500);
-				if(object != "Course" && object!="NewProgramOutcome" && object!="DepartmentCourses" && object != "Department")
+				if(object != "Course" && object!="NewProgramOutcome" && object!="OrganizationCourses" && object != "Organization")
 				{
 					setTimeout("closeEdit()",2000);
 				}
@@ -103,20 +116,20 @@ function saveSystem(requiredParameterArray, parameterArray,type)
 }
 
 
-function addDepartment(name)
+function addOrganization(name)
 {
 	$.ajax({
 		type: 		"post",
-		url: 		"/cat/auth/modifySystem/saveSystem.jsp?object=Department&name="+escape(name),
+		url: 		"/cat/auth/modifySystem/saveSystem.jsp?object=Organization&name="+escape(name),
 		success:	function(msg) 
 		{
 			if(msg.indexOf("ERROR") >=0)
 			{
-				alert("There was a problem adding the department! "+msg);
+				alert("There was a problem adding the organization! "+msg);
 			}
 			else
 			{
-				loadURLIntoId("/cat/auth/modifySystem/chooseDepartment.jsp?departmentName="+escape(name),"#chooseDepartmentDiv");
+				loadURLIntoId("/cat/auth/modifySystem/chooseOrganization.jsp?organizationName="+escape(name),"#chooseOrganizationDiv");
 				$("#addLdapGroupDiv").hide();
 			}
 			
@@ -153,21 +166,31 @@ function deleteOrganization(id)
 
 }
 
-function editDepartment(id)
+function editOrganization(id)
 {
-	var deptId = -1
+	var orgId = -1
 	if(id != null)
 	{
 		var selectBox = $("#"+id);
-		deptId = selectBox.val();
+		orgId = selectBox.val();
 	}
-	loadModify("/cat/auth/modifySystem/editDepartment.jsp?department_id="+deptId);
+	loadModify("/cat/auth/modifySystem/editOrganization.jsp?organization_id="+orgId);
 }
-function loadDeptCourseNumbers(id,departmentId)
+function editInstructor(id)
+{
+	var instrId = -1
+	if(id != null)
+	{
+		var selectBox = $("#"+id);
+		instrId = selectBox.val();
+	}
+	loadModify("/cat/auth/modifySystem/editInstructor.jsp?instructor_id="+instrId);
+}
+function loadDeptCourseNumbers(id,organizationId)
 {
 	var selectBox = $("#"+id);
 	
-	loadURLIntoId("/cat/auth/modifySystem/existingCourseSelector.jsp?subjectParameter="+selectBox.val()+"&department_id="+departmentId,"#assignCoursesDiv");
+	loadURLIntoId("/cat/auth/modifySystem/existingCourseSelector.jsp?subjectParameter="+selectBox.val()+"&organization_id="+organizationId,"#assignCoursesDiv");
 }
 function selectCourses(which)
 {
@@ -293,7 +316,7 @@ function editAssessment(aId,groupId,command,target)
 	});
 }
 
-function modifyPermission(programId,organizationId,type,name,command, permission_id)
+function modifyPermission(programId,organizationId,type,name,first,last,command, permission_id)
 {
 	if(command != 'add' && !confirm("Are you sure you want to remove this permission?"))
 	{
@@ -302,7 +325,7 @@ function modifyPermission(programId,organizationId,type,name,command, permission
 
 	$.ajax({
 		type: 		"post",
-		url: 		"/cat/auth/modifySystem/editPermission.jsp?program_id="+programId+"&organization_id="+organizationId+"&type="+type+"&name="+escape(name)+"&command="+command+"&permission_id="+permission_id ,
+		url: 		"/cat/auth/modifySystem/editPermission.jsp?program_id="+programId+"&organization_id="+organizationId+"&type="+type+"&name="+escape(name)+"&first="+escape(first)+"&last="+escape(last)+"&command="+command+"&permission_id="+permission_id ,
 		success:	function(msg) 
 		{
 			if(msg.indexOf("ERROR") >=0)

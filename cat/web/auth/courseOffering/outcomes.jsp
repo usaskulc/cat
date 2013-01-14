@@ -5,36 +5,36 @@ String courseOfferingId = request.getParameter("course_offering_id") ;
 
 CourseOffering courseOffering = new CourseOffering();
 CourseManager cm = CourseManager.instance();
-DepartmentManager dm = DepartmentManager.instance();
+OrganizationManager dm = OrganizationManager.instance();
 OutcomeManager om = OutcomeManager.instance();
 boolean access = true;
 if(HTMLTools.isValid(courseOfferingId))
 {
 	courseOffering = cm.getCourseOfferingById(Integer.parseInt(courseOfferingId));
 }
-List<Department> departments = cm.getDepartmentForCourseOffering(courseOffering);
-Department department = departments.get(0);  
+List<Organization> organizations = cm.getOrganizationForCourseOffering(courseOffering);
+Organization organization = organizations.get(0);  
 
-if(department == null)
+if(organization == null)
 {
 	%>
-	<h1>Unable to find associated department!</h1>
+	<h1>Unable to find associated organization!</h1>
 	<%
 	return;
 }
-else if(departments.size() > 1)
+else if(organizations.size() > 1)
 {	
 %>
-<h1>Course offering appears to be associated with multiple departments! </h1>
+<h1>Course offering appears to be associated with multiple organizations! </h1>
 <%
 	
 }
 
-List<CharacteristicType> characteristicTypes = department.getCharacteristicTypes();
+List<CharacteristicType> characteristicTypes = organization.getCharacteristicTypes();
 if(characteristicTypes == null  || characteristicTypes.isEmpty())
 {
 	%>
-	<h1>No Characteristics associated with department <b><%=department.getName()%></b>!  Add Characteristics first please!</h1>
+	<h1>No Characteristics associated with organization <b><%=organization.getName()%></b>!  Add Characteristics first please!</h1>
 	<%
 	return;
 }
@@ -51,14 +51,13 @@ Each entry may contain no more than 400 characters (less than 10 outcomes recomm
 <div>
 	<div id="mainCourseOfferingCharacteristics">
 		<table border="1" cellpadding="5" cellspacing="0">
-			
-
 <%
 int count = 1;
 List<CourseOutcome> outcomes = om.getOutcomesForCourseOffering(courseOffering);
+int lastOne = outcomes.size()-1;
 for(CourseOutcome o : outcomes)
 {
-	List<Characteristic> outcomeCharacteristics = om.getCharacteristicsForCourseOfferingOutcome(courseOffering,o, department);
+	List<Characteristic> outcomeCharacteristics = om.getCharacteristicsForCourseOfferingOutcome(courseOffering,o, organization);
 	StringBuilder charOutput = new StringBuilder();
 	int charTypeIndex = 0;
 	int colorIndex = 0;
@@ -83,16 +82,32 @@ for(CourseOutcome o : outcomes)
 	
 	%>
 	<tr>
-	    <td><%=count++ %></td>
+	    <td><%=count %></td>
+	    <td>
+	    <%if(count>1)
+		{%>
+			<a href="javascript:moveOutcome(<%=o.getId()%>,<%=courseOfferingId%>,'up');">
+				<img src="/cat/images/up2.gif"  alt="Move Up"/>
+			</a>
+		<%}
+		if(count <= lastOne)
+		{%>
+			<a href="javascript:moveOutcome(<%=o.getId()%>,<%=courseOfferingId%>,'down');">
+				<img src="/cat/images/down2.gif"  alt="Move Down"/>
+			</a>
+		<%}
+		%>
+	    </td>
 	    <td <%=charOutputDisplay%>><%=o.getName()%>	
 	    <%if(access)
 		  {%>	
-				<a href="javascript:loadModify('/cat/auth/courseOffering/addOutcome.jsp?outcome_id=<%=o.getId()%>&department_id=<%=department.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit"></a>
+				<a href="javascript:loadModify('/cat/auth/courseOffering/addOutcome.jsp?outcome_id=<%=o.getId()%>&organization_id=<%=organization.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit"></a>
 				<a href="javascript:removeCourseOfferingOutcome(<%=courseOfferingId%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove"/></a><%
 		  }%>
 		</td>
 	</tr>
 	<%
+	count++;
 }
 
 if(access)
@@ -103,7 +118,7 @@ if(access)
 	%>
 		<tr>
 			<td>&nbsp;</td>
-			<td><a href="javascript:loadModify('/cat/auth/courseOffering/addOutcome.jsp?department_id=<%=department.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller">
+			<td colspan="2"><a href="javascript:loadModify('/cat/auth/courseOffering/addOutcome.jsp?organization_id=<%=organization.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller">
 				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
 				add course learning outcome 
 			</a>
@@ -115,7 +130,7 @@ if(access)
 		%>
 		<tr>
 			<td>&nbsp;</td>
-			<td>Maximum of <%=maxOutcomes%> has been reached.
+			<td colspan="2">Maximum of <%=maxOutcomes%> has been reached.
 		    </td>
 		</tr>
 	<%}

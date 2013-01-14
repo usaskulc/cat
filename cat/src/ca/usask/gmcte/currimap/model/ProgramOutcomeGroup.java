@@ -17,7 +17,7 @@ import org.hibernate.validator.NotNull;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "program_outcome_group")
-public class ProgramOutcomeGroup implements java.io.Serializable, Comparable<CourseOutcomeGroup>
+public class ProgramOutcomeGroup implements java.io.Serializable, Comparable<ProgramOutcomeGroup>
 {
 
 	private int id;
@@ -29,7 +29,7 @@ public class ProgramOutcomeGroup implements java.io.Serializable, Comparable<Cou
 	{
 	}
 
-	public int compareTo(CourseOutcomeGroup other)
+	public int compareTo(ProgramOutcomeGroup other)
 	{
 		return other.getId() - id;
 	}

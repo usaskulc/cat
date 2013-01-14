@@ -3,15 +3,15 @@
 String courseOfferingId = request.getParameter("course_offering_id");
 CourseManager cm = CourseManager.instance();
 CourseOffering 	courseOffering = cm.getCourseOfferingById(Integer.parseInt(courseOfferingId));
-List<Department> departments = cm.getDepartmentForCourseOffering(courseOffering);
-if(departments!= null && departments.size() > 1)
+List<Organization> organizations = cm.getOrganizationForCourseOffering(courseOffering);
+if(organizations!= null && organizations.size() > 1)
 {	
 %>
-<h1>Course offering appears to be associated with multiple departments! </h1>
+<h1>Course offering appears to be associated with multiple organizations! </h1>
 <%
 	
 }
-Department department = departments.get(0);
+Organization organization = organizations.get(0);
 String courseOfferingField="";
 String courseOfferingParam="";
 if(HTMLTools.isValid(courseOfferingId))
@@ -37,7 +37,7 @@ $(document).ready(function()
 </script>
 <div id="newOutComeFormDiv">
 <form name="newOutcomeForm" id="newOutcomeForm" method="post" action="" >
-	<input type="hidden" name="department_id" id="department_id" value="<%=department.getId()%>"/>
+	<input type="hidden" name="organization_id" id="organization_id" value="<%=organization.getId()%>"/>
 	<%=courseOfferingField %>
 	<%=charField%>
 	<div class="formElement">
@@ -48,14 +48,14 @@ $(document).ready(function()
 	</div>
 	<br>
 	<div class="formElement">
-		<div class="label">This outcome is specific to courses offered by <%=department.getName()%>:</div>
-		<div class="field"> <input type="checkbox"  value="true" id="newOutcomeDepartmentSpecific" /></div>
-		<div class="error" id="newOutcomeDepartmentSpecificMessage"></div>
+		<div class="label">This outcome is specific to courses offered by <%=organization.getName()%>:</div>
+		<div class="field"> <input type="checkbox"  value="true" id="newOutcomeOrganizationSpecific" /></div>
+		<div class="error" id="newOutcomeOrganizationSpecificMessage"></div>
 		<div class="spacer"> </div>
 	</div>
 	<br>
 	<div class="formElement">
-		<div class="label"><input type="button" name="saveNewOutcomeButton" id="saveNewOutcomeButton" value="Add New Outcome" onclick="saveOffering(new Array('newOutcomeName'),new Array('newOutcomeName','department_id','newOutcomeDepartmentSpecific'<%=courseOfferingParam%><%=charParam%>),'NewCourseOutcome');" /></div>
+		<div class="label"><input type="button" name="saveNewOutcomeButton" id="saveNewOutcomeButton" value="Add New Outcome" onclick="saveOffering(new Array('newOutcomeName'),new Array('newOutcomeName','organization_id','newOutcomeOrganizationSpecific'<%=courseOfferingParam%><%=charParam%>),'NewCourseOutcome');" /></div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 	</div>

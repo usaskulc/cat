@@ -1,13 +1,13 @@
 <%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*"%>
 <%
 String courseOfferingId = request.getParameter("course_offering_id");
-String departmentId = request.getParameter("department_id");
+String organizationId = request.getParameter("organization_id");
 String characteristicId = request.getParameter("char_id");
 OutcomeManager om = OutcomeManager.instance();
 Characteristic characteristic = om.getCharacteristicById(Integer.parseInt(characteristicId));
 
 CourseOffering courseOffering = CourseManager.instance().getCourseOfferingById(Integer.parseInt(courseOfferingId));
-Department department = DepartmentManager.instance().getDepartmentById(Integer.parseInt(departmentId));
+Organization organization = OrganizationManager.instance().getOrganizationById(Integer.parseInt(organizationId));
 
 String programName = "";
 String outcomeParameter = request.getParameter("outcome");
@@ -29,18 +29,18 @@ Main characteristic : <%=characteristic.getName()%> (<%=characteristic.getDescri
 <form name="newCourseOfferingOutcomeForm" id="newCourseOfferingOutcomeForm" method="post" action="" >
 	<input type="hidden" name="objectClass" id="objectClass" value="CourseOfferingOutcome"/>
 	<input type="hidden" name="course_offering_id" id="course_offering_id" value="<%=courseOfferingId%>"/>
-	<input type="hidden" name="department_id" id="department_id" value="<%=departmentId%>"/>
+	<input type="hidden" name="organization_id" id="organization_id" value="<%=organizationId%>"/>
 	<input type="hidden" name="char_id" id="char_id" value="<%=characteristicId%>"/>
 	<input type="hidden" name="char_type" id="char_type" value="<%=characteristic.getCharacteristicType().getId()%>"/>
 	<div class="formElement">
 		<div class="label">Outcome:</div>
 		<div class="field"> 
 		<%
- 			List<CourseOutcome> list = om.getOutcomesForDepartment(department);
+ 			List<CourseOutcome> list = om.getOutcomesForOrganization(organization);
  				out.println(HTMLTools.createSelectOutcomes("outcomeToAdd", list, outcome!=null?""+outcome.getId():null));
  		%>
 		<br>
-		<a href="javascript:loadModifyIntoDiv('/cat/auth/department/newOutcome.jsp?department_id=<%=departmentId%>&course_offering_id=<%=courseOfferingId%>&char_id=<%=characteristicId%>','newOutcomeDiv');" class="smaller">
+		<a href="javascript:loadModifyIntoDiv('/cat/auth/organization/newOutcome.jsp?organization_id=<%=organizationId%>&course_offering_id=<%=courseOfferingId%>&char_id=<%=characteristicId%>','newOutcomeDiv');" class="smaller">
 				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
 				Add an outcome (the one I need doesn't show up) 
 			</a>
@@ -52,12 +52,12 @@ Main characteristic : <%=characteristic.getName()%> (<%=characteristic.getDescri
 	<hr/>
 	<%
 	String parameterString = "";
-	List<CharacteristicType> charTypes = department.getCharacteristicTypes();
+	List<CharacteristicType> charTypes = organization.getCharacteristicTypes();
 	for(int i=1; i< charTypes.size() ; i++)
 	{
 		CharacteristicType temp = charTypes.get(i);
 		%>
-			<jsp:include page="/auth/department/characteristicType.jsp">
+			<jsp:include page="/auth/organization/characteristicType.jsp">
 				<jsp:param name="charTypeId" value="<%=temp.getId()%>"/>
 				<jsp:param name="index" value="<%=i%>"/>
 			</jsp:include>
@@ -72,7 +72,7 @@ Main characteristic : <%=characteristic.getName()%> (<%=characteristic.getDescri
 				   name="saveCourseOfferingOutcomeButton" 
 				   id="saveCourseOfferingOutcomeButton" 
 				   value="Add CourseOffering Outcome" 
-				   onclick="saveProgram(new Array('outcomeToAdd'),new Array('outcomeToAdd'<%=parameterString%>,'department_id','course_offering_id','char_id','char_type','char_count'),'CourseOfferingOutcome');" />
+				   onclick="saveProgram(new Array('outcomeToAdd'),new Array('outcomeToAdd'<%=parameterString%>,'organization_id','course_offering_id','char_id','char_type','char_count'),'CourseOfferingOutcome');" />
 		</div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>

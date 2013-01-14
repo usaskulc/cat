@@ -27,6 +27,7 @@ public class LinkCourseOfferingOutcome implements java.io.Serializable
 	private int id;
 	private CourseOffering courseOffering;
 	private CourseOutcome courseOutcome;
+	private int displayIndex;
 	private Set<LinkCourseOfferingOutcomeCharacteristic> linkCourseOfferingOutcomeCharacteristics = new HashSet<LinkCourseOfferingOutcomeCharacteristic>(
 			0);
 
@@ -98,6 +99,14 @@ public class LinkCourseOfferingOutcome implements java.io.Serializable
 			Set<LinkCourseOfferingOutcomeCharacteristic> linkCourseOfferingOutcomeCharacteristics)
 	{
 		this.linkCourseOfferingOutcomeCharacteristics = linkCourseOfferingOutcomeCharacteristics;
+	}
+	@Column(name = "display_index", nullable = false)
+	public int getDisplayIndex() {
+		return displayIndex;
+	}
+
+	public void setDisplayIndex(int displayIndex) {
+		this.displayIndex = displayIndex;
 	}
 
 }

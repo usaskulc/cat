@@ -9,7 +9,7 @@ import ca.usask.gmcte.currimap.model.Characteristic;
 import ca.usask.gmcte.currimap.model.CharacteristicType;
 import ca.usask.gmcte.currimap.model.CourseOffering;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingOutcomeCharacteristic;
-import ca.usask.gmcte.currimap.model.LinkDepartmentCharacteristicType;
+import ca.usask.gmcte.currimap.model.LinkOrganizationCharacteristicType;
 import ca.usask.gmcte.currimap.model.CourseOutcome;
 import ca.usask.gmcte.currimap.model.Program;
 import ca.usask.gmcte.util.HibernateUtil;
@@ -261,8 +261,8 @@ public class CharacteristicManager
 			}
 		
 			@SuppressWarnings("unchecked")
-			List<LinkDepartmentCharacteristicType> programLinks = session.createQuery("FROM LinkDepartmentCharacteristicType WHERE characteristicType.id = :charTypeId").setParameter("charTypeId",ct.getId()).list();
-			for(LinkDepartmentCharacteristicType pLink : programLinks)
+			List<LinkOrganizationCharacteristicType> programLinks = session.createQuery("FROM LinkOrganizationCharacteristicType WHERE characteristicType.id = :charTypeId").setParameter("charTypeId",ct.getId()).list();
+			for(LinkOrganizationCharacteristicType pLink : programLinks)
 			{
 				session.delete(pLink);
 			}

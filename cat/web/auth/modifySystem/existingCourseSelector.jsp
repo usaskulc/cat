@@ -3,32 +3,32 @@
 <input type="button" value="Select All Courses" onClick="selectCourses('all');"> &nbsp; <input type="button" value="De-select All Courses" onClick="selectCourses('none');"><br/>
 
 <%
-int departmentId = HTMLTools.getInt(request.getParameter("department_id"));
+int organizationId = HTMLTools.getInt(request.getParameter("organization_id"));
 String subjectParameter = request.getParameter("subjectParameter") ;
 CourseManager cm = CourseManager.instance();
 Course course = new Course();
 List<String> subjects = cm.getCourseSubjects();
-out.println(HTMLTools.createSelect("courseSubject",subjects, subjects, subjectParameter, "loadDeptCourseNumbers('courseSubject',"+departmentId+")"));
+out.println(HTMLTools.createSelect("courseSubject",subjects, subjects, subjectParameter, "loadDeptCourseNumbers('courseSubject',"+organizationId+")"));
 if(!HTMLTools.isValid(subjectParameter) && subjects.size()>0)
 {
 	subjectParameter = subjects.get(0);
 }
 List<String> courseNumbers = new ArrayList<String>();
-List<String> alreadyHasAsHomedepartment = new ArrayList<String>();
+List<String> alreadyHasAsHomeorganization = new ArrayList<String>();
 if(subjectParameter != null)
 {
 	courseNumbers = cm.getCourseNumbersForSubject(subjectParameter);
-	alreadyHasAsHomedepartment = cm.getCourseNumbersForSubjectAndDepartment(subjectParameter,departmentId);
+	alreadyHasAsHomeorganization = cm.getCourseNumbersForSubjectAndOrganization(subjectParameter,organizationId);
 }
 
 %>
-<input type="hidden" name="department_id" id="department_id" value="<%=departmentId%>" />
+<input type="hidden" name="organization_id" id="organization_id" value="<%=organizationId%>" />
 <br/>
 <% 
 for(String courseNum : courseNumbers)
 {
 	String selected = "";
-	if(alreadyHasAsHomedepartment.contains(courseNum))
+	if(alreadyHasAsHomeorganization.contains(courseNum))
 		selected="checked=\"checked\"";
 
 	%>
@@ -37,7 +37,7 @@ for(String courseNum : courseNumbers)
 }
 %>
 <div class="formElement">
-		<div class="label"><input type="button" name="saveCoursesButton" id="saveCoursesButton" value="Save Courses for Department" onclick="saveSystem(new Array('department_id'),new Array('department_id','courseSubject'),'DepartmentCourses');" /></div>
+		<div class="label"><input type="button" name="saveCoursesButton" id="saveCoursesButton" value="Save Courses for Organization" onclick="saveSystem(new Array('organization_id'),new Array('organization_id','courseSubject'),'OrganizationCourses');" /></div>
 		<div class="field"><div id="message2Div" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 	</div>

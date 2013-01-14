@@ -9,16 +9,16 @@ DataUpdater du = new DataUpdater();
 
 long start = System.currentTimeMillis(); 
 long processStart = start;
-List<String> depts = di.retrieveDepartments();
+List<String> depts = di.retrieveOrganizations();
 
-out.println("<br>Number of departments to process: "+depts.size());
+out.println("<br>Number of organizations to process: "+depts.size());
 out.flush();
 
 long now = System.currentTimeMillis();
 
 logger.error("It took "+(now-start)+" to retrieve all depts");
 start=now;
-out.println("<br>update departments result:"+du.updateDepartments(depts));
+out.println("<br>update organizations result:"+du.updateOrganizations(depts));
 now = System.currentTimeMillis();
 response.flushBuffer();
 out.flush();
@@ -31,7 +31,7 @@ for(String dept:depts)
 	out.println("<br>Now processing: "+dept);
 	out.flush();
 	response.flushBuffer();
-	List<Course> courses  = di.retrieveCoursesForDepartment(dept,term);
+	List<Course> courses  = di.retrieveCoursesForOrganization(dept,term);
 	now = System.currentTimeMillis();
 	
 	logger.error("It took "+(now-start)+" to retrieve courses for dept " +dept);

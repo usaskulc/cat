@@ -62,7 +62,7 @@ $(document).ready(function()
 	<div class="formElement">
 		<div class="label">Outcome:</div>
 		<div class="field"> <input type="text" style="width: 300px;" value="" id="outcomeToAdd" class="ac_input"/> 
-		<a href="javascript:loadModifyIntoDiv('/cat/auth/department/newOutcome.jsp?program_id=<%=programId%>','newOutcomeDiv');">
+		<a href="javascript:loadModifyIntoDiv('/cat/auth/organization/newOutcome.jsp?program_id=<%=programId%>','newOutcomeDiv');">
 				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
 				Add an outcome (the one I need doesn't show up) 
 			</a>

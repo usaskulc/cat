@@ -15,7 +15,7 @@ if(HTMLTools.isValid(courseOfferingId))
 }
 
 %>
-<h3>Add a course offering to course <%=course.getSubject()%> <%=course.getCourseNumber()%></h3>
+<h3>Add/Edit a course offering as part of course <%=course.getSubject()%> <%=course.getCourseNumber()%></h3>
 <br/>
 <form name="newCourseOfferingForm" id="newCourseOfferingForm" method="post" action="" >
 	<input type="hidden" name="objectClass" id="objectClass" value="CourseOffering"/>

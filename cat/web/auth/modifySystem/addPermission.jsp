@@ -4,26 +4,11 @@ int programId = HTMLTools.getInt(request.getParameter("program_id"));
 int organizationId = HTMLTools.getInt(request.getParameter("organization_id"));
 
 PermissionsManager manager = PermissionsManager.instance();
+boolean includeLdap = PermissionsManager.ldapEnabled;
 %>
 <script type="text/javascript">
-function swapDivs()
-{
-	var ldapRadio = $("#radioLDAP");
-	var useridRadio = $("#radioUserid");
-	if(ldapRadio.is(":checked"))
-	{
-		$("#useridDiv").hide();
-		$("#ldapSearchResults").html("");
-		$("#ldapDiv").show();
-	}
-	if(useridRadio.is(":checked"))
-	{
-		$("#useridDiv").show();
-		$("#ldapDiv").hide();
-		$("#ldapSearchResults").html("");
-		$("#ldapSearchResults").hide();
-	}
-}
+<%if(includeLdap)
+{%>
 function ldapSearch()
 {
 	var searchText = $("#ldapGroup").val();
@@ -33,56 +18,93 @@ function ldapSearch()
 function ldapUserSearch()
 {
 	var searchText = $("#ldapText").val();
+	var programId = $("#program_id").val();
 	$("#ldapSearchResults").show();
-	loadURLIntoId('/cat/auth/modifySystem/ldapNameSearch.jsp?program_id=<%=programId%>&organization_id=<%=organizationId%>&name='+searchText,'#ldapSearchResults');
+	loadURLIntoId('/cat/auth/modifySystem/ldapNameSearch.jsp?name='+searchText,'#ldapSearchResults');
 }
+function setValues(first,last,userid)
+{
+	$("#first_name").val(first);
+	$("#last_name").val(last);
+	$("#userid").val(userid);
+}
+
+function ldapUserLookup()
+{
+	var searchText = $("#userid").val();
+	var programId = $("#program_id").val();
+	$('#useridMessage').show();
+	loadURLIntoId('/cat/auth/modifySystem/ldapUseridSearch.jsp?userid='+searchText,'#useridMessage');
+}
+<%}%>
 function addPermission()
 {
-	if(checkRequired(new Array('nsid')) )
+	if(checkRequired(new Array('userid')) )
 	{
-		var userid = $("#nsid").val();
-		modifyPermission(<%=programId%>,<%=organizationId%>,'Userid',userid,'add');
+		var userid = $("#userid").val();
+		var first = $("#first_name").val();
+		var last = $("#last_name").val();
+		modifyPermission(<%=programId%>,<%=organizationId%>,'Userid',userid,first,last,'add');
 	}
 	
 }
 			</script>
-<h2>Add Department or Person:</h2>
+<h2>Add a Person:</h2>
 
 <form name="newCourseOfferingForm" id="newCourseOfferingForm" method="post" action="" >
 	<input type="hidden" name="objectClass" id="objectClass" value="ProgramAdmin"/>
 	<input type="hidden" name="program_id" id="program_id" value="<%=programId%>"/>
 	<input type="hidden" name="organization_id" id="organization_id" value="<%=organizationId%>"/>
-	<div class="formElement">
-		<div class="label">Type:</div>
-		<div class="field"> <input type="radio" name="type" value="LDAP" id="radioLDAP" checked="checked" onClick="swapDivs();"/> Department name<br/> 
-							<input type="radio" name="type" value="Userid" id="radioUserid" onClick="swapDivs();"/> Person (search by last-name or user-id (NSID) )</div>
-		<div class="error" id="subjectMessage"></div>
+	<input type="hidden" name="type" value="Userid"/>
+	<br/>
+
+    <div class="formElement">
+		<div class="label">Userid:</div>
+		<div class="field"> <input type="text" size="40" name="userid" id="userid" value=""/> 
+		<%if(PermissionsManager.ldapEnabled){ %><input type="button" value="Look up First and Last name" onClick="ldapUserLookup();"/>
+	<%}%> </div>
+		<div class="error" id="useridMessage"></div>
 		<div class="spacer"> </div>
 	</div>
-	<br/>
-	<div id="useridDiv" style="display:none;">
-		
-		<div class="formElement">
-			<div class="label">User-id (NSID):</div>
-			<div class="field"> <input type="text" size="6" name="nsid" id="nsid" value=""/> <input type="button" name="savePermissionButton" id="savePermissionButton" value="Add" onclick="addPermission();" />
-			<br/>
-			<br/>
-			<br/>
 			
 			
+	<div class="formElement">
+		<div class="label">first name:</div>
+		<div class="field"> <input type="text" size="50" name="first_name" id="first_name" value=""/></div>
+		<div class="error" id="system_nameMessage"></div>
+		<div class="spacer"> </div>
+	</div>
+	<div class="formElement">
+		<div class="label">last name:</div>
+		<div class="field"> <input type="text" size="50" name="last_name" id="last_name" value=""/></div>
+		<div class="error" id="system_nameMessage"></div>
+		<div class="spacer"> </div>
+	</div>
+			<br/>
+	<div class="formElement">
+		<div class="label"><input type="button" name="savePermissionButton" id="savePermissionButton" value="Add" onclick="addPermission();" /></div>
+		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
+		<div class="spacer"> </div>
+	</div>	
+			
+			
+			<br/>
+			<br/>
+			<br/>
+			<div class="formElement">
+	<div class="field">	
+<%if(PermissionsManager.ldapEnabled){ %>		
+	
 			 <input type="text" size="30" name="ldapText" id="ldapText" value=""/> <input type="button" onClick="ldapUserSearch()" value="Last name search"/> 
-			</div>
+			 
+			 <%}%>
+		 
+	</div>
 			<div class="error" id="nsidMessage"></div>
 			<div class="spacer"> </div>
 		</div>
 	</div>
 		
-	<div class="formElement" id="ldapDiv">
-		<div class="label">Search (part of dept. name):</div>
-		<div class="field"> <input type="text" size="60" name="ldapGroup" id="ldapGroup" value=""/> <input type="button" onClick="ldapSearch()" value="Search"/> </div>
-		<div class="error" id="nameMessage"></div>
-		<div class="spacer"> </div>
-	</div>
 </form>
 
 <div id="ldapSearchResults"></div>

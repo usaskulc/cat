@@ -39,10 +39,10 @@ for(LinkCourseProgram link : courseLinks)
 	String attributeString = cm.getCourseAttributesString(c, o.getId(),access);
 	CourseClassification classification = link.getCourseClassification();
 	Time time = link.getTime();
-	List<Department> depts = cm.getDepartmentForCourse(c);
+	List<Organization> depts = cm.getOrganizationForCourse(c);
 	String deptString = "";
 	boolean first = true;
-	for(Department dept:depts)
+	for(Organization dept:depts)
 	{
 		if(!first)
 			deptString+=", ";

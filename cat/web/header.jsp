@@ -32,7 +32,7 @@ Boolean sessionValue = (Boolean)session.getAttribute("userIsSysadmin");
 boolean sysadmin = sessionValue != null && sessionValue;
 boolean access = true;
 String userid=(String)session.getAttribute("edu.yale.its.tp.cas.client.filter.user");
-List<Department> departments = PermissionsManager.instance().getDepartmentsForUser(userid, sysadmin);
+List<Organization> organizations = PermissionsManager.instance().getOrganizationsForUser(userid, sysadmin,true);
 
 String clientBrowser=request.getHeader("User-Agent");
 //simplify the client browser
@@ -160,13 +160,13 @@ clicked.filter(current).length)
 		  	<div class="wrapper">
 		  		<ul >
 		  			<li><a href="/cat/auth/myCourses.jsp">My Courses</a></li>
-		  			<%if(departments!=null && !departments.isEmpty()){ 
+		  			<%if(organizations!=null && !organizations.isEmpty()){ 
 		  				%>
-		  				<li class="drop-down-menu"><a href="#">Outcomes Admin</a>
+		  				<li class="drop-down-menu"><a href="#">Characteristics Admin</a>
 		  					<ul style="display: none;" class="submenu">
 		  					<%
-		  					for(Department department:departments){%>
-		  						<li><a href="javascript:loadModify('/cat/auth/courseOffering/department.jsp?department_id=<%=department.getId()%>');"><%=department.getName()%></a></li> 
+		  					for(Organization organization:organizations){%>
+		  						<li><a href="javascript:loadModify('/cat/auth/courseOffering/organization.jsp?organization_id=<%=organization.getId()%>');"><%=organization.getName()%></a></li> 
 		  					<%}
 		  					%>
 		  					</ul>

@@ -32,7 +32,7 @@ if (userid != null)
 	//window.opener.parent.document.getElementById("loginStatus").innerHtml="Logged in";
 	</script>
 	
-<iframe style="width:1px;height:1px" src="/cat/auth/department/loginCheck.jsp"></iframe>
+<iframe style="width:1px;height:1px" src="/cat/auth/organization/loginCheck.jsp"></iframe>
 	<%
 }
 else

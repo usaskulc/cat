@@ -14,6 +14,8 @@ import javax.persistence.Transient;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import ca.usask.gmcte.currimap.action.PermissionsManager;
+import ca.usask.gmcte.util.HTMLTools;
 import ca.usask.ocd.ldap.LdapConnection;
 
 /**
@@ -27,6 +29,8 @@ public class Instructor implements java.io.Serializable
 
 	private int id;
 	private String userid;
+	private String lastName;
+	private String firstName;
 
 	public Instructor()
 	{
@@ -62,22 +66,69 @@ public class Instructor implements java.io.Serializable
 	{
 		StringBuilder output = new StringBuilder();
 		
-		try
+		if (!HTMLTools.isValid(lastName) && !HTMLTools.isValid(firstName))
 		{
-			LdapConnection ldapConnection = LdapConnection.instance();
-			TreeMap<String,String> data = ldapConnection.getUserData(userid);
-			output.append(data.get("givenName"));
+			if(PermissionsManager.ldapEnabled)
+			{
+				try		
+				{
+					LdapConnection ldapConnection = LdapConnection.instance();
+					TreeMap<String,String> data = ldapConnection.getUserData(userid);	
+					if(PermissionsManager.instance().saveInstructor(userid, data.get("givenName"), data.get("sn")))
+					{
+						setLastName(data.get("sn"));
+						setFirstName(data.get("givenName"));
+					}			
+				}
+				catch(Exception e)
+				{
+					output.append(userid+" not found");
+				}	
+			}
+			else
+			{
+				output.append("no name found");
+			}
+		}
+		if(HTMLTools.isValid(firstName))
+		{
+			output.append(firstName);
 			output.append(" ");
-			output.append(data.get("sn"));
-			
 		}
-		catch(Exception e)
+		if(HTMLTools.isValid(lastName))
 		{
-			output.append("Unable to retrieve instructor name");
+			output.append(lastName);
 		}
+		
 		output.append("( ");
 		output.append(userid);
 		output.append(" )");
 		return output.toString();
+	}
+
+	@Column(name = "last_name", nullable = true, length = 50)
+	@Length(max = 50)
+	public String getLastName() 
+	{
+		return lastName;
+	}
+
+
+	public void setLastName(String lastName) 
+	{
+		this.lastName = lastName;
+	}
+
+	@Column(name = "first_name", nullable = true, length = 50)
+	@Length(max = 50)
+	public String getFirstName() 
+	{
+		return firstName;
+	}
+
+
+	public void setFirstName(String firstName) 
+	{
+		this.firstName = firstName;
 	}
 }

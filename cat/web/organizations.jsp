@@ -4,7 +4,7 @@
 Boolean sessionValue = (Boolean)session.getAttribute("userIsSysadmin");
 boolean sysadmin = sessionValue != null && sessionValue;
 //TreeMap<Organization, ArrayList<Organization>> map = OrganizationManager.instance().getOrganizationsOrderedByName();
-List<Organization> list = OrganizationManager.instance().getParentOrganizationsOrderedByName();
+List<Organization> list = OrganizationManager.instance().getParentOrganizationsOrderedByName(true);
 for(Organization o : list)
 {
 	%>

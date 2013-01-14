@@ -46,7 +46,7 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 				//console.log("object="+object);
 				//console.log("objectId="+objectId);
 				var programId = $("#program_id").val();
-				var departmentId = $("#department_id").val();
+				var organizationId = $("#organization_id").val();
 				if(object == "Organization")
 				{
 					if(parentId != null && parentId.length > 0)
@@ -157,12 +157,12 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 					loadModify('/cat/auth/modifyProgram/editOutcomeMapping.jsp?program_id='+programId+'&organization_outcome_id='+organizationOutcomeId);
 					loadURLIntoId("/cat/auth/programView/outcomesMapping.jsp?program_id="+programId,"#outcomesMappingDiv");
 				}
-				else if(object=="LinkCourseDepartment")
+				else if(object=="LinkCourseOrganization")
 				{
 					var programId = $("#program_id").val();
 					var courseId = $("#objectId").val();
 					
-					loadURLIntoId("/cat/auth/modifyProgram/courseDepartments.jsp?program_id="+programId+"&course_id="+courseId,"#courseDepartmentsDiv");
+					loadURLIntoId("/cat/auth/modifyProgram/courseOrganizations.jsp?program_id="+programId+"&course_id="+courseId,"#courseOrganizationsDiv");
 				}
 				else if (object=="ProgramOutcomeWithCharacteristics")
 				{
@@ -171,7 +171,7 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 				
 				$('#saveButton').removeAttr("disabled");
 				setTimeout("clearMessage();",500);
-				if(object != "Course" && object!="NewProgramOutcome" && object!= "InstructorAttributeValue" && object!="CourseAttributeValue" && object!="ProgramOutcomeOrganizationOutcome" && object !="LinkCourseDepartment")
+				if(object != "Course" && object!="NewProgramOutcome" && object!= "InstructorAttributeValue" && object!="CourseAttributeValue" && object!="ProgramOutcomeOrganizationOutcome" && object !="LinkCourseOrganization")
 				{
 					setTimeout("closeEdit()",2000);
 				}
@@ -212,15 +212,15 @@ function removeProgram(program_id,organization_id)
 		}
 	});
 }
-function removeDepartmentFromCourse(departmentLinkId, programId, courseId)
+function removeOrganizationFromCourse(organizationLinkId, programId, courseId)
 {
-	if(!confirm("Are you sure you want to remove this department?"))
+	if(!confirm("Are you sure you want to remove this organization?"))
 	{
 		return;
 	}
 	$.ajax({
 		type: 		"post",
-		url: 		"/cat/auth/modifyProgram/editCourseDepartment.jsp?program_id="+programId + "&dept_link_id="+departmentLinkId + "&action=removeDepartment",
+		url: 		"/cat/auth/modifyProgram/editCourseOrganization.jsp?program_id="+programId + "&dept_link_id="+organizationLinkId + "&action=removeOrganization",
 		success:	function(msg) 
 		{
 			$("#messageDiv").html(msg);
@@ -234,11 +234,11 @@ function removeDepartmentFromCourse(departmentLinkId, programId, courseId)
 				$("#messageDiv").html(msg);
 			}
 			resetChanges();
-			loadURLIntoId("/cat/auth/modifyProgram/courseDepartments.jsp?program_id="+programId+"&course_id="+courseId,"#courseDepartmentsDiv");
+			loadURLIntoId("/cat/auth/modifyProgram/courseOrganizations.jsp?program_id="+programId+"&course_id="+courseId,"#courseOrganizationsDiv");
 		}
 	});
 }
-function editCourseOfferingInstructor(action, linkOrUser,programId,courseOfferingId,courseId)
+function editCourseOfferingInstructor(action, linkOrUser,programId,courseOfferingId,courseId,first,last)
 {
 	if(action == "delete" && !confirm("Are you sure you want to remove this instructor?"))
 	{
@@ -246,7 +246,8 @@ function editCourseOfferingInstructor(action, linkOrUser,programId,courseOfferin
 	}
 	$.ajax({
 		type: 		"post",
-		url: 		"/cat/auth/modifyProgram/editCourseOfferingInstructor.jsp?program_id="+programId + "&user_or_link="+linkOrUser + "&action="+action+"&course_offering_id="+courseOfferingId,
+		url: 		"/cat/auth/modifyProgram/editCourseOfferingInstructor.jsp?program_id="+programId + "&user_or_link="+linkOrUser + "&action="+
+						action+"&course_offering_id="+courseOfferingId+"&first="+escape(first)+"&last="+escape(last),
 		success:	function(msg) 
 		{
 			$("#messageDiv").html(msg);
@@ -260,7 +261,7 @@ function editCourseOfferingInstructor(action, linkOrUser,programId,courseOfferin
 				$("#messageDiv").html(msg);
 			}
 			resetChanges();
-			loadURLIntoId("/cat/auth/modifyProgram/courseOfferingInstructors.jsp?program_id="+programId+"&course_offering_id="+courseOfferingId,"#courseOfferingInstructorsDiv");
+			loadURLIntoId("/cat/auth/modifyProgram/courseOfferingInstructors.jsp?program_id="+programId+"&course_offering_id="+courseOfferingId+"&course_id="+courseId,"#courseOfferingInstructorsDiv");
 			loadURLIntoId("/cat/auth/programView/courseOfferings.jsp?course_id="+courseId+"&program_id="+programId,"#courseOfferingsDiv");
 			
 		}
@@ -346,7 +347,7 @@ function removeProgramOutcome(program_id,link_id)
 	});
 
 }
-function removeProgramOutcome(program_id,link_id, department_id)
+function removeProgramOutcome(program_id,link_id, organization_id)
 {
 
 	$.ajax({

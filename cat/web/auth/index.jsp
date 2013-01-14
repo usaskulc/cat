@@ -5,7 +5,7 @@
 				<div id="content" style="overflow:auto;"> 
 					<div id="breadcrumbs"><p><a href="http://www.usask.ca/gmcte/">The Gwenna Moss Centre for Teaching Effectiveness</a> &gt; Matterhorn promotion</p></div>  
 					<div class="module" style="overflow:auto;"><h1>CourseOfferings</h1>
-					<jsp:include page="department/newCourseOffering.jsp"/>
+					<jsp:include page="organization/newCourseOffering.jsp"/>
 				</div>
 			</div>
 		</div>

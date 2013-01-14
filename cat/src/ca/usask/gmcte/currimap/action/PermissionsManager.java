@@ -1,10 +1,10 @@
 package ca.usask.gmcte.currimap.action;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -13,13 +13,10 @@ import org.hibernate.Session;
 
 import ca.usask.gmcte.currimap.model.Course;
 import ca.usask.gmcte.currimap.model.CourseOffering;
-import ca.usask.gmcte.currimap.model.Department;
 import ca.usask.gmcte.currimap.model.Instructor;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingInstructor;
 import ca.usask.gmcte.currimap.model.Organization;
 import ca.usask.gmcte.currimap.model.OrganizationAdmin;
-import ca.usask.gmcte.currimap.model.Program;
-import ca.usask.gmcte.currimap.model.ProgramAdmin;
 import ca.usask.gmcte.currimap.model.SystemAdmin;
 import ca.usask.gmcte.util.HibernateUtil;
 import ca.usask.ocd.ldap.LdapConnection;
@@ -29,37 +26,20 @@ public class PermissionsManager
 	private static PermissionsManager instance;
 	private static Logger logger = Logger.getLogger(PermissionsManager.class);
 	
-
-	public boolean saveProgramPermission(int programId,String type,String name, String createdUserid)
+	public static boolean ldapEnabled=setLdap();
+	private static String ldapBoolean;
+	
+	public static boolean setLdap()
 	{
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
-		try
-		{
-		
-			ProgramAdmin p = getProgramAdminByNameAndType(name,type,programId,session);
-			if(p == null)
-			{
-				p = new ProgramAdmin();
-				Program program = (Program)session.get(Program.class, programId);
-				p.setProgram(program);
-				p.setName(name);
-				p.setType(type);
-				p.setCreatedUserid(createdUserid);
-				p.setCreatedOn(Calendar.getInstance().getTime());
-				session.save(p);
-			}
-			session.getTransaction().commit();
-			return true;
-		}
-		catch(Exception e)
-		{
-			HibernateUtil.logException(logger, e);
-			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
-			return false;
-		}
+		if(ldapBoolean != null)
+			return ldapBoolean.equals("Y");
+		ResourceBundle bundle = ResourceBundle.getBundle("currimap");
+		ldapBoolean = bundle.getString("ldap.enabled");
+		return ldapBoolean.equals("Y");
 	}
-	public boolean saveOrganizationPermission(int organizationId,String type,String name)
+
+
+	public boolean saveOrganizationPermission(int organizationId,String type,String name, String first, String last)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -67,6 +47,7 @@ public class PermissionsManager
 		{
 		
 			OrganizationAdmin p = getOrganizationAdminByNameAndType(name,type,organizationId,session);
+			boolean existed = true;
 			if(p == null)
 			{
 				p = new OrganizationAdmin();
@@ -74,13 +55,19 @@ public class PermissionsManager
 				p.setOrganization(Organization);
 				p.setName(name);
 				p.setType(type);
+				existed = false;
 				if(type.equals("Userid"))
 					p.setTypeDisplay("Persons");
 				else
-					p.setTypeDisplay("Departments");
-						
-				session.save(p);
+					p.setTypeDisplay("Organizations");
+			
 			}
+			p.setLastName(last);
+			p.setFirstName(first);
+			if(existed)			
+				session.merge(p);
+			else
+				session.save(p);
 			session.getTransaction().commit();
 			return true;
 		}
@@ -91,7 +78,7 @@ public class PermissionsManager
 			return false;
 		}
 	}
-	public boolean saveSystemPermission(String type,String name, String createdUserid)
+	public boolean saveSystemPermission(String type,String name, String createdUserid,String first, String last)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -99,6 +86,7 @@ public class PermissionsManager
 		{
 		
 			SystemAdmin p = getSystemAdminByNameAndType(name,type,session);
+			boolean existed = true;
 			if(p==null)
 			{
 				p = new SystemAdmin();
@@ -107,13 +95,132 @@ public class PermissionsManager
 				if(type.equals("Userid"))
 					p.setTypeDisplay("Persons");
 				else
-					p.setTypeDisplay("Departments");
+					p.setTypeDisplay("Organizations");
 				p.setCreatedUserid(createdUserid);
 				p.setCreatedOn(Calendar.getInstance().getTime());
-				session.save(p);
+		
+				existed = false;
 			}
+			p.setLastName(last);
+			p.setFirstName(first);
+			if(existed)
+				session.merge(p);
+			else
+				session.save(p);
+			
 			
 			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
+	public boolean saveInstructor(int id,String userid,String first,String last)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			boolean createNew = true;
+			Instructor i = new Instructor();
+			if(id > -1)
+			{
+				i = (Instructor)session.get(Instructor.class,  id);
+				createNew = false;
+			}
+			else
+			{
+				i = (Instructor)session.createQuery("FROM Instructor where lower(userid) = :userid").setParameter("userid",userid.toLowerCase()).uniqueResult();
+				if( i==null)
+					i = new Instructor();
+			}
+			i.setUserid(userid);
+			i.setFirstName(first);
+			i.setLastName(last);
+			if(createNew)
+				session.save(i);
+			else
+				session.merge(i);
+			
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+		
+	}
+	
+	public Instructor getInstructorById(int id)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		Instructor toReturn = null;
+		try
+		{
+			toReturn = (Instructor)session.get(Instructor.class, id);
+			session.getTransaction().commit();
+			
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	public Instructor getInstructorByUserid(Session session,String id)
+	{
+		return (Instructor)session.createQuery("FROM Instructor where lower(userid) = :userid").setParameter("userid",id.toLowerCase()).uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Instructor> getAllInstructors()
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<Instructor> toReturn = null;
+		try
+		{
+			toReturn = (List<Instructor>)session.createQuery("FROM Instructor ORDER by lower(lastName), lower(firstName),lower(userid)").list();
+			session.getTransaction().commit();
+			
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	public boolean saveInstructor(String userid,String first, String last)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			Instructor i = (Instructor)session.createQuery("FROM Instructor where userid=:userid").setParameter("userid", userid).uniqueResult();
+			boolean existed = true;
+			if(i == null)
+			{
+				i = new Instructor();
+				i.setUserid(userid);
+				existed = false;
+			}
+			i.setLastName(last);
+			i.setFirstName(first);
+			
+			if(existed)
+				session.merge(i);
+			else
+				session.save(i);
+			
+	 		session.getTransaction().commit();
 			return true;
 		}
 		catch(Exception e)
@@ -130,14 +237,7 @@ public class PermissionsManager
 				.setParameter("name",name.toLowerCase().trim())
 				.uniqueResult();
 	}
-	private ProgramAdmin getProgramAdminByNameAndType(String name, String type,int programId, Session session)
-	{
-		return (ProgramAdmin)session.createQuery("FROM ProgramAdmin WHERE program.id=:programId AND type=:type AND lower(name)=:name")
-				.setParameter("type",type)
-				.setParameter("programId",programId)
-				.setParameter("name",name.toLowerCase().trim())
-				.uniqueResult();
-	}
+
 	private OrganizationAdmin getOrganizationAdminByNameAndType(String name, String type,int organizationId, Session session)
 	{
 		return (OrganizationAdmin)session.createQuery("FROM OrganizationAdmin WHERE organization.id=:organizationId AND type=:type AND lower(name)=:name")
@@ -165,25 +265,7 @@ public class PermissionsManager
 			return false;
 		}
 	}
-	public boolean removeProgramPermission(String id)
-	{
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
-		try
-		{
-	
-			ProgramAdmin p = (ProgramAdmin)session.get(ProgramAdmin.class,Integer.parseInt(id));
-			session.delete(p);
-			session.getTransaction().commit();
-			return true;
-		}
-		catch(Exception e)
-		{
-			HibernateUtil.logException(logger, e);
-			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
-			return false;
-		}
-	}
+
 	public boolean removeOrganizationPermission(String id)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -203,58 +285,80 @@ public class PermissionsManager
 			return false;
 		}
 	}
-	public String getDisplayName(ProgramAdmin p) throws Exception
-	{
-		
-		if(p.getType().equalsIgnoreCase("LDAP"))
-		{
-			return p.getName();
-		}
-		return getDisplayName( LdapConnection.instance().getUserData(p.getName()),p.getName() );
-	}
+	
 	public String getDisplayName(OrganizationAdmin p) throws Exception
 	{
-		
-		if(p.getType().equalsIgnoreCase("LDAP"))
+		if(p.getLastName() == null && PermissionsManager.ldapEnabled)
 		{
-			return p.getName();
+			try
+			{
+				TreeMap<String,String> data = LdapConnection.instance().getUserData(p.getName());
+				if(data!=null)
+				{
+					
+					String first = data.get("givenName");
+					String last = data.get("sn");
+					if(this.saveOrganizationPermission(p.getOrganization().getId(),p.getType(),p.getName(), first, last))
+					{
+						p.setFirstName(first);
+						p.setLastName(last);
+					}
+				}
+			}catch(Exception e)
+			{
+				//fail silently
+			}
 		}
-		return getDisplayName( LdapConnection.instance().getUserData(p.getName()),p.getName() );
+		String display = null;
+		
+		if(p.getFirstName() !=null)
+			display = p.getFirstName();
+		if(p.getLastName() != null)
+		{
+			if(display == null)
+				display = p.getLastName();
+			else
+				display += " " + p.getLastName();
+		}
+		return display == null ? p.getName() : display;
 	}
 	public String getDisplayName(SystemAdmin p) throws Exception
 	{
 		
-		if(p.getType().equalsIgnoreCase("LDAP"))
+		if(p.getLastName() == null && PermissionsManager.ldapEnabled)
 		{
-			return p.getName();
+			try
+			{
+				TreeMap<String,String> data = LdapConnection.instance().getUserData(p.getName());
+				String first = data.get("givenName");
+				String last = data.get("sn");
+				if(saveSystemPermission(p.getType(),p.getName(),p.getCreatedUserid(), first, last))
+				{
+					p.setFirstName(first);
+					p.setLastName(last);
+				}
+			}
+			catch(Exception e)
+			{//fail silently
+			}
+		
 		}
-		return getDisplayName( LdapConnection.instance().getUserData(p.getName()),p.getName() );
-	}
-	private String getDisplayName(TreeMap<String,String> data, String name) throws Exception
-	{
-		StringBuilder toReturn  =  new StringBuilder();
-		toReturn.append(data.get("cn"));
-		return toReturn.toString();
+		String display = null;
+		
+		if(p.getFirstName() !=null)
+			display = p.getFirstName();
+		if(p.getLastName() != null)
+		{
+			if(display == null)
+				display = p.getLastName();
+			else
+				display += " " + p.getLastName();
+		}
+		return display == null ? p.getName() : display;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<ProgramAdmin> getAdminsForGroup(String id)
-	{
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
-		List<ProgramAdmin> toReturn = null;
-		
-		try
-		{
-			toReturn = session.createQuery("FROM ProgramAdmin WHERE program.id = :programId ORDER BY type,name").setParameter("programId",Integer.parseInt(id)).list();
-			session.getTransaction().commit();
-		}
-		catch(Exception e)
-		{
-			HibernateUtil.logException(logger, e);
-		}
-		return toReturn;
-	}
+	
+
 	@SuppressWarnings("unchecked")
 	public List<OrganizationAdmin> getAdminsForOrganization(String id)
 	{
@@ -290,73 +394,11 @@ public class PermissionsManager
 		}
 		return toReturn;
 	}
-	@SuppressWarnings("unchecked")
-	public List<String> getAccessProgramListForUser(String userid,List<String> userGroups)
-	{
-		List<String> toReturn = new ArrayList<String>();
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
-		try
-		{
 
-		String query="SELECT p FROM Program p, ProgramAdmin pa WHERE pa.program.id=p.id AND ( (pa.name in ("+buildIn(userGroups)+") AND pa.type='LDAP') OR (pa.type='Userid' AND pa.name=:userid) ) ";
-		List<Program> programList = (List<Program>)session.createQuery(query)
-				.setParameter("userid",userid)
-				.list();
-		
-		for(Program p : programList)
-		{
-			toReturn.add(""+p.getId());
-		}
-		session.getTransaction().commit();
-		}
-		catch(Exception e)
-		{
-			HibernateUtil.logException(logger, e);
-		}
-		return toReturn;
-	}
 	
-	public HashMap<String,Program> getProgramsForUser(String userid,List<String> userGroups)
-	{
-		HashMap<String,Program> toReturn = new HashMap<String,Program>();
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
-		try
-		{
-
-		StringBuilder sql = new StringBuilder();
-		String inGroups = buildIn(userGroups);
-		sql.append("   select {p.*} ");
-		sql.append("  from program p");
-		sql.append("      ,program_admin pa ");
-		sql.append(" where pa.program_id = p.id");
-		sql.append("   and (pa.name in (");
-		sql.append(inGroups);
-		sql.append(") and type='LDAP' ");
-		sql.append("        OR");
-		sql.append("        pa.name =:userid and type='Userid' )");
-		@SuppressWarnings("unchecked")
-		List<Program> programs = (List<Program>)session.createSQLQuery(sql.toString())
-						.addEntity("p",Program.class)
-						.setParameter("userid",userid)
-						.list();
-				
-		for(Program p : programs)
-		{
-			toReturn.put(""+p.getId(), p);
-		}
-				
-		session.getTransaction().commit();
-		}
-		catch(Exception e)
-		{
-			HibernateUtil.logException(logger, e);
-		}
-		return toReturn;
-	}
 	
-	public HashMap<String,Organization> getOrganizationsForUser(String userid,List<String> userGroups)
+	
+	public HashMap<String,Organization> getOrganizationsForUser(String userid)
 	{
 		HashMap<String,Organization> toReturn = new HashMap<String,Organization>();
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -365,16 +407,11 @@ public class PermissionsManager
 		{
 
 		StringBuilder sql = new StringBuilder();
-		String inGroups = buildIn(userGroups);
 		sql.append("   select {o.*} ");
 		sql.append("  from organization o");
 		sql.append("      ,organization_admin oa ");
 		sql.append(" where oa.organization_id = o.id");
-		sql.append("   and (oa.name in (");
-		sql.append(inGroups);
-		sql.append(") and type='LDAP' ");
-		sql.append("        OR");
-		sql.append("        oa.name =:userid and type='Userid' )");
+		sql.append("   and oa.name =:userid and type='Userid' ");
 		@SuppressWarnings("unchecked")
 		List<Organization> organizations = (List<Organization>)session.createSQLQuery(sql.toString())
 						.addEntity("o",Organization.class)
@@ -453,15 +490,14 @@ public class PermissionsManager
 	
 	
 	
-	public boolean isSysadmin(String userid,List<String> userGroups)
+	public boolean isSysadmin(String userid)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		boolean toReturn =  false;
 		try
 		{
-			//get Groups for user
-			toReturn =  !session.createQuery("FROM SystemAdmin  WHERE (name in ("+buildIn(userGroups)+") AND type='LDAP') OR (type='Userid' AND name=:userid)")
+			toReturn =  !session.createQuery("FROM SystemAdmin  WHERE type='Userid' AND name=:userid")
 				.setParameter("userid",userid)
 				.list()
 				.isEmpty();
@@ -474,34 +510,12 @@ public class PermissionsManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
-	public List<Department> getDepartmentsForUser(String userid, boolean sysadmin) throws Exception
+	public List<Organization> getOrganizationsForUser(String userid, boolean sysadmin, boolean activeOnly) throws Exception
 	{
-		List<Department> departments = null;
+		List<Organization> organizations = null;
 		if(userid == null)
 		{
 			return null;
-		}
-		LdapConnection ldap = LdapConnection.instance();
-		ArrayList<String> depts = null;
-		try
-		{
-			depts = ldap.getUserDepartments(userid);
-		}
-		catch(Exception e)
-		{ 
-			departments = new ArrayList<Department>(0);
-			depts = new ArrayList<String>(0);
-		}
-		if(!sysadmin && depts.isEmpty())
-		{
-			return departments;
-		}
-		StringBuilder in = new StringBuilder();
-		for(String dept: depts)
-		{
-			in.append("'");
-			in.append(dept);
-			in.append("',");
 		}
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -510,40 +524,27 @@ public class PermissionsManager
 		{
 			if(sysadmin)
 			{
-				departments = (List<Department>)session.createQuery("FROM Department ORDER BY lower(name)").list();
+				String query=activeOnly?"FROM Organization WHERE active='Y' ORDER BY lower(name)":"FROM Organization ORDER BY lower(name)";
+				organizations = (List<Organization>)session.createQuery(query).list();
 			}
 			else
 			{
-				//@SuppressWarnings("unchecked") promoted to method
-				departments = (List<Department>)session.createQuery("FROM Department WHERE ldapName in (" +  in.substring(0,in.length()-1) +")").list();
-				logger.error("FROM Department WHERE ldapName in (" +  in.substring(0,in.length()-1) +")");
-				boolean deptsCreated = false;
-				for(String dept: depts)
+				 
+				StringBuilder sql = new StringBuilder();
+				sql.append("   select {o.*} ");
+				sql.append("  from organization o");
+				sql.append("      ,organization_admin oa ");
+				sql.append(" where oa.organization_id = o.id");
+				if(activeOnly)
 				{
-					boolean found = false;
-					for(Department d : departments)
-					{
-						if(d.getName().equals(dept))
-						{
-							found = true;
-							break;
-						}
-					}
-					if(!found)
-					{
-						Department tempDept = new Department();
-						tempDept.setName(dept);
-						tempDept.setLdapName(dept);
-						logger.error("Dept with ldap_name["+dept+"] not found");
-						session.save(tempDept);
-						deptsCreated = true;
-					}
+					sql.append(" and o.active='Y' ");
 				}
-				if(deptsCreated)
-				{
-					//@SuppressWarnings("unchecked") promoted to method
-					departments = (List<Department>)session.createQuery("FROM Department WHERE ldapName in (" +  in.substring(0,in.length()-1) +")").list();
-				}
+				sql.append("   and oa.name =:userid and type='Userid' ");
+				organizations = (List<Organization>)session.createSQLQuery(sql.toString())
+								.addEntity("o",Organization.class)
+								.setParameter("userid",userid)
+								.list();
+				
 			}
 			session.getTransaction().commit();
 
@@ -552,7 +553,7 @@ public class PermissionsManager
 		{
 			HibernateUtil.logException(logger, e);
 		}
-		return departments;
+		return organizations;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -566,27 +567,27 @@ public class PermissionsManager
 		{
 			return true;
 		}
-		List<Department> accessDepartments = getDepartmentsForUser(userid,sysadmin);
-		if(accessDepartments == null  || accessDepartments.isEmpty())
-		{ //user is NOT in any departments
+		List<Organization> accessOrganizations = getOrganizationsForUser(userid,sysadmin,false);
+		if(accessOrganizations == null  || accessOrganizations.isEmpty())
+		{ //user is NOT in any organizations
 			return false;
 		}
 		
 		StringBuilder in = new StringBuilder();
-		for(Department dept: accessDepartments)
+		for(Organization org: accessOrganizations)
 		{
 			
-			in.append(dept.getId());
+			in.append(org.getId());
 			in.append(",");
 		}
 		Course course = offering.getCourse();
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT {d.*} ");
-		sql.append("  FROM department d,");
+		sql.append("  FROM organization d,");
 		sql.append("       program_admin pa,");
 		sql.append("       link_course_program lcp");
 		sql.append(" WHERE d.id = pa.name");
-		sql.append("   AND pa.type='deptId' ");
+		sql.append("   AND pa.type='orgId' ");
 		sql.append("   AND pa.program_id = lcp.program_id");
 		sql.append("   AND lcp.course_id = :courseId");
 		sql.append("   AND d.id in (");
@@ -595,11 +596,11 @@ public class PermissionsManager
 		
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
-		List<Department> departmentsWithAccessToCourseForUser = null;
+		List<Organization> organizationsWithAccessToCourseForUser = null;
 		try
 		{
-			departmentsWithAccessToCourseForUser = (List<Department>)session.createSQLQuery(sql.toString())
-					.addEntity("d",Department.class)
+			organizationsWithAccessToCourseForUser = (List<Organization>)session.createSQLQuery(sql.toString())
+					.addEntity("d",Organization.class)
 					.setParameter("courseId",course.getId())
 				.list();
 			
@@ -609,7 +610,7 @@ public class PermissionsManager
 		{
 			HibernateUtil.logException(logger, e);
 		}
-		return !departmentsWithAccessToCourseForUser.isEmpty();
+		return !organizationsWithAccessToCourseForUser.isEmpty();
 	}
 	
 	
@@ -657,21 +658,6 @@ public class PermissionsManager
 		}
 		return r.toString();
 	}
-	private static String buildIn(List<String> values)
-	{
-		StringBuilder r = new StringBuilder();
-		if(values == null || values.isEmpty())
-		{
-			return "''";
-		}
-		r.append("'bogus'");
-		for(String s : values)
-		{
-			r.append(",'");
-			r.append(s);
-			r.append("'");
-		}
-		return r.toString();
-	}
+
 	
 }

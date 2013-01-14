@@ -20,12 +20,14 @@ for(TeachingMethodPortionOption time : optionsList)
 %>
 <div id="addTeachingMethodDiv" >
 <h2>My Instructional Methods</h2>
-<p>This section gathers information about how you teach this course.
- Five types of instructional method are identified in the first column 
- with example strategies for each method in the middle column. 
- Please use the pull down menus in the last column to indicate 
- how often you use each instructional method in this course. 
- Below a bar graph will display your distribution of instructional strategies for this course.
+<p>This section gathers information about how you teach this course. 
+Five types of instructional methods are identified in the first column with example strategies 
+for each method in the middle column. Please use the pull down menus in the last column to indicate
+ the extent to which you use each instructional method in this course.
+   The descriptors are not intended to be numeric.  Where you feel you use overlapping strategies, 
+   you can assign those strategies the same "extent of use"" (pull down menu) description. 
+    Below a bar graph will display your general distribution of instructional strategies for this course.  
+    You also have the option to add information to the comment section appearing below the table.
 </p>
 	<form name="addTeachingMethodForm" id="teachingMethodForm" method="post" action="" >
 		<table >

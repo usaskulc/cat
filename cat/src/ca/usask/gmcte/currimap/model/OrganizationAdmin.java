@@ -26,6 +26,8 @@ public class OrganizationAdmin implements java.io.Serializable
 	private int id;
 	private Organization organization;
 	private String name;
+	private String lastName;
+	private String firstName;
 	private String type;
 	
 	private String typeDisplay;
@@ -104,5 +106,30 @@ public class OrganizationAdmin implements java.io.Serializable
 	public void setTypeDisplay(String typeDisplay)
 	{
 		this.typeDisplay = typeDisplay;
+	}
+	@Column(name = "last_name", nullable = true, length = 50)
+	@Length(max = 50)
+	public String getLastName() 
+	{
+		return lastName;
+	}
+
+
+	public void setLastName(String lastName) 
+	{
+		this.lastName = lastName;
+	}
+
+	@Column(name = "first_name", nullable = true, length = 50)
+	@Length(max = 50)
+	public String getFirstName() 
+	{
+		return firstName;
+	}
+
+
+	public void setFirstName(String firstName) 
+	{
+		this.firstName = firstName;
 	}
 }

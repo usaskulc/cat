@@ -17,12 +17,11 @@ import ca.usask.gmcte.currimap.model.Course;
 import ca.usask.gmcte.currimap.model.CourseClassification;
 import ca.usask.gmcte.currimap.model.CourseOffering;
 import ca.usask.gmcte.currimap.model.CourseOutcome;
-import ca.usask.gmcte.currimap.model.Department;
 import ca.usask.gmcte.currimap.model.LinkCourseContributionProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingContributionProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseOutcomeProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseProgram;
-import ca.usask.gmcte.currimap.model.LinkDepartmentCharacteristicType;
+import ca.usask.gmcte.currimap.model.LinkOrganizationCharacteristicType;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcomeCharacteristic;
 import ca.usask.gmcte.currimap.model.MasteryOptionValue;
@@ -70,7 +69,7 @@ public class ProgramManager
 			return false;
 		}
 	}
-	
+
 	public boolean saveProgramOutcomeGroupNameById(String value, int programOutcomeGroupId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -347,11 +346,7 @@ public class ProgramManager
 		{
 			session.delete(link);
 		}
-		/*List<LinkDepartmentCharacteristicType> characteristicLinks = p.getLinkProgramCharacteristicTypes();
-		for(LinkDepartmentCharacteristicType link: characteristicLinks)
-		{
-			session.delete(link);
-		}*/
+	
 		@SuppressWarnings("unchecked")
 		List<ProgramAdmin> adminLinks = session.createQuery("FROM ProgramAdmin WHERE program.id = :programId").setParameter("programId",p.getId()).list();
 		for(ProgramAdmin link: adminLinks)
@@ -592,30 +587,30 @@ public class ProgramManager
 		}
 		return toReturn;
 	}
-	public boolean addCharacteristicToDepartment(int charId, int deptId)
+	public boolean addCharacteristicToOrganization(int charId, int orgId)
 	{
 		boolean createSuccessful = false;
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
-		Department d = (Department) session.get(Department.class, deptId);
-		CharacteristicType cType = (CharacteristicType) session.get(CharacteristicType.class,charId);
-		LinkDepartmentCharacteristicType link  = new LinkDepartmentCharacteristicType();
-		int max = 0;
-		try
-		{
-			max = (Integer)session.createQuery("select max(displayIndex) from LinkDepartmentCharacteristicType l where l.department.id = :deptId").setParameter("deptId",d.getId()).uniqueResult();
-		}
-		catch(Exception e)
-		{
+			Organization d = (Organization) session.get(Organization.class, orgId);
+			CharacteristicType cType = (CharacteristicType) session.get(CharacteristicType.class,charId);
+			LinkOrganizationCharacteristicType link  = new LinkOrganizationCharacteristicType();
+			int max = 0;
+			try
+			{
+				max = (Integer)session.createQuery("select max(displayIndex) from LinkOrganizationCharacteristicType l where l.organization.id = :orgId").setParameter("orgId",d.getId()).uniqueResult();
+			}
+			catch(Exception e)
+			{
 			
-			logger.error("unable to determine max!",e);
-		}
+				logger.error("unable to determine max!",e);
+			}
 		
 		link.setDisplayIndex(max+1);
 		link.setCharacteristicType(cType);
-		link.setDepartment(d);
+		link.setOrganization(d);
 		//p.getLinkProgramCharacteristicTypes().add(link);
 		session.persist(link);
 		session.getTransaction().commit();
@@ -638,11 +633,11 @@ public class ProgramManager
 		try
 		{
 		@SuppressWarnings("unchecked")
-		List<LinkDepartmentCharacteristicType> existing = (List<LinkDepartmentCharacteristicType>)session.createQuery("select l from LinkProgramCharacteristicType l where l.program.id = :programId order by l.displayIndex").setParameter("programId",id).list();
+		List<LinkOrganizationCharacteristicType> existing = (List<LinkOrganizationCharacteristicType>)session.createQuery("select l from LinkProgramCharacteristicType l where l.program.id = :programId order by l.displayIndex").setParameter("programId",id).list();
 		if(direction.equals("up"))
 		{
-			LinkDepartmentCharacteristicType prev = null;
-			for(LinkDepartmentCharacteristicType link : existing)
+			LinkOrganizationCharacteristicType prev = null;
+			for(LinkOrganizationCharacteristicType link : existing)
 			{
 				if(link.getCharacteristicType().getId() == charTypeId && prev!=null)
 				{
@@ -659,8 +654,8 @@ public class ProgramManager
 		}
 		else if(direction.equals("down"))
 		{
-			LinkDepartmentCharacteristicType prev = null;
-			for(LinkDepartmentCharacteristicType link : existing)
+			LinkOrganizationCharacteristicType prev = null;
+			for(LinkOrganizationCharacteristicType link : existing)
 			{
 				if(prev !=null)
 				{
@@ -681,8 +676,8 @@ public class ProgramManager
 		}
 		else if(direction.equals("delete"))
 		{
-			LinkDepartmentCharacteristicType toDelete = null;
-			for(LinkDepartmentCharacteristicType link : existing)
+			LinkOrganizationCharacteristicType toDelete = null;
+			for(LinkOrganizationCharacteristicType link : existing)
 			{
 				if(toDelete !=null)
 				{
@@ -713,16 +708,16 @@ public class ProgramManager
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<CharacteristicType> setDepartmentCharacteristicTypes(Department d)
+	public List<CharacteristicType> setOrganizationCharacteristicTypes(Organization o)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		List<CharacteristicType> toReturn = null;
 		try
 		{
-			toReturn = (List<CharacteristicType>)session.createQuery("select ct from CharacteristicType ct, LinkDepartmentCharacteristicType lpct where lpct.department.id=:deptId and lpct.characteristicType = ct  order by lpct.displayIndex")
-					.setParameter("deptId",d.getId()).list();
-			d.setCharacteristicTypes(toReturn);
+			toReturn = (List<CharacteristicType>)session.createQuery("select ct from CharacteristicType ct, LinkOrganizationCharacteristicType lpct where lpct.organization.id=:orgId and lpct.characteristicType = ct  order by lpct.displayIndex")
+					.setParameter("orgId",o.getId()).list();
+			o.setCharacteristicTypes(toReturn);
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
@@ -1004,7 +999,7 @@ public class ProgramManager
 		logger.debug("OfferingId="+offering.getId()+" programOutcomeId = "+programOutcomeId);
 		try
 		{
-			toReturn = (List<LinkCourseOutcomeProgramOutcome>)session.createQuery("from LinkCourseOutcomeProgramOutcome l where l.programOutcome.id = :programOutcomeId AND l.courseOffering.id=:courseOfferingId order by l.courseOutcome.id")
+			toReturn = (List<LinkCourseOutcomeProgramOutcome>)session.createQuery("select l from LinkCourseOutcomeProgramOutcome l , LinkCourseOfferingOutcome l2 where l.programOutcome.id = :programOutcomeId AND l.courseOffering.id=:courseOfferingId AND l2.courseOffering = l.courseOffering  AND l.courseOutcome = l2.courseOutcome order by l2.displayIndex")
 				.setParameter("programOutcomeId",programOutcomeId)
 				.setParameter("courseOfferingId",offering.getId())
 				.list();

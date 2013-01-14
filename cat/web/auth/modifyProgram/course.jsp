@@ -53,18 +53,18 @@ if(courseId != null  && courseId.trim().length() > 0)
 	<br/>
 	<%
 	//only show this if the user is a sysadmin, or the home dept is null (new course)
-	List<Department> homeDepartments = CourseManager.instance().getDepartmentForCourse(o);
-	String departmentParameter = "";
-	if(editing && (sysadmin || homeDepartments == null || homeDepartments.isEmpty()) )
+	List<Organization> homeOrganizations = CourseManager.instance().getOrganizationForCourse(o);
+	String organizationParameter = "";
+	if(editing && (sysadmin || homeOrganizations == null || homeOrganizations.isEmpty()) )
 	{
-		departmentParameter = ",'department'";
+		organizationParameter = ",'organization'";
 	%>
-	<div id="courseDepartmentsDiv">
-		<jsp:include page="courseDepartments.jsp"/>
+	<div id="courseOrganizationsDiv">
+		<jsp:include page="courseOrganizations.jsp"/>
 	</div>
 	<%} %>
 	<div class="formElement">
-		<div class="label"><input type="button" name="saveCourseButton" id="saveCourseButton" value="Save Course" onclick="saveProgram(new Array('subject','courseNumber','title'<%=departmentParameter%>),new Array('subject','courseNumber','title','description','department','program_id'));" /></div>
+		<div class="label"><input type="button" name="saveCourseButton" id="saveCourseButton" value="Save Course" onclick="saveProgram(new Array('subject','courseNumber','title'<%=organizationParameter%>),new Array('subject','courseNumber','title','description','organization','program_id'));" /></div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 	</div>

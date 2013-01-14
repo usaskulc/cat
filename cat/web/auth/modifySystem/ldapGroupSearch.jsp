@@ -8,7 +8,7 @@ int organizationId = HTMLTools.getInt( request.getParameter("organization_id"));
 Collection<String> list = new ArrayList<String>();
 try
 {
-	list = LdapConnection.instance().getDepartmentsContaining(group);
+	list = LdapConnection.instance().getOrganizationsContaining(group);
 }
 catch(SizeLimitExceededException sle)
 {

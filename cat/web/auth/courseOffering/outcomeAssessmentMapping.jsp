@@ -1,6 +1,6 @@
 <%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*, java.text.NumberFormat"%>
 <%
-String departmentId = request.getParameter("department_id") ;
+String organizationId = request.getParameter("organization_id") ;
 String courseOfferingId = request.getParameter("course_offering_id") ;
 
 @SuppressWarnings("unchecked")
@@ -50,7 +50,7 @@ To link a course learning outcome to an assessment, select one of your course le
 			infoDisplay += link.getAssessment().getName() + (HTMLTools.isValid(additionalInfo)?" ( "+additionalInfo+" )":"");
 			%>
 		<tr>
-			<td><%=(displayIndex+1)%> <%=outcome.getName()%></td><td><%=infoDisplay %>, <%=formatter.format(link.getWeight())%> %, <%=link.getWhen().getName()%>
+			<td><%=(displayIndex)%> <%=outcome.getName()%></td><td><%=infoDisplay %>, <%=formatter.format(link.getWeight())%> %, <%=link.getWhen().getName()%>
 				 <%if(access){%>
 				 	<a href="javascript:editOutcomeAssessment(<%=courseOfferingId%>,<%=outcomeLink.getId()%>);" class="smaller"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a>
 				 	<%}%></td>

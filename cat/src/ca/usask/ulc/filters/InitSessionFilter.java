@@ -2,12 +2,12 @@ package ca.usask.ulc.filters;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
+
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import ca.usask.gmcte.currimap.action.PermissionsManager;
 import ca.usask.gmcte.currimap.model.CourseOffering;
 import ca.usask.gmcte.currimap.model.Organization;
-import ca.usask.ocd.ldap.LdapConnection;
+
 
 
 public final class InitSessionFilter implements Filter
@@ -44,45 +44,30 @@ public final class InitSessionFilter implements Filter
 			chain.doFilter(request,response);
 			return;
 		}
+		session.setAttribute("userIsSysadmin",new Boolean(true));
 		
+		chain.doFilter(request,response);
+
 		
-		//get groups for user
-		String message = "";
-		List<String> userGroups = null;
-		try
-		{
-			userGroups = LdapConnection.instance().getUserDepartments(userid);
-		}
-		catch(Exception e)
-		{
-			message = "Error retrieving departments from LDAP ("+e.toString()+")";
-			logger.error("unable to retrieve user departments ",e);
-		}
-		if(userGroups == null)
-		{
-				
-			RequestDispatcher dispatcher=filterConfig.getServletContext().getRequestDispatcher("/error.jsp?message="+message);
-			dispatcher.forward(request,response);
-			return;
-		}
 		PermissionsManager manager = PermissionsManager.instance();
+		
 		//if user is sys admin
-		if(manager.isSysadmin(userid, userGroups))
+		if(manager.isSysadmin(userid))
 		{
 			//add sys admin flag to session
 			session.setAttribute("userIsSysadmin",new Boolean(true));
 		}
 		else
 		{
+			
 			//get organizations user has access to
-			 HashMap<String,Organization> userHasAccessToOrganizations = manager.getOrganizationsForUser(userid, userGroups);
+			 HashMap<String,Organization> userHasAccessToOrganizations = manager.getOrganizationsForUser(userid);
 			 session.setAttribute("userHasAccessToOrganizations",userHasAccessToOrganizations);
 	
 			//get offerings user has access to
 			HashMap<String,CourseOffering> userHasAccessToOfferings = manager.getOfferingsForUser(userid, userHasAccessToOrganizations);
 			session.setAttribute("userHasAccessToOfferings",userHasAccessToOfferings);
-
-			}
+		}
 	
 		session.setAttribute("sessionInitialized",new Boolean(true));
 		chain.doFilter(request,response);

@@ -60,7 +60,7 @@ if(id != null  && id.trim().length() > 0)
 		<%
 	}
 	%>
-	<a href="javascript:loadModify('/cat/auth/department/addProgramCharacteristic.jsp?id=<%=o.getId()%>','addCharacteristicToProgramDiv','programCharacteristicsDiv');" class="smaller">
+	<a href="javascript:loadModify('/cat/auth/organization/addProgramCharacteristic.jsp?id=<%=o.getId()%>','addCharacteristicToProgramDiv','programCharacteristicsDiv');" class="smaller">
 				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
 				Add a Characteristic
 			</a>

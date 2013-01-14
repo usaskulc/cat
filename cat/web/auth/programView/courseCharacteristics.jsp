@@ -9,7 +9,7 @@ if(programIdParameter > -1)
 	programId = ""+programIdParameter; 
 }
 CourseManager cm = CourseManager.instance();
-DepartmentManager dm = DepartmentManager.instance();
+OrganizationManager dm = OrganizationManager.instance();
 String courseId = request.getParameter("course_id") ;
 Course course = cm.getCourseById(Integer.parseInt(courseId));
 String courseNumber = ""+course.getCourseNumber();
@@ -18,21 +18,21 @@ Boolean sessionValue = (Boolean)session.getAttribute("userIsSysadmin");
 boolean sysadmin = sessionValue != null && sessionValue;
 boolean access = sysadmin;
 
-List<Department> homeDepartments = cm.getDepartmentForCourse(course);
-boolean homeDepartment = false;
-List<Department> accessToDepartments = new ArrayList<Department>();
+List<Organization> homeOrganizations = cm.getOrganizationForCourse(course);
+boolean homeOrganization = false;
+List<Organization> accessToOrganizations = new ArrayList<Organization>();
 
 if(HTMLTools.isValid(programId))
 {
 	Program program = ProgramManager.instance().getProgramById(Integer.parseInt(programId));
 	
-	Organization organization = OrganizationManager.instance().getOrganizationByProgram(program);
+	Organization organization = program.getOrganization();
 	HashMap<String,Organization>  userHasAccessToOrganizations = (HashMap<String,Organization>)session.getAttribute("userHasAccessToOrganizations");
 	if(userHasAccessToOrganizations == null)
 		userHasAccessToOrganizations = new HashMap<String,Organization>();
 	if(sysadmin)
 	{
-		List<Organization> allOrgs = OrganizationManager.instance().getAllOrganizations();
+		List<Organization> allOrgs = OrganizationManager.instance().getAllOrganizations(false);
 		for(Organization org : allOrgs)
 		{
 			userHasAccessToOrganizations.put(""+org.getId(), org);
@@ -41,15 +41,17 @@ if(HTMLTools.isValid(programId))
 
 	for(Organization org:userHasAccessToOrganizations.values())
 	{
-		accessToDepartments.add(org.getDepartment());
+		accessToOrganizations.add(org);
 	}
 	
 	access = sysadmin || userHasAccessToOrganizations!=null && userHasAccessToOrganizations.containsKey(""+organization.getId());
-	for(Department dept: homeDepartments)
+	out.println("Number of home depts="+homeOrganizations.size());
+	for(Organization org: homeOrganizations)
 	{
-		if(dept.getId() == organization.getDepartment().getId())
+		out.println("Home org Id="+org.getId());
+		if(org.getId() == organization.getId())
 		{
-			homeDepartment = true;
+			homeOrganization = true;
 		}
 	}
 
@@ -59,9 +61,9 @@ Program bogus = new Program();
 bogus.setId(-1);
 bogus.setName("Please select a Program");
 programs.add(bogus);
-for(Department dep : accessToDepartments)
+for(Organization dep : accessToOrganizations)
 {	
-	for(Program p : dm.getProgramOrderedByNameForDepartmentLinkedToCourse(dep,course))
+	for(Program p : dm.getProgramOrderedByNameForOrganizationLinkedToCourse(dep,course))
 	{
 		boolean notInYet = true;
 		for(Program toCheck : programs)
@@ -99,7 +101,7 @@ if(temp != null)
 </jsp:include>
 
 <%
-if(homeDepartment)
+if(homeOrganization)
 {%>
 
 <div id="courseOfferingsDiv" <%=hideOfferings%> >

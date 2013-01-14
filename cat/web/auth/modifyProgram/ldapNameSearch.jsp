@@ -6,7 +6,14 @@ int programId = HTMLTools.getInt( request.getParameter("program_id"));
 List<TreeMap<String,String>> results = new ArrayList<TreeMap<String,String>>();
 try
 {
-	results = LdapConnection.instance().searchForUserWithSurname(text);
+	/*TreeMap<String,String> result1= new TreeMap<String,String>();
+	result1.put("givenName","Fred");
+	result1.put("sn","Flintstone");
+	result1.put("cn","Freddie Flints");
+	result1.put("uid","abx123");
+	results.add(result1);
+	if(1==2)*/
+		results = LdapConnection.instance().searchForUserWithSurname(text);
 }
 catch(SizeLimitExceededException sle)
 {
@@ -25,7 +32,7 @@ for(TreeMap<String,String> result : results)
 {
 	%>
 	<li><%=result.get("cn")%>
-	 <a href="javascript:addInstructor('<%=result.get("uid")%>');" class="smaller">Add</a> 
+	 <a href="javascript:setFirst(escape('<%=result.get("givenName")%>'));setLast(escape('<%=result.get("sn")%>'));addInstructor('<%=result.get("uid")%>');" class="smaller">Add</a> 
 	</li>
 
 <%

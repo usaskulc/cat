@@ -21,8 +21,10 @@ else if(object.equals("Organization"))
 {
 	String name = request.getParameter("name");
 	String id = request.getParameter("id");
-	String departmentId = request.getParameter("department");
+	String organizationId = request.getParameter("organization");
 	String parentId = request.getParameter("parent_organization_id");
+	String systemName = request.getParameter("system_name");
+	String active = request.getParameter("active");
 	String action = request.getParameter("action");
 	OrganizationManager manager = OrganizationManager.instance();
 	if(id != null)
@@ -42,7 +44,7 @@ else if(object.equals("Organization"))
 				out.println("ERROR: Organization still has admins associated with it");
 				return;
 			}
-			List<Organization> children = manager.getChildOrganizationsOrderedByName(org);
+			List<Organization> children = manager.getChildOrganizationsOrderedByName(org,false);
 			if(children!=null && !children.isEmpty())
 			{
 				out.println("ERROR: Organization still has child-organizations");
@@ -66,7 +68,7 @@ else if(object.equals("Organization"))
 		}
 		else
 		{
-			if(manager.update(id,name,Integer.parseInt(departmentId)))
+			if(manager.update(id,name,systemName,active))
 			{
 				out.println("Organization updated");
 			}
@@ -76,7 +78,7 @@ else if(object.equals("Organization"))
 			}
 		}
 	}
-	else if(manager.save(name,parentId, Integer.parseInt(departmentId)))
+	else if(manager.save(name,parentId,systemName))
 	{
 		out.println("Organization created");
 		//trigger re-init for reloading permissions
@@ -150,36 +152,7 @@ else if(object.equals("CharacteristicType"))
 		}
 	}*/
 }
-
-else if(object.equals("Department"))
-{
-	String name = request.getParameter("name");
-	String systemName = request.getParameter("system_name");
-	int id = HTMLTools.getInt(request.getParameter("id"));
-	if(id < 0)
-	{
-		if(DepartmentManager.instance().save(name, systemName))
-		{
-			out.println("Values Saved");
-		}
-		else
-		{
-			out.println("ERROR: Unable to save values");
-		}
-	}
-	else
-	{
-		if(DepartmentManager.instance().update(id,name,systemName))
-		{
-			out.println("Values Saved");
-		}
-		else
-		{
-			out.println("ERROR: Unable to save values");
-		}
-	}
-}
-else if(object.equals("DepartmentCourses"))
+else if(object.equals("OrganizationCourses"))
 {
 	/* possibilities:
 		Course included when it wasn't before : add
@@ -188,26 +161,26 @@ else if(object.equals("DepartmentCourses"))
 		Course not inluded when it wasn't before either : do nothing
 		*/
 	
-	int departmentId = HTMLTools.getInt(request.getParameter("department_id"));
+	int organizationId = HTMLTools.getInt(request.getParameter("organization_id"));
 	String subject = request.getParameter("courseSubject");
 	
 	List<String> courseNumbers = CourseManager.instance().getCourseNumbersForSubject(subject);
 	logger.error("CourseNumbers found"+courseNumbers.size());
 	
-	List<String> alreadyHasAsHomedepartment = CourseManager.instance().getCourseNumbersForSubjectAndDepartment(subject,departmentId);
+	List<String> alreadyHasAsHomeorganization = CourseManager.instance().getCourseNumbersForSubjectAndOrganization(subject,organizationId);
 	int deleted = 0;
 	int failed = 0;
 	int added = 0;
 	int stayed = 0;
-	logger.error("already has "+alreadyHasAsHomedepartment.size());
+	logger.error("already has "+alreadyHasAsHomeorganization.size());
 	for(String courseNumber : courseNumbers)
 	{
 		String param = request.getParameter("course_number_checkbox_"+courseNumber);
 		if(param==null) // course not included
 		{
-			if(alreadyHasAsHomedepartment.contains(courseNumber)) // it was before
+			if(alreadyHasAsHomeorganization.contains(courseNumber)) // it was before
 			{
-				if(DepartmentManager.instance().removeCourseFromDepartment(subject, courseNumber, departmentId))
+				if(OrganizationManager.instance().removeCourseFromOrganization(subject, courseNumber, organizationId))
 				{
 					deleted++;
 				}
@@ -221,9 +194,9 @@ else if(object.equals("DepartmentCourses"))
 		}
 		else 
 		{
-			if(!alreadyHasAsHomedepartment.contains(courseNumber)) // it was before ans still is
+			if(!alreadyHasAsHomeorganization.contains(courseNumber)) // it was before ans still is
 			{
-				if(DepartmentManager.instance().addCourseToDepartment(subject, courseNumber, departmentId))
+				if(OrganizationManager.instance().addCourseToOrganization(subject, courseNumber, organizationId))
 				{
 					added++;
 				}
@@ -245,6 +218,20 @@ else if(object.equals("DepartmentCourses"))
 	{
 		out.println("Changes saved (deleted:"+deleted+" added:"+added+" the same:"+stayed+")");
 	}
+}
+
+else if(object.equals("Instructor"))
+{
+	String userid = request.getParameter("userid");
+	String first = request.getParameter("first_name");
+	String last = request.getParameter("last_name");
+	int id = HTMLTools.getInt(request.getParameter("id"));
+	
+	PermissionsManager manager = PermissionsManager.instance();
+	if(manager.saveInstructor(id,userid,first,last))
+		out.println("Instructor saved");
+	else
+		out.println("There was a problem saving the Instructor!");	
 }
 else
 {

@@ -11,7 +11,7 @@ boolean sysadmin = sessionValue != null && sessionValue;
 boolean access = sysadmin || (userHasAccessToOfferings!=null && userHasAccessToOfferings.containsKey(courseOfferingId));
 CourseOffering courseOffering = new CourseOffering();
 CourseManager cm = CourseManager.instance();
-DepartmentManager dm = DepartmentManager.instance();
+OrganizationManager dm = OrganizationManager.instance();
 OutcomeManager om = OutcomeManager.instance();
 if(HTMLTools.isValid(courseOfferingId))
 {

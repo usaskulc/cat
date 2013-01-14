@@ -1,16 +1,16 @@
-<%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*"%>
+<%@ page import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.currimap.model.*,org.hibernate.validator.Length"%>
 <%
 String courseOfferingId = request.getParameter("course_offering_id");
-String departmentId = request.getParameter("department_id");
+String organizationId = request.getParameter("organization_id");
 
 int outcomeId = HTMLTools.getInt(request.getParameter("outcome_id"));
 OutcomeManager om = OutcomeManager.instance();
 
 
 CourseOffering courseOffering = CourseManager.instance().getCourseOfferingById(Integer.parseInt(courseOfferingId));
-Department department = DepartmentManager.instance().getDepartmentById(Integer.parseInt(departmentId));
+Organization organization = OrganizationManager.instance().getOrganizationById(Integer.parseInt(organizationId));
 
-String departmentName = "";
+String organizationName = "";
 String outcomeParameter = request.getParameter("outcome");
 CourseOutcome outcome = null;
 boolean editing = false;
@@ -23,15 +23,16 @@ else if(HTMLTools.isValid(outcomeParameter))
 {
 	outcome = om.getCourseOutcomeByName(outcomeParameter);
 }
+int maxFieldSize= (CourseOutcome.class.getMethod("getName")).getAnnotation(Length.class).max();
 %>
 <hr/>
 <p>
-Type in one course learning outcome then click save. Return to this add outcome window to enter additional outcomes. Each entry may contain no more than 400 characters (less than 10 outcomes recommended).
+Type in one course learning outcome then click save. Return to this add outcome window to enter additional outcomes. Each entry may contain no more than <%=maxFieldSize%> characters (less than 10 outcomes recommended).
 </p>
 <form name="newCourseOfferingOutcomeForm" id="newCourseOfferingOutcomeForm" method="post" action="" >
 	<input type="hidden" name="objectClass" id="objectClass" value="CourseOfferingOutcome"/>
 	<input type="hidden" name="course_offering_id" id="course_offering_id" value="<%=courseOfferingId%>"/>
-	<input type="hidden" name="department_id" id="department_id" value="<%=departmentId%>"/>
+	<input type="hidden" name="organization_id" id="organization_id" value="<%=organizationId%>"/>
 	<div class="formElement">
 		<div class="label">Outcome:<br/>By the end of this course, students are expected to:</div>
 		<div class="field"><textarea cols="60" rows="5" id="outcomeToAdd" name="outcomeToAdd" ><%=editing?outcome.getName():""%></textarea></div>
@@ -46,11 +47,11 @@ Type in one course learning outcome then click save. Return to this add outcome 
 	<%}
 	
 	String parameterString = "";
-	List<CharacteristicType> charTypes = department.getCharacteristicTypes();
+	List<CharacteristicType> charTypes = organization.getCharacteristicTypes();
 	List<Characteristic> outcomeCharacteristics = new ArrayList<Characteristic>();
 	if(editing)
 	{
-		outcomeCharacteristics = om.getCharacteristicsForCourseOfferingOutcome(courseOffering,outcome, department);
+		outcomeCharacteristics = om.getCharacteristicsForCourseOfferingOutcome(courseOffering,outcome, organization);
 	}
 	for(int i=0; i< charTypes.size() ; i++)
 	{
@@ -81,7 +82,7 @@ Type in one course learning outcome then click save. Return to this add outcome 
 				   id="saveCourseOfferingOutcomeButton" 
 				   value="Save" 
 				   onclick="saveOffering(new Array('outcomeToAdd'),
-				   				new Array('outcomeToAdd'<%=parameterString%>,'department_id','course_offering_id','char_id','char_type','char_count','outcome_id'),'CourseOfferingOutcome');" />
+				   				new Array('outcomeToAdd'<%=parameterString%>,'organization_id','course_offering_id','char_count','outcome_id'),'CourseOfferingOutcome');" />
 		</div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>

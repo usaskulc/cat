@@ -21,8 +21,11 @@ else if(action.equals("add"))
 {
 	int courseOfferingId = HTMLTools.getInt(request.getParameter("course_offering_id"));
 	String instructorUserid = request.getParameter("user_or_link");
+	String first = request.getParameter("first");
+	String last = request.getParameter("last");
 	
-	if(manager.addInstructorToCourseOffering(instructorUserid, courseOfferingId))
+	
+	if(manager.addInstructorToCourseOffering(instructorUserid, courseOfferingId,first,last))
 	{
 		out.println("Instructor added");
 	}

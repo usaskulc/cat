@@ -21,16 +21,16 @@ String existingValue = outcome.getName();
 		<div class="spacer"> </div>
 	</div>
 	<%
-	int departmentId = HTMLTools.getInt(request.getParameter("department_id"));
+	int organizationId = HTMLTools.getInt(request.getParameter("organization_id"));
 	
 	int programId = HTMLTools.getInt(request.getParameter("program_id"));
 	Program program = ProgramManager.instance().getProgramById(programId);
 		
 	String parameterString = "";
-	Department department = DepartmentManager.instance().getDepartmentById(departmentId);
-	List<CharacteristicType> charTypes = department.getCharacteristicTypes();
+	Organization organization = OrganizationManager.instance().getOrganizationById(organizationId);
+	List<CharacteristicType> charTypes = organization.getCharacteristicTypes();
 	List<Characteristic> outcomeCharacteristics = new ArrayList<Characteristic>();
-	outcomeCharacteristics = om.getCharacteristicsForProgramOutcome(program,outcome, department);
+	outcomeCharacteristics = om.getCharacteristicsForProgramOutcome(program,outcome, organization);
 	for(int i=0; i< charTypes.size() ; i++)
 	{
 		CharacteristicType temp = charTypes.get(i);
@@ -51,7 +51,7 @@ String existingValue = outcome.getName();
 		parameterString += ",'characteristic_"+i+"','characteristic_type_"+i+"'";
 	}
 	%>
-	<input type="hidden" name="department_id" id="department_id" value="<%=departmentId%>"/>
+	<input type="hidden" name="organization_id" id="organization_id" value="<%=organizationId%>"/>
 	<input type="hidden" name="program_id" id="program_id" value="<%=programId%>"/>
 	
 	<input type="hidden" name="char_count" id="char_count" value="<%=charTypes.size()%>"/>
@@ -62,7 +62,7 @@ String existingValue = outcome.getName();
 				   id="saveCourseOfferingOutcomeButton" 
 				   value="Save" 
 				   onclick="saveProgram(new Array('new_value'),
-				   				new Array('link_id','new_value'<%=parameterString%>,'department_id','program_id','program_outcome_group_id','char_count','outcome_id'),'ProgramOutcomeWithCharacteristics');" /></div>
+				   				new Array('link_id','new_value'<%=parameterString%>,'organization_id','program_id','program_outcome_group_id','char_count','outcome_id'),'ProgramOutcomeWithCharacteristics');" /></div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 	</div>

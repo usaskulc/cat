@@ -3,7 +3,7 @@
 Boolean sessionValue = (Boolean)session.getAttribute("userIsSysadmin");
 boolean sysadmin = sessionValue != null && sessionValue;
 int programId = HTMLTools.getInt(request.getParameter("program_id"));
-int departmentId = HTMLTools.getInt(request.getParameter("department_id"));
+int organizationId = HTMLTools.getInt(request.getParameter("organization_id"));
 ProgramManager om = ProgramManager.instance();
 
 Program program = om.getProgramById(programId);
@@ -19,7 +19,7 @@ for(ProgramOutcomeGroup group: groups)
 	//sysadmins are the only ones that can edit general outcoomes
 	if(group.getProgramId() > 0 || sysadmin){
 		if(group.getProgramId()> -1)
-			additionalInfo="&department_id="+departmentId;
+			additionalInfo="&organization_id="+organizationId;
 	
 	%>
 	<li><strong><%=group.getName()%></strong>	

@@ -373,19 +373,19 @@ else if (object.equals("ProgramOutcomeOrganizationOutcome"))
 		out.println("ERROR: Unable to save contribution");
 	}
 }
-else if (object.equals("LinkCourseDepartment"))
+else if (object.equals("LinkCourseOrganization"))
 {
 	int courseId = HTMLTools.getInt(request.getParameter("id"));
-	int departmentId = HTMLTools.getInt(request.getParameter("department"));
+	int organizationId = HTMLTools.getInt(request.getParameter("organization"));
 	
 	CourseManager manager = CourseManager.instance();
-	if(manager.addDepartmentToCourse(departmentId, courseId))
+	if(manager.addOrganizationToCourse(organizationId, courseId))
 	{
-		out.println("Department added");
+		out.println("Organization added");
 	}
 	else
 	{
-		out.println("ERROR: Unable to add Department");
+		out.println("ERROR: Unable to add Organization");
 	}
 }
 else if (object.equals("ProgramOutcomeWithCharacteristics"))

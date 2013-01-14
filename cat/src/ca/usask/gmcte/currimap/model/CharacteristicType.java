@@ -30,7 +30,7 @@ public class CharacteristicType implements java.io.Serializable, Comparable<Char
 	private String questionDisplay;
 	
 	private Set<Characteristic> characteristics = new HashSet<Characteristic>(0);
-	private Set<LinkDepartmentCharacteristicType> linkDepartmentmCharacteristicTypes = new HashSet<LinkDepartmentCharacteristicType>(
+	private Set<LinkOrganizationCharacteristicType> linkOrganizationmCharacteristicTypes = new HashSet<LinkOrganizationCharacteristicType>(
 			0);
 
 	public CharacteristicType()
@@ -50,13 +50,13 @@ public class CharacteristicType implements java.io.Serializable, Comparable<Char
 
 	public CharacteristicType(int id, String name, String valueType,
 			Set<Characteristic> characteristics,
-			Set<LinkDepartmentCharacteristicType> linkDepartmentCharacteristicTypes)
+			Set<LinkOrganizationCharacteristicType> linkOrganizationCharacteristicTypes)
 	{
 		this.id = id;
 		this.name = name;
 		this.valueType = valueType;
 		this.characteristics = characteristics;
-		this.linkDepartmentmCharacteristicTypes = linkDepartmentCharacteristicTypes;
+		this.linkOrganizationmCharacteristicTypes = linkOrganizationCharacteristicTypes;
 	}
 
 	@Id @GeneratedValue
@@ -121,15 +121,15 @@ public class CharacteristicType implements java.io.Serializable, Comparable<Char
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "characteristicType")
-	public Set<LinkDepartmentCharacteristicType> getLinkDepartmentCharacteristicTypes()
+	public Set<LinkOrganizationCharacteristicType> getLinkOrganizationCharacteristicTypes()
 	{
-		return this.linkDepartmentmCharacteristicTypes;
+		return this.linkOrganizationmCharacteristicTypes;
 	}
 
-	public void setLinkDepartmentCharacteristicTypes(
-			Set<LinkDepartmentCharacteristicType> linkProgramCharacteristicTypes)
+	public void setLinkOrganizationCharacteristicTypes(
+			Set<LinkOrganizationCharacteristicType> linkProgramCharacteristicTypes)
 	{
-		this.linkDepartmentmCharacteristicTypes = linkProgramCharacteristicTypes;
+		this.linkOrganizationmCharacteristicTypes = linkProgramCharacteristicTypes;
 	}
 	@Column(name = "short_display", nullable = false, length = 32)
 	@NotNull

@@ -48,19 +48,21 @@ else if(object.equals("AssessmentMethod"))
 	}
 	
 }
-else if(object.equals("Department"))
+else if(object.equals("Organization"))
 {
-	String departmentName = request.getParameter("name");
-	int id = HTMLTools.getInt(request.getParameter("id"));
+	String organizationName = request.getParameter("name");
+	String systemName = request.getParameter("system_name");
+	String active = request.getParameter("active");
+	String id = request.getParameter("id");
 	
-	DepartmentManager manager = DepartmentManager.instance();
-	if(manager.update(id,departmentName, null) )
+	OrganizationManager manager = OrganizationManager.instance();
+	if(manager.update(id,organizationName, systemName, active) )
 	{
-		out.println("Department updated");
+		out.println("Organization updated");
 	}
 	else
 	{
-		out.println("There was a problem updating the Department!");
+		out.println("There was a problem updating the Organization!");
 	}
 	
 }
@@ -107,11 +109,8 @@ else if(object.equals("LinkCourseOfferingAssessmentMethod"))
 else if(object.equals("CourseOfferingOutcome"))
 {
 	int existingOutcomeId = HTMLTools.getInt(request.getParameter("outcome_id"));
-	String courseOfferingId = request.getParameter("course_offering_id");
-	String mainCharacteristicId = request.getParameter("char_id");
-	String mainCharacteristicType = request.getParameter("char_type");
-	String characteristicCount = request.getParameter("char_count");
-	int charCount = Integer.parseInt(characteristicCount);
+	int courseOfferingId = HTMLTools.getInt(request.getParameter("course_offering_id"));
+	int charCount = HTMLTools.getInt( request.getParameter("char_count"));
 	String outcomeName = request.getParameter("outcomeToAdd");
 	OutcomeManager manager = OutcomeManager.instance();
 	String userid=(String)session.getAttribute("edu.yale.its.tp.cas.client.filter.user");
@@ -124,20 +123,23 @@ else if(object.equals("CourseOfferingOutcome"))
 	
 	if(existingOutcomeId < 0 )
 	{
-		boolean allOkay = true;
 		//new outcome link
+		existingOutcomeId = manager.saveCourseOfferingOutcomeLink(courseOfferingId, outcomeName, existingOutcomeId);
+		if(existingOutcomeId < 0 )
+		{
+			out.println("ERROR: Unable to create a new Outcome");
+			return;
+		}
+		boolean allOkay = true;
 		
-		
-		existingOutcomeId = manager.saveCourseOfferingOutcomeLink(Integer.parseInt(courseOfferingId), outcomeName, existingOutcomeId);
-		manager.saveCharacteristic(Integer.parseInt(courseOfferingId), existingOutcomeId, mainCharacteristicId,mainCharacteristicType,userid);
-		for(int i=1; i < charCount ; i++ )
+		for(int i=0; i < charCount ; i++ )
 		{
 			String charString = request.getParameter("characteristic_"+i);
 			String charType = request.getParameter("characteristic_type_"+i);
 			logger.error("charString = ["+charString+"] charType ("+"characteristic_type_"+i+") = ["+charType+"]");
-			
-			allOkay = allOkay && manager.saveCharacteristic(Integer.parseInt(courseOfferingId), existingOutcomeId, charString,charType,userid);
-			
+				
+			allOkay = allOkay && manager.saveCharacteristic(courseOfferingId, existingOutcomeId, charString,charType,userid);
+				
 		}
 		if(allOkay)
 		{
@@ -145,21 +147,25 @@ else if(object.equals("CourseOfferingOutcome"))
 		}
 		else
 		{
-			out.println("ERROR: saving new outcome");
+			out.println("ERROR: saving characteristcs for new outcome");
 		}
 	}
 	else
 	{
-		manager.saveCourseOfferingOutcomeLink(Integer.parseInt(courseOfferingId), outcomeName, existingOutcomeId);
+		if(manager.saveCourseOfferingOutcomeLink(courseOfferingId, outcomeName, existingOutcomeId)< 0)
+		{
+			out.println("ERROR: saving outcome text");
+			return;
+		}
 		boolean allOkay = true;
 		//saving existing
-		for(int i=1; i < charCount ; i++ )
+		for(int i=0; i < charCount ; i++ )
 		{
 			String charString = request.getParameter("characteristic_"+i);
 			String charType = request.getParameter("characteristic_type_"+i);
 			logger.error("charString = ["+charString+"] charType ("+"characteristic_type_"+i+") = ["+charType+"]");
 			
-			allOkay = allOkay && manager.updateCharacteristic(Integer.parseInt(courseOfferingId), existingOutcomeId, charString,charType,userid);
+			allOkay = allOkay && manager.updateCharacteristic(courseOfferingId, existingOutcomeId, charString,charType);
 			
 		}
 		if(allOkay)
@@ -248,9 +254,9 @@ else if(object.equals("ExportOfferingData"))
 else if (object.equals("EditCourseOutcome"))
 {
 	int outcomeId = HTMLTools.getInt(request.getParameter("id"));
-	CourseOutcome co = DepartmentManager.instance().getCourseOutcomeById(outcomeId);
+	CourseOutcome co = OrganizationManager.instance().getCourseOutcomeById(outcomeId);
 	String value = request.getParameter("value");
-	if(DepartmentManager.instance().saveCourseOutcomeValue(co,value))
+	if(OrganizationManager.instance().saveCourseOutcomeValue(co,value))
 	{
 		out.println("Value saved");
 	}
