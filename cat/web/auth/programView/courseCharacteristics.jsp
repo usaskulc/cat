@@ -45,10 +45,8 @@ if(HTMLTools.isValid(programId))
 	}
 	
 	access = sysadmin || userHasAccessToOrganizations!=null && userHasAccessToOrganizations.containsKey(""+organization.getId());
-	out.println("Number of home depts="+homeOrganizations.size());
 	for(Organization org: homeOrganizations)
 	{
-		out.println("Home org Id="+org.getId());
 		if(org.getId() == organization.getId())
 		{
 			homeOrganization = true;
