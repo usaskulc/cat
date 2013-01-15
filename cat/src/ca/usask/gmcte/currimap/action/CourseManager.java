@@ -98,17 +98,20 @@ public class CourseManager
 		}
 	}
 	
-	public boolean setCommentsForCourseOffering(int id, String comments)
+	public boolean setCommentsForCourseOffering(int id, String comments, String type)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
-		CourseOffering c = (CourseOffering)session.get(CourseOffering.class,id);
-		c.setComments(comments);
-		session.merge(c);
-		session.getTransaction().commit();
-		return true;
+			CourseOffering c = (CourseOffering)session.get(CourseOffering.class,id);
+			if(type.equals("teaching_comment"))
+				c.setTeachingComment(comments);
+			else
+				c.setComments(comments);
+			session.merge(c);
+			session.getTransaction().commit();
+			return true;
 		}
 		catch(Exception e)
 		{

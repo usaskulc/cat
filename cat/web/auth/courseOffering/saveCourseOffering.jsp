@@ -212,13 +212,14 @@ else if(object.equals("CharacteristicType"))
 }
 else if(object.equals("CourseOfferingComments"))
 {
+	String type = request.getParameter("commentType");
 	String comments = request.getParameter("comments");
 	String id = request.getParameter("course_offering_id");
 	
 	CourseManager manager = CourseManager.instance();
 	if(id != null)
 	{
-		if(manager.setCommentsForCourseOffering(Integer.parseInt(id),comments))
+		if(manager.setCommentsForCourseOffering(Integer.parseInt(id),comments,type))
 		{
 			out.println("comments updated");
 		}

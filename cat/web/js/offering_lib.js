@@ -104,7 +104,12 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 				else if(object == "CourseOfferingComments")
 				{
 					var courseOfferingId = $("#course_offering_id").val();
-					loadURLIntoId("/cat/auth/courseOffering/comments.jsp?course_offering_id="+courseOfferingId,"#courseOfferingCommentsDiv");
+					var type = $('#commentType').val();
+					
+					if( type != null && type=="teaching_comment")
+						loadURLIntoId("/cat/auth/courseOffering/editableTeachingMethods.jsp?course_offering_id="+courseOfferingId,"#editableTeachingMethodsDiv");
+					else
+						loadURLIntoId("/cat/auth/courseOffering/comments.jsp?course_offering_id="+courseOfferingId,"#courseOfferingCommentsDiv");
 			
 				}
 				else if(object == "NewCourseOutcome")

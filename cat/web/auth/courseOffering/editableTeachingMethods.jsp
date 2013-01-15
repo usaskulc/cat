@@ -53,6 +53,7 @@ for each method in the middle column. Please use the pull down menus in the last
 					
 				%>	
 				<br/>
+				
 				<div id="teachingMethodMessage<%=tm.getId()%>" style="display:none;" class="error"></div>				
 				</td>
 				</tr>
@@ -60,7 +61,14 @@ for each method in the middle column. Please use the pull down menus in the last
 		%>
 
 		</table>
+	<div id="teachingMethodComment">
+		
+	<%=courseOffering.getTeachingComment()==null?"No additional information entered. Select edit icon below to add additional information about your Instructional Methods.":courseOffering.getTeachingComment() %>
 	
+</div>
+<br/>
+<a href="javascript:loadModify('/cat/auth/courseOffering/editComments.jsp?course_offering_id=<%=courseOfferingId%>&type=teachingMethodComment','teachingMethodComment');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit"></a>
+
 	</form>
 </div>
 <div id="teachingMethodsGraphDiv" style="width:600px;height:300px;">

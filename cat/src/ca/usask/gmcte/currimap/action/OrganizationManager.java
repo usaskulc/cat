@@ -912,7 +912,7 @@ public class OrganizationManager
 		try
 		{
 			@SuppressWarnings("unchecked")
-			List<LinkOrganizationCharacteristicType> existing = (List<LinkOrganizationCharacteristicType>)session.createQuery("select l from LinkDepartmentCharacteristicType l where l.department.id = :deptId order by l.displayIndex").setParameter("deptId",id).list();
+			List<LinkOrganizationCharacteristicType> existing = (List<LinkOrganizationCharacteristicType>)session.createQuery("select l from LinkOrganizationCharacteristicType l where l.organization.id = :orgId order by l.displayIndex").setParameter("orgId",id).list();
 			if(direction.equals("up"))
 			{
 				LinkOrganizationCharacteristicType prev = null;
