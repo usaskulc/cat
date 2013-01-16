@@ -61,6 +61,8 @@ for each method in the middle column. Please use the pull down menus in the last
 		%>
 
 		</table>
+		<h3>Additional information:</h3>
+		<br>
 	<div id="teachingMethodComment">
 		
 	<%=courseOffering.getTeachingComment()==null?"No additional information entered. Select edit icon below to add additional information about your Instructional Methods.":courseOffering.getTeachingComment() %>
