@@ -45,10 +45,6 @@ public final class InitSessionFilter implements Filter
 			return;
 		}
 		session.setAttribute("userIsSysadmin",new Boolean(true));
-		
-		chain.doFilter(request,response);
-
-		
 		PermissionsManager manager = PermissionsManager.instance();
 		
 		//if user is sys admin
