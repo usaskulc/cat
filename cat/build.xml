@@ -8,7 +8,8 @@
 	<!-- ******************************************************************* -->
 	<!-- Override this with "ant -Dconf.home=./conf.example deploy" -->
 		
-<property name="conf.home" value="${basedir}/../../svnconfigs/cat/ulc.usask.ca" />
+<property name="conf.home" value="${basedir}/conf/example.yourdomain.edu" />		
+
 	<!--<property name="conf.home" value="${basedir}/conf" />-->
 	<!-- Load the build environment properties -->
 	<property file="${conf.home}/build.properties"/>
