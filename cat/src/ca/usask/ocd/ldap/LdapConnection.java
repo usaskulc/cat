@@ -336,7 +336,7 @@ public class LdapConnection
 	{
 		List<TreeMap<String,String>> valuesList=new ArrayList<TreeMap<String,String>>();
 		
-		String[] attributesToReturn = {"cn","uid"};	// this changed for guest accounts.  Everyone has at least one mail attribute, though it may be different from abc123@mail.usask.ca, which is the uofsofficialemailaddress
+		String[] attributesToReturn = {"cn","givenName","sn","uid"};	// this changed for guest accounts.  Everyone has at least one mail attribute, though it may be different from abc123@mail.usask.ca, which is the uofsofficialemailaddress
 		SearchControls constraints = new SearchControls();
 		constraints.setReturningAttributes(attributesToReturn);
 		constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
