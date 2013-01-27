@@ -80,7 +80,7 @@ if(access)
 		%>
 		<%=inst.getInstructorDisplay()%> 
 		
-		<a href="javascript:editCourseOfferingInstructor('delete',<%=link.getId()%>,<%=programId%>,<%=courseOfferingId%>,<%=courseId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a><br>
+		<a href="javascript:editCourseOfferingInstructor('delete',<%=link.getId()%>,<%=programId%>,<%=courseOfferingId%>,<%=courseId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove Instructor" title="Remove Instructor"></a><br>
 
 	<%}
 	%>

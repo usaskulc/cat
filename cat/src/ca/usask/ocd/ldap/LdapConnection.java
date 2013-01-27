@@ -254,6 +254,13 @@ public class LdapConnection
 		start=System.currentTimeMillis();
 		LdapConnection ldap=new LdapConnection();
 		
+		TreeMap<String,String> data = ldap.getUserData("abv641");
+		for(String key : data.keySet())
+		{
+			System.out.println(key +" = " + data.get(key));
+		}
+		
+		
 		List<String> grouplist = ldap.getDirectDeptEmployees("University Learning Centre");
 		for(String group:grouplist)
 		{
@@ -388,7 +395,16 @@ public class LdapConnection
 		//this limits the list of attributes that the LDAP query will return
 		//NOTE: operational attributes like MemberOf only appear if requested specifically
 			
-		NamingEnumeration<SearchResult> results = this.executeSearch("ou=people,dc=usask,dc=ca","(&(objectClass=eduPerson)(uid="+nsid+"))", constraints);
+		String ouGroupString = "ou=guests";
+		
+		if (isNsidType(nsid))
+		{
+			ouGroupString = "ou=nsids";
+		}			 
+				 
+		NamingEnumeration<SearchResult> results = this.executeSearch(ouGroupString + ",ou=people,dc=usask,dc=ca","(uid="+nsid+")", constraints);
+									 
+		//NamingEnumeration<SearchResult> results = this.executeSearch("ou=people,dc=usask,dc=ca","(&(objectClass=eduPerson)(uid="+nsid+"))", constraints);
 		if(results != null)
 		{
 			while (results.hasMore()) 
@@ -973,6 +989,29 @@ public class LdapConnection
 				}
 			}
 			return usersAndEmails;
+		}
+		private boolean isNsidType(String s)
+		{
+			if(s == null)
+				return false;
+			s = s.trim().toLowerCase();
+			if (s.length() != 6)
+				return false;
+			for(int i= 0 ; i < 3; i++)
+			{
+				if(s.charAt(i) < 'a' || s.charAt(i) > 'z')
+					return false;
+			}
+			try
+			{
+				Integer.parseInt(s.substring(3,6));
+				return true;
+			}
+			catch(NumberFormatException e)
+			{
+				return false;
+			}
+			
 		}
 }
 
