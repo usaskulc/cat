@@ -58,7 +58,7 @@ if(id != null  && id.trim().length() > 0)
 	}
 	%>
 	<a href="javascript:loadModify('/cat/auth/courseOffering/addOrganizationCharacteristic.jsp?id=<%=o.getId()%>','addCharacteristicToOrganizationDiv','organizationCharacteristicsDiv');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add a characteristic" title="Add a characteristic" />
 				Add a Characteristic
 			</a>
 			<div id="addCharacteristicToOrganizationDiv">

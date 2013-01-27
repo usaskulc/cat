@@ -63,13 +63,15 @@ for each method in the middle column. Please use the pull down menus in the last
 		</table>
 		<h3>Additional information:</h3>
 		<br>
+		<p>To add/edit additional information about your instructional methods please click the edit icon below.
+		</p>
 	<div id="teachingMethodComment">
 		
-	<%=courseOffering.getTeachingComment()==null?"No additional information entered. Select edit icon below to add additional information about your Instructional Methods.":courseOffering.getTeachingComment() %>
+	<%=!HTMLTools.isValid(courseOffering.getTeachingComment())?"No additional information entered. Select edit icon below to add additional information about your Instructional Methods.":courseOffering.getTeachingComment() %>
 	
 </div>
 <br/>
-<a href="javascript:loadModify('/cat/auth/courseOffering/editComments.jsp?course_offering_id=<%=courseOfferingId%>&type=teachingMethodComment','teachingMethodComment');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit"></a>
+<a href="javascript:loadModify('/cat/auth/courseOffering/editComments.jsp?course_offering_id=<%=courseOfferingId%>&type=teachingMethodComment','teachingMethodComment');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit instructional methods comment" title="Edit instructional methods comment"></a>
 
 	</form>
 </div>

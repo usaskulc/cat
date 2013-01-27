@@ -5,6 +5,10 @@ boolean sysadmin = sessionValue != null && sessionValue;
 String id  = request.getParameter("organization_id");
 OrganizationManager manager = OrganizationManager.instance();
 Organization o = manager.getOrganizationById(Integer.parseInt(id));
+
+List<InstructorAttribute> attributes = OrganizationManager.instance().getInstructorAttributes(o);
+boolean hasInstructorAttributes = attributes != null && !attributes.isEmpty();
+
 Organization parent = o.getParentOrganization();
 @SuppressWarnings("unchecked")
 HashMap<String,Organization>  userHasAccessToOrganizations = (HashMap<String,Organization> )session.getAttribute("userHasAccessToOrganizations");
@@ -35,7 +39,7 @@ for(String section : records.keySet())
 	CourseOffering offering = (CourseOffering)records.get(section).getA();
 	
 	Boolean[] completion = (Boolean[])records.get(section).getB();
-	%><tr  style="cellpadding:2px; cellspacing:2px;"><td><%=section%> <%=CourseManager.instance().getInstructorsString(offering, false, "-1")%></td>
+	%><tr  style="cellpadding:2px; cellspacing:2px;"><td><%=section%> <%=CourseManager.instance().getInstructorsString(offering, false, "-1",hasInstructorAttributes)%></td>
 	<%
 	for(Boolean b : completion)
 	{%>

@@ -21,7 +21,6 @@ boolean access = sysadmin;
 List<Organization> homeOrganizations = cm.getOrganizationForCourse(course);
 boolean homeOrganization = false;
 List<Organization> accessToOrganizations = new ArrayList<Organization>();
-
 if(HTMLTools.isValid(programId))
 {
 	Program program = ProgramManager.instance().getProgramById(Integer.parseInt(programId));
@@ -54,6 +53,7 @@ if(HTMLTools.isValid(programId))
 	}
 
 }
+
 List<Program> programs = new ArrayList<Program>();
 Program bogus = new Program();
 bogus.setId(-1);
@@ -91,7 +91,7 @@ if(temp != null)
 }
 %>
 
-<h2>Course Information for <%=subject%> <%=courseNumber%> <%=course.getTitle()%><%if(access){%> <img src="/cat/images/edit_16.gif" alt="Edit" onclick="loadModify('/cat/auth/modifyProgram/course.jsp?course_id=<%=course.getId()%>&program_id=<%=programId%>');"><%}%></h2>
+<h2>Course Information for <%=subject%> <%=courseNumber%> <%=course.getTitle()%><%if(access){%> <img src="/cat/images/edit_16.gif" alt="Edit course details" title="Edit course details" onclick="loadModify('/cat/auth/modifyProgram/course.jsp?course_id=<%=course.getId()%>&program_id=<%=programId%>');"><%}%></h2>
 
 <jsp:include page="linkProgramCourse.jsp"> 
 	<jsp:param value="<%=courseId%>" name="course_id"/>	

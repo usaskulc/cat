@@ -52,7 +52,7 @@ To link a course learning outcome to an assessment, select one of your course le
 		<tr>
 			<td><%=(displayIndex)%> <%=outcome.getName()%></td><td><%=infoDisplay %>, <%=formatter.format(link.getWeight())%> %, <%=link.getWhen().getName()%>
 				 <%if(access){%>
-				 	<a href="javascript:editOutcomeAssessment(<%=courseOfferingId%>,<%=outcomeLink.getId()%>);" class="smaller"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a>
+				 	<a href="javascript:editOutcomeAssessment(<%=courseOfferingId%>,<%=outcomeLink.getId()%>);" class="smaller"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove outcome assessment link" title="Remove outcome assessment link" ></a>
 				 	<%}%></td>
 		</tr>
 			<% 

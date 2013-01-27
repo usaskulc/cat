@@ -23,8 +23,8 @@ for(InstructorAttribute attrType: attrTypes)
 		{
 			%>
 			<li><%=av.getValue()%>
-				<a href="javascript:loadModify('/cat/auth/modifyProgram/addInstructorAttributeValue.jsp?program_id=<%=programId%>&attribute_value_id=<%=av.getId()%>&userid=<%=userid%>&course_id=<%=courseId%>');"><img src="/cat/images/edit_16.gif" alt="Edit"></a>
-				<a href="javascript:removeInstructorAttributeValue(<%=av.getId()%>,<%=programId%>,'<%=userid%>',<%=courseId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a>
+				<a href="javascript:loadModify('/cat/auth/modifyProgram/addInstructorAttributeValue.jsp?program_id=<%=programId%>&attribute_value_id=<%=av.getId()%>&userid=<%=userid%>&course_id=<%=courseId%>');"><img src="/cat/images/edit_16.gif" alt="Edit instructor attribute" title="Edit instructor attribute"></a>
+				<a href="javascript:removeInstructorAttributeValue(<%=av.getId()%>,<%=programId%>,'<%=userid%>',<%=courseId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove instructor attribute" title="Remove instructor attribute" ></a>
 			</li>
 			<%
 		}

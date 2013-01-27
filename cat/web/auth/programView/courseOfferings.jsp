@@ -14,9 +14,12 @@ List<String> terms = cm.getAvailableTermsForCourse(course);
 Boolean sessionValue = (Boolean)session.getAttribute("userIsSysadmin");
 boolean sysadmin = sessionValue != null && sessionValue;
 boolean access = sysadmin;
+boolean hasInstructorAttributes = false;
 if(HTMLTools.isValid(programId))
 {
 	Organization organization = OrganizationManager.instance().getOrganizationByProgramId(programId);	
+	List<InstructorAttribute> attributes = OrganizationManager.instance().getInstructorAttributes(organization);
+	hasInstructorAttributes = attributes != null && !attributes.isEmpty();
 
 	@SuppressWarnings("unchecked")
 	HashMap<String,Organization>  userHasAccessToOrganizations = (HashMap<String,Organization> )session.getAttribute("userHasAccessToOrganizations");
@@ -48,9 +51,9 @@ for(CourseOffering offering : offerings)
 	<li class="Term_<%=offering.getTerm()%>" <%=hide%> >
 	 <%if(accessToOffering){%><a href="/cat/auth/courseOffering/characteristicsStart.jsp?course_offering_id=<%=offering.getId()%>"><%}%>section
 	 		 <%=offering.getSectionNumber()%> in <%=offering.getTerm()%> ( <%=offering.getMedium() %> )<%if(accessToOffering){%></a><%}%>
-	 		 <%=cm.getInstructorsString(offering,access,programId)%> (<%=offering.getNumStudents()%> students)
-	 <%if(access){%> <a href="javascript:loadModify('/cat/auth/modifyProgram/addCourseOfferingToCourse.jsp?program_id=<%=programId%>&course_id=<%=course.getId()%>&course_offering_id=<%=offering.getId()%>');"><img src="/cat/images/edit_16.gif" alt="Edit"></a><%}%>
-	 <%if(access){%> <a href="javascript:removeOfferingFromCourse(<%=course.getId()%>,<%=offering.getId()%>,<%=programId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a><%} %>
+	 		 <%=cm.getInstructorsString(offering,access,programId,hasInstructorAttributes)%> (<%=offering.getNumStudents()%> students)
+	 <%if(access){%> <a href="javascript:loadModify('/cat/auth/modifyProgram/addCourseOfferingToCourse.jsp?program_id=<%=programId%>&course_id=<%=course.getId()%>&course_offering_id=<%=offering.getId()%>');"><img src="/cat/images/edit_16.gif" alt="Edit course offering details" title="Edit course offering details"></a><%}%>
+	 <%if(access){%> <a href="javascript:removeOfferingFromCourse(<%=course.getId()%>,<%=offering.getId()%>,<%=programId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove course offering" title="Remove course offering" ></a><%} %>
 	</li>
 	<% 
 }
@@ -62,7 +65,7 @@ if(access)
 {
 %>
 	<li>	<a href="javascript:loadModify('/cat/auth/modifyProgram/addCourseOfferingToCourse.jsp?course_id=<%=course.getId()%>&program_id=<%=programId%>');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add a course offering" title="Add a course offering"/>
 				Add a course offering
 			</a>
 	</li>

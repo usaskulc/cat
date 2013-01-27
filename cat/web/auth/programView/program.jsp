@@ -27,7 +27,7 @@ else if (clientBrowser.indexOf("Linux")>-1)
 else
 	clientBrowser="windows";
 %>
-<h2><%=o.getName()%><%if(sysadmin){%> &nbsp; <a href="javascript:loadModify('/cat/auth/modifyProgram/program.jsp?organization_id=<%=organization.getId()%>&program_id=<%=o.getId()%>','characteristicsModifyDiv');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit"></a><%}%></h2>
+<h2><%=o.getName()%><%if(sysadmin){%> &nbsp; <a href="javascript:loadModify('/cat/auth/modifyProgram/program.jsp?organization_id=<%=organization.getId()%>&program_id=<%=o.getId()%>','characteristicsModifyDiv');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit program details" title="Edit program details"></a><%}%></h2>
 
 <h3>Courses</h3>
 

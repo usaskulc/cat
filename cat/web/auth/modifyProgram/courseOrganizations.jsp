@@ -20,7 +20,7 @@ if(sysadmin || homeOrganizations == null || homeOrganizations.isEmpty())
 	<%
 		for(LinkCourseOrganization orgLink: homeOrganizations)
 		{
-	%><%=orgLink.getOrganization().getName()+ (!orgLink.getOrganization().getName().equals(orgLink.getOrganization().getSystemName())?"(system name:"+orgLink.getOrganization().getSystemName()+")":"")  %> <a href="javascript:removeOrganizationFromCourse(<%=orgLink.getId()%>,<%=programId%>,<%=courseId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a><br>
+	%><%=orgLink.getOrganization().getName()+ (!orgLink.getOrganization().getName().equals(orgLink.getOrganization().getSystemName())?"(system name:"+orgLink.getOrganization().getSystemName()+")":"")  %> <a href="javascript:removeOrganizationFromCourse(<%=orgLink.getId()%>,<%=programId%>,<%=courseId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove course from organization" title="Remove course from organization" ></a><br>
 
 	<%}
 	%>

@@ -21,8 +21,8 @@ for(OrganizationOutcomeGroup group: groups)
 {
 	%>
 	<li><strong><%=group.getName()%></strong>	 
-		<a href="javascript:editGenericProgramField(<%=group.getId()%>,'OrganizationOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit Name" alt="Edit Name"/></a>
-		<a href="javascript:editOutcome('OrganizationOutcomeGroup',<%=group.getId()%>,<%=organizationId%>,'delete');"><img src="/cat/images/deletes.gif" alt="Delete"/></a>
+		<a href="javascript:editGenericProgramField(<%=group.getId()%>,'OrganizationOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit outcome category" alt="Edit outcome category"/></a>
+		<a href="javascript:editOutcome('OrganizationOutcomeGroup',<%=group.getId()%>,<%=organizationId%>,'delete');"><img src="/cat/images/deletes.gif" alt="Delete outcoem category" title="Delete outcome category"/></a>
 	</li>
 	<li>
 		<ul style="padding-left:15px;line-height:1.0em;">
@@ -33,9 +33,9 @@ for(OrganizationOutcomeGroup group: groups)
 		{
 			%>
 			<li><%=outcome.getName()%>
-			 <a href="javascript:editGenericProgramField(<%=outcome.getId()%>,'OrganizationOutcome','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit Name" alt="Edit Name"/></a>
-			 <a href="javascript:editGenericProgramField(<%=outcome.getId()%>,'OrganizationOutcome','description','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit Description" alt="Edit Description"/></a>
-			 <a href="javascript:editOutcome('OrganizationOutcome',<%=outcome.getId()%>,<%=organizationId%>,'delete');"><img src="/cat/images/deletes.gif" alt="Delete"/></a>
+			 <a href="javascript:editGenericProgramField(<%=outcome.getId()%>,'OrganizationOutcome','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit outcome" alt="Edit outcome"/></a>
+			 <a href="javascript:editGenericProgramField(<%=outcome.getId()%>,'OrganizationOutcome','description','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit outcome description" alt="Edit outcome description"/></a>
+			 <a href="javascript:editOutcome('OrganizationOutcome',<%=outcome.getId()%>,<%=organizationId%>,'delete');"><img src="/cat/images/deletes.gif" alt="Delete outcome" title="Delete outcome"/></a>
 			</li>
 			
 					
@@ -43,7 +43,7 @@ for(OrganizationOutcomeGroup group: groups)
 		}
 		%>
 			<li>
-				<a href="javascript:editGenericProgramField(-1,'OrganizationOutcome','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>','organization_outcome_group_id=<%=group.getId()%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Add Outcome" alt="Add Outcome"/>Add Outcome to Group</a>
+				<a href="javascript:editGenericProgramField(-1,'OrganizationOutcome','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>','organization_outcome_group_id=<%=group.getId()%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Add Outcome" alt="Add outcome to outcome category" title="Add outcome to outcome category"/>Add Outcome to outcome category</a>
 			</li>
 		</ul>
 	</li>
@@ -51,10 +51,10 @@ for(OrganizationOutcomeGroup group: groups)
 }
 %>
 	<li>
-		<a href="javascript:editGenericProgramField(-1,'OrganizationOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>','organization_id=<%=organizationId%>');" class="smaller">Create new group for <%=organization.getName()%></a>
+		<a href="javascript:editGenericProgramField(-1,'OrganizationOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>','organization_id=<%=organizationId%>');" class="smaller">Create new outcome category for <%=organization.getName()%></a>
 	</li>
 	<li>
-		<a href="javascript:editGenericProgramField(-1,'OrganizationOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>','organization_id=-1');" class="smaller">Create new General group</a>
+		<a href="javascript:editGenericProgramField(-1,'OrganizationOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editOrganizationOutcomes.jsp?organization_id=<%=organizationId%>','organization_id=-1');" class="smaller">Create new "General" outcome category</a>
 	</li>
 	
 </ul>

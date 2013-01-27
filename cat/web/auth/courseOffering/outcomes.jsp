@@ -46,6 +46,7 @@ specifically those abilities, knowledge, and values for which you anticipate
  evidence of in students as they complete your course. 
  You may enter up to <%=maxOutcomes%> course learning outcomes one-at-a time by clicking on <i><b>add course learning outcome</b></i> to add each entry.
 Each entry may contain no more than 400 characters (less than 10 outcomes recommended). 
+To change the order of the course learning outcomes, use the arrows to the left of each outcome
 </p>
 
 <div>
@@ -87,13 +88,13 @@ for(CourseOutcome o : outcomes)
 	    <%if(count>1)
 		{%>
 			<a href="javascript:moveOutcome(<%=o.getId()%>,<%=courseOfferingId%>,'up');">
-				<img src="/cat/images/up2.gif"  alt="Move Up"/>
+				<img src="/cat/images/up2.gif"  alt="move up" title="move up"/>
 			</a>
 		<%}
 		if(count <= lastOne)
 		{%>
 			<a href="javascript:moveOutcome(<%=o.getId()%>,<%=courseOfferingId%>,'down');">
-				<img src="/cat/images/down2.gif"  alt="Move Down"/>
+				<img src="/cat/images/down2.gif"  alt="move down" title="move down"/>
 			</a>
 		<%}
 		%>
@@ -101,8 +102,8 @@ for(CourseOutcome o : outcomes)
 	    <td <%=charOutputDisplay%>><%=o.getName()%>	
 	    <%if(access)
 		  {%>	
-				<a href="javascript:loadModify('/cat/auth/courseOffering/addOutcome.jsp?outcome_id=<%=o.getId()%>&organization_id=<%=organization.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit"></a>
-				<a href="javascript:removeCourseOfferingOutcome(<%=courseOfferingId%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove"/></a><%
+				<a href="javascript:loadModify('/cat/auth/courseOffering/addOutcome.jsp?outcome_id=<%=o.getId()%>&organization_id=<%=organization.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit outcome" title="Edit outcome"></a>
+				<a href="javascript:removeCourseOfferingOutcome(<%=courseOfferingId%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove outcome" title="Remove outcome"/></a><%
 		  }%>
 		</td>
 	</tr>
@@ -119,7 +120,7 @@ if(access)
 		<tr>
 			<td>&nbsp;</td>
 			<td colspan="2"><a href="javascript:loadModify('/cat/auth/courseOffering/addOutcome.jsp?organization_id=<%=organization.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add course outcome" title="Add course outcome"/>
 				add course learning outcome 
 			</a>
 		    </td>

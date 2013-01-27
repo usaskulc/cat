@@ -15,7 +15,7 @@ for(OrganizationAdmin organizationAdmin : list)
 {
 %>
 	<li><%=manager.getDisplayName(organizationAdmin)%><a href="javascript:modifyPermission(-1,<%=organizationId%>,'<%=organizationAdmin.getType()%>',escape('<%=organizationAdmin.getName().replaceAll("'","\\\\'")%>'),'','','delete',<%=organizationAdmin.getId()%>);">
-				<img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove"/></a>
+				<img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove permission" title="Remove permission"/></a>
 	</li>
 
 <%
@@ -24,7 +24,7 @@ for(OrganizationAdmin organizationAdmin : list)
 </ul>
 <hr/>
 <a href="javascript:loadModifyIntoDiv('/cat/auth/modifySystem/addPermission.jsp?organization_id=<%=organizationId%>','membersDiv');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add person" title="Add person"/>
 				Add a Person
 			</a>
 <br/>

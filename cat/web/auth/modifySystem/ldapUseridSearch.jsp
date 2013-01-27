@@ -1,8 +1,8 @@
 <%@ page import="java.util.*,java.net.*,ca.usask.ocd.ldap.*,ca.usask.gmcte.currimap.model.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.util.*, javax.naming.*"%><%
 String text = request.getParameter("userid");
-if(!HTMLTools.isValid(text) || text.length()!=6)
+if(!HTMLTools.isValid(text))
 {
-	out.println("Userid should be 6 characters long");
+	out.println("Please enter an id to search for");
 	return;
 }
 int programId = HTMLTools.getInt( request.getParameter("program_id"));
@@ -10,11 +10,11 @@ int programId = HTMLTools.getInt( request.getParameter("program_id"));
 TreeMap<String,String>  results = new TreeMap<String,String>();
 try
 {
-	results= new TreeMap<String,String>();
+	/*results= new TreeMap<String,String>();
 	results.put("givenName","Fred");
 	results.put("sn","Flintstone");
-	if(1 ==2)
-		results = LdapConnection.instance().getUserData(text);	
+	if(1 ==2)*/
+	results = LdapConnection.instance().getUserData(text);	
 }
 catch(SizeLimitExceededException sle)
 {

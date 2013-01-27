@@ -11,7 +11,7 @@ for(SystemAdmin systemAdmin : list)
 {
 %>
 	<li><%=manager.getDisplayName(systemAdmin)%><a href="javascript:modifyPermission(-1,-1,'<%=systemAdmin.getType()%>',escape('<%=systemAdmin.getName().replaceAll("'","\\\\'")%>'),'','','delete',<%=systemAdmin.getId()%>);">
-				<img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove"/></a>
+				<img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove permission" title="Remove permission"/></a>
 	</li>
 <%
 }%>
@@ -19,7 +19,7 @@ for(SystemAdmin systemAdmin : list)
 </ul>
 <hr/>
 <a href="javascript:loadModifyIntoDiv('/cat/auth/modifySystem/addPermission.jsp?program_id=-1','membersDiv');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add person"/>
 				Add a Person
 			</a>
 <br/>

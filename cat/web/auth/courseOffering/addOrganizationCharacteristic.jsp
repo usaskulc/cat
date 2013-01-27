@@ -25,8 +25,8 @@ for(CharacteristicType type: types)
 {
 
 		%><ul><h5><%=type.getName()%> (Associated question:<%=type.getQuestionDisplay()%>)<a href="javascript:addCharacteristicToOrganization(<%=type.getId()%>,<%=o.getId()%>);" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
-				Add to Organization
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add to organization" title="Add to organization"/>
+				Add to organization
 			</a> </h5> 
 			<%
 			for(Characteristic c : dm.getCharacteristicsForType(type))

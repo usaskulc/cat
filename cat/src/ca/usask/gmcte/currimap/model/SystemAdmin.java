@@ -82,8 +82,8 @@ public class SystemAdmin implements java.io.Serializable
 	{
 		this.type = type;
 	}
-	@Column(name = "created_userid", length = 6)
-	@Length(max = 6)
+	@Column(name = "created_userid", length = 30)
+	@Length(max = 30)
 	public String getCreatedUserid()
 	{
 		return createdUserid;

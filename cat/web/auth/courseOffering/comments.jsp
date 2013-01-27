@@ -24,7 +24,7 @@ if(HTMLTools.isValid(courseOfferingId))
 	
 </div>
 <br/>
-<%if(access){%><a href="javascript:loadModify('/cat/auth/courseOffering/editComments.jsp?course_offering_id=<%=courseOfferingId%>','courseOfferingComments');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit"></a> <%}%>
+<%if(access){%><a href="javascript:loadModify('/cat/auth/courseOffering/editComments.jsp?course_offering_id=<%=courseOfferingId%>','courseOfferingComments');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit comment" title="Edit comment"></a> <%}%>
 
 <%}
 catch(Exception e)

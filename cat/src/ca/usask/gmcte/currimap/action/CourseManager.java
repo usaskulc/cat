@@ -1939,7 +1939,7 @@ public class CourseManager
 		return toReturn;
 	}
 	
-	public String getInstructorsString(CourseOffering offering, boolean admin, String programId) throws Exception
+	public String getInstructorsString(CourseOffering offering, boolean admin, String programId,boolean hasInstructorAttributes) throws Exception
 	{
 		StringBuilder output = new StringBuilder();
 		
@@ -1959,7 +1959,7 @@ public class CourseManager
 			output.append(instr.getInstructor().getInstructorDisplay());
 			
 			int programIdInt = HTMLTools.getInt(programId);
-			if(programIdInt > -1)
+			if(programIdInt > -1 && hasInstructorAttributes)
 			{
 				List<InstructorAttributeValue> attrValues = getInstructorAttributeValues(instr.getInstructor().getUserid(), programIdInt);
 				String prevAttr = "";
@@ -1989,7 +1989,7 @@ public class CourseManager
 					output.append("] ");
 				}
 			}
-			if(admin)
+			if(admin && hasInstructorAttributes)
 			{
 				output.append("<a href=\"javascript:loadModify('/cat/auth/modifyProgram/modifyInstructorAttributes.jsp?program_id=");
 				output.append(programId);

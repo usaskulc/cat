@@ -2,7 +2,7 @@
 String text = request.getParameter("userid");
 if(!HTMLTools.isValid(text))
 {
-	out.println("Please enter a userid to search for");
+	out.println("Please enter an id to search for");
 	return;
 }
 int programId = HTMLTools.getInt( request.getParameter("program_id"));
@@ -14,7 +14,7 @@ try
 	results.put("givenName","Fred");
 	results.put("sn","Flintstone");
 	if(1 ==2)*/
-		results = LdapConnection.instance().getUserData(text);	
+	results = LdapConnection.instance().getUserData(text);	
 }
 catch(SizeLimitExceededException sle)
 {

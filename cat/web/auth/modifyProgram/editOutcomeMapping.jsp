@@ -33,7 +33,7 @@ for(ProgramOutcome candidateOutcome : associatedProgramOutcomes)
 			found = true;	
 			%>
 			<li><strong><%=organizationOutcome.getName()%></strong> is linked to <strong><%=candidateOutcome.getName()%></strong>
-				<a href="javascript:deleteOrganizationOutcomeMapping(<%=programId%>, <%=organizationOutcomeId%>,<%=existingLink.getId()%>);" class="smaller"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete"/></a>
+				<a href="javascript:deleteOrganizationOutcomeMapping(<%=programId%>, <%=organizationOutcomeId%>,<%=existingLink.getId()%>);" class="smaller"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete outcome link" title="Delete outcome link"/></a>
 			</li>
 			<%
 		}

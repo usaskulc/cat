@@ -19,7 +19,7 @@ for(Organization o : list)
 <hr/>
 <%
 
-if(sysadmin) {%><a href="javascript:loadModify('/cat/auth/modifySystem/organization.jsp');" class="smaller"><img src="/cat/images/add_24.gif" style="height:14pt;" alt="Add"> Add an Organization</a><%}%>
+if(sysadmin) {%><a href="javascript:loadModify('/cat/auth/modifySystem/organization.jsp');" class="smaller"><img src="/cat/images/add_24.gif" style="height:14pt;" alt="Add organization" title="Add organization"> Add an Organization</a><%}%>
 
 
 

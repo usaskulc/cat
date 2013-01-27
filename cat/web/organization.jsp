@@ -25,7 +25,7 @@ else
 %>
 
 
-<h<%=hasParent?"4":"3"%>><a href="javascript:toggleDisplay('org_<%=id%>','<%=clientBrowser%>');"><img src="images/closed_folder_<%=clientBrowser%>.gif" id="org_<%=id%>_img"><%=o.getName()%></a><%if(sysadmin){%> <a href="javascript:loadModify('/cat/auth/modifySystem/editOrganization.jsp?organization_id=<%=o.getId()%>');"><img src="/cat/images/edit_16.gif" alt="Edit" ></a><%} %></h<%=hasParent?"4":"3"%>>
+<h<%=hasParent?"4":"3"%>><a href="javascript:toggleDisplay('org_<%=id%>','<%=clientBrowser%>');"><img src="images/closed_folder_<%=clientBrowser%>.gif" id="org_<%=id%>_img"><%=o.getName()%></a><%if(sysadmin){%> <a href="javascript:loadModify('/cat/auth/modifySystem/editOrganization.jsp?organization_id=<%=o.getId()%>');"><img src="/cat/images/edit_16.gif" alt="Edit organization" title="Edit organization" ></a><%} %></h<%=hasParent?"4":"3"%>>
 <div id="org_<%=id%>_div" style="display:none;">
 	<div id="Organization_<%=o.getId()%>_children" style="padding-left:20px;">
 		<div id="Organization_<%=o.getId()%>_programs">
@@ -35,16 +35,16 @@ else
 				{%>
 					<%if(access){%>
 					<li><a href="/cat/auth/programView/programWrapper.jsp?program_id=<%=p.getId()%>"><%=p.getName()%></a>						
-						<a href="javascript:removeProgram(<%=p.getId()%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete" ></a>					
+						<a href="javascript:removeProgram(<%=p.getId()%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete program" title="Delete program" ></a>					
 					</li>
 					<%}%>
 				<%}
 				if(access){%><li>
-					<a href="javascript:loadModify('/cat/auth/modifyProgram/program.jsp?organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"> Add a program</a></li>
+					<a href="javascript:loadModify('/cat/auth/modifyProgram/program.jsp?organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add a program" title="Add a program"> Add a program</a></li>
 				<%}
 				if(!hasParent && sysadmin)
 					{%>
-				<li><a href="javascript:loadModify('/cat/auth/modifySystem/organization.jsp?parent_organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add">Add an Organization</a>
+				<li><a href="javascript:loadModify('/cat/auth/modifySystem/organization.jsp?parent_organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add an organization" title="Add an organization">Add an organization</a>
 				<%}
 				if(!hasParent && access)
 				{%>
@@ -70,10 +70,10 @@ else
 				{
 					%>
 						<li><%=attr.getName()%>
-						<a href="javascript:removeInstructorAttribute(<%=attr.getId()%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete" ></a>
+						<a href="javascript:removeInstructorAttribute(<%=attr.getId()%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete instructor attribute type" title="Delete instructor attribute type" ></a>
 					<%
 				}
-				%><li><a href="javascript:loadModify('/cat/auth/modifyProgram/instructorAttribute.jsp?organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"> Add an instructor attribute</a></li>
+				%><li><a href="javascript:loadModify('/cat/auth/modifyProgram/instructorAttribute.jsp?organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add an instructor attribute" title="Add an instructor attribute"> Add an instructor attribute</a></li>
 				</ul>
 			</div>
 			<div id="Organization_<%=o.getId()%>_CourseAttributes">
@@ -86,10 +86,10 @@ else
 				{
 					%>
 						<li><%=attr.getName()%>
-						<a href="javascript:removeCourseAttribute(<%=attr.getId()%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete" ></a>
+						<a href="javascript:removeCourseAttribute(<%=attr.getId()%>,<%=o.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete course attribute" title="Delete course attribute" ></a>
 					<%
 				}
-				%><li><a href="javascript:loadModify('/cat/auth/modifyProgram/courseAttribute.jsp?organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"> Add a course attribute</a></li>
+				%><li><a href="javascript:loadModify('/cat/auth/modifyProgram/courseAttribute.jsp?organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add a course attribute" title="Add a course attribute"> Add a course attribute</a></li>
 				</ul>
 				<div id="organizationOutcomesDiv_<%=o.getId()%>">
 					<jsp:include page="organizationOutcomes.jsp">

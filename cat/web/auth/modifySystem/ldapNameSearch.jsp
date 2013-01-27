@@ -6,13 +6,15 @@ int programId = HTMLTools.getInt( request.getParameter("program_id"));
 List<TreeMap<String,String>> results = new ArrayList<TreeMap<String,String>>();
 try
 {
-	TreeMap<String,String> result1= new TreeMap<String,String>();
+	/*TreeMap<String,String> result1= new TreeMap<String,String>();
 	result1.put("givenName","Fred");
 	result1.put("sn","Flintstone");
 	result1.put("cn","Freddie Flints");
 	result1.put("uid","abx123");
 	results.add(result1);
-	if(1==2)results = LdapConnection.instance().searchForUserWithSurname(text);
+	if(1==2)
+	*/
+	results = LdapConnection.instance().searchForUserWithSurname(text);
 }
 catch(SizeLimitExceededException sle)
 {

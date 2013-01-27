@@ -275,7 +275,7 @@ public class ExcelEporter
 			offeringsSheet.addCell(coSectionNumLabel);
 			Label medLabel = new Label(col++, row, ""+co.getMedium(),wrappedCell);
 			offeringsSheet.addCell(medLabel);
-			Label instructorsLabel = new Label(col++, row, cm.getInstructorsString(co, false, "-2"),wrappedCell);
+			Label instructorsLabel = new Label(col++, row, cm.getInstructorsString(co, false, "-2",false),wrappedCell);
 			offeringsSheet.addCell(instructorsLabel);
 			Label studentsLabel = new Label(col++, row, ""+co.getNumStudents(),wrappedCell);
 			offeringsSheet.addCell(studentsLabel);

@@ -27,7 +27,7 @@ if(access)
 {
 %>
 	<li>	<a href="javascript:loadModifyIntoDivWithReload('/cat/auth/modifyProgram/linkCourseProgram.jsp?program_id=<%=o.getId()%>','','programCoursesDiv');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add a course" title="Add a course"/>
 				Add a course
 			</a>
 	</li>
@@ -57,7 +57,7 @@ for(LinkCourseProgram link : courseLinks)
 	%>
 	<li><a href="/cat/auth/programView/courseCharacteristicsWrapper.jsp?program_id=<%=programId%>&course_id=<%=c.getId()%>&link_id=<%=link.getId()%>" ><span title="Offered by <%=deptString%>"><%=c.getSubject()%> <%=c.getCourseNumber()%></span>
 			 <%=c.getTitle()%> (<%=classification.getName()%>)</a> <%=attributeString%>
-	 <%if(access){%><a href="javascript:removeProgramCourse(<%=o.getId()%>,<%=link.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a><%} %>
+	 <%if(access){%><a href="javascript:removeProgramCourse(<%=o.getId()%>,<%=link.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove course" title="Remove course"></a><%} %>
 	
 	</li>
 	<% 

@@ -24,8 +24,8 @@ for(ProgramOutcomeGroup group: groups)
 	%>
 	<li><strong><%=group.getName()%></strong>	
 	
-		<a href="javascript:editGenericProgramField(<%=group.getId()%>,'ProgramOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit Name" alt="Edit Name"/></a>
-		<a href="javascript:editOutcome('ProgramOutcomeGroup',<%=group.getId()%>,<%=programId%>,'delete');"><img src="/cat/images/deletes.gif" alt="Delete"/></a>
+		<a href="javascript:editGenericProgramField(<%=group.getId()%>,'ProgramOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit outcome category" alt="Edit outcome category"/></a>
+		<a href="javascript:editOutcome('ProgramOutcomeGroup',<%=group.getId()%>,<%=programId%>,'delete');"><img src="/cat/images/deletes.gif" alt="Delete outcome category" title="Delete outcome category"/></a>
 		
 	</li>
 	<li>
@@ -37,9 +37,9 @@ for(ProgramOutcomeGroup group: groups)
 		{
 			%>
 			<li><%=outcome.getName()%>
-			 <a href="javascript:editGenericProgramField(<%=outcome.getId()%>,'ProgramOutcome','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit Name" alt="Edit Name"/></a>
-			 <a href="javascript:editGenericProgramField(<%=outcome.getId()%>,'ProgramOutcome','description','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit Description" alt="Edit Description"/></a>
-			 <a href="javascript:editOutcome('ProgramOutcome',<%=outcome.getId()%>,<%=programId%>,'delete');"><img src="/cat/images/deletes.gif" alt="Delete"/></a>
+			 <a href="javascript:editGenericProgramField(<%=outcome.getId()%>,'ProgramOutcome','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit outcome" alt="Edit outcome"/></a>
+			 <a href="javascript:editGenericProgramField(<%=outcome.getId()%>,'ProgramOutcome','description','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Edit outcome description" alt="Edit outcome description"/></a>
+			 <a href="javascript:editOutcome('ProgramOutcome',<%=outcome.getId()%>,<%=programId%>,'delete');"><img src="/cat/images/deletes.gif" alt="Delete program outcome" title="Delete program outcome"/></a>
 
 			</li>
 			
@@ -48,7 +48,7 @@ for(ProgramOutcomeGroup group: groups)
 		}
         %>
 			<li>
-				<a href="javascript:editGenericProgramField(-1,'ProgramOutcome','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>','program_outcome_group_id=<%=group.getId()%><%=additionalInfo%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Add Outcome" alt="Add Outcome"/>Add Outcome to Group</a>
+				<a href="javascript:editGenericProgramField(-1,'ProgramOutcome','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>','program_outcome_group_id=<%=group.getId()%><%=additionalInfo%>');" class="smaller"><img src="/cat/images/edit_16.gif"  title="Add program outcome to category" alt="Add program outcome to category"/>Add program outcome to category</a>
 			</li>
 		
 		</ul>
@@ -58,12 +58,12 @@ for(ProgramOutcomeGroup group: groups)
 }
 %>
 	<li>
-		<a href="javascript:editGenericProgramField(-1,'ProgramOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>','program_id=<%=programId%>');" class="smaller">Create new Program Outcome group for <%=program.getName()%> (eg: Biology Program Outcomes, Math: Geometry)</a>
+		<a href="javascript:editGenericProgramField(-1,'ProgramOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>','program_id=<%=programId%>');" class="smaller">Create new Program Outcome category for <%=program.getName()%> (eg: Biology Program Outcomes, Math: Geometry)</a>
 	</li>
 	<%if(sysadmin)
 		{%>
 	<li>
-		<a href="javascript:editGenericProgramField(-1,'ProgramOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>','program_id=-1');" class="smaller">Create new General group (eg: Research)</a>
+		<a href="javascript:editGenericProgramField(-1,'ProgramOutcomeGroup','name','editDiv','/cat/auth/modifyProgram/editProgramOutcomes.jsp?program_id=<%=programId%>','program_id=-1');" class="smaller">Create new "General" category (eg: Research)</a>
 	</li>
 	<%}%>
 	

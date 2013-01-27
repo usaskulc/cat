@@ -41,7 +41,7 @@ for(LinkOrganizationOrganizationOutcome link : links)
 	%>
 	
 	<li><%=o.getName()%> <%=HTMLTools.addBracketsIfNotNull(o.getDescription())%>
-	 <%if(access){%><a href="javascript:removeOrganizationOutcome(<%=organization.getId()%>,<%=link.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a><%} %>
+	 <%if(access){%><a href="javascript:removeOrganizationOutcome(<%=organization.getId()%>,<%=link.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove organization outcome" title="Remove organization outcome" ></a><%} %>
 	</li>
 	<% 
 	prevGroup = groupName;
@@ -62,7 +62,7 @@ if(access)
 {
 %>
 	<li>	<a href="javascript:loadModify('/cat/auth/modifyProgram/organizationOutcome.jsp?organization_id=<%=organization.getId()%>');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add outcome" title="Add outcome"/>
 				Add an outcome
 			</a>
 	</li>

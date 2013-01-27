@@ -22,8 +22,8 @@ for(CourseAttribute attrType: attrTypes)
 		{
 			%>
 			<li><%=av.getValue()%>
-				<a href="javascript:loadModify('/cat/auth/modifyProgram/addCourseAttributeValue.jsp?program_id=<%=programId%>&attribute_value_id=<%=av.getId()%>&course_id=<%=courseId%>');"><img src="/cat/images/edit_16.gif" alt="Edit"></a>
-				<a href="javascript:removeCourseAttributeValue(<%=av.getId()%>,<%=programId%>,<%=courseId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a>
+				<a href="javascript:loadModify('/cat/auth/modifyProgram/addCourseAttributeValue.jsp?program_id=<%=programId%>&attribute_value_id=<%=av.getId()%>&course_id=<%=courseId%>');"><img src="/cat/images/edit_16.gif" alt="Edit course attribute" title="Edit course attribute"></a>
+				<a href="javascript:removeCourseAttributeValue(<%=av.getId()%>,<%=programId%>,<%=courseId%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove course attribute" title="Remove course attribute" ></a>
 			</li>
 			<%
 		}

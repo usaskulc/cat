@@ -28,7 +28,7 @@ if(temp != null)
 { %>
 <div id="programCourseLinkDiv">
 	Course is <%=o.getCourseClassification().getName()%> and is typically taken <%=o.getTime().getName()%>. 
-	<%if(access){%><a href="javascript:hideDiv('programCourseLinkDiv');loadURLIntoId('/cat/auth/modifyProgram/editProgramCourseLink.jsp?course_id=<%=courseId%>&program_id=<%=programId%>','#editProgramCourseLinkDiv');"><img src="/cat/images/edit_16.gif" alt="Edit"></a> <%} %>
+	<%if(access){%><a href="javascript:hideDiv('programCourseLinkDiv');loadURLIntoId('/cat/auth/modifyProgram/editProgramCourseLink.jsp?course_id=<%=courseId%>&program_id=<%=programId%>','#editProgramCourseLinkDiv');"><img src="/cat/images/edit_16.gif" alt="Edit course classification" title="Edit course classification"></a> <%} %>
 </div>
 <%
 }

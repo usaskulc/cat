@@ -95,9 +95,9 @@ for(LinkProgramProgramOutcome link : outcomeLinks)
 	<li><span <%=charOutputDisplay%>><%=o.getName()%> <%=HTMLTools.addBracketsIfNotNull(o.getDescription())%></span>
 	 <%if(access){
 	 	if(o.getGroup().getProgramId() > 0 ){%>
-	 <a href="javascript:loadModify('/cat/auth/modifyProgram/editProgramOutcome.jsp?program_id=<%=program.getId()%>&organization_id=<%=org.getId()%>&link_id=<%=link.getId()%>');"><img src="/cat/images/edit_16.gif" style="height:10pt;" alt="Remove" ></a>
+	 <a href="javascript:loadModify('/cat/auth/modifyProgram/editProgramOutcome.jsp?program_id=<%=program.getId()%>&organization_id=<%=org.getId()%>&link_id=<%=link.getId()%>');"><img src="/cat/images/edit_16.gif" style="height:10pt;" alt="Edit program outcome" title="Edit program outcome" ></a>
 	 	<%} %>
-	 <a href="javascript:removeProgramOutcome(<%=program.getId()%>,<%=link.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove" ></a>
+	 <a href="javascript:removeProgramOutcome(<%=program.getId()%>,<%=link.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove program outcome" title="Remove program outcome" ></a>
 	 <%} %>
 	</li>
 	<% 
@@ -118,8 +118,8 @@ if(access)
 {
 %>
 	<li>	<a href="javascript:loadModify('/cat/auth/modifyProgram/programOutcome.jsp?program_id=<%=program.getId()%>&organization_id=<%=org.getId()%>');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add"/>
-				Add an outcome
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add a program outcome" title="Add a program outcome"/>
+				Add a program outcome
 			</a>
 	</li>
 <%} %>

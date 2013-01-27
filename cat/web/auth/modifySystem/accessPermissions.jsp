@@ -20,9 +20,9 @@ for(Organization organization : organizations)
 {
 %>
 	<li><span style="color:<%=organization.getActive().equals("Y")?"black":"grey"%>;"><%=organization.getName()%> <%=organization.getActive().equals("Y")?"":"(inactive)"%></span>
-<a href="javascript:deleteOrganization(<%=organization.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete"/></a> 
+<a href="javascript:deleteOrganization(<%=organization.getId()%>);"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Delete permission" title="Delete permission"/></a> 
 <a href="javascript:loadModifyIntoDiv('/cat/auth/modifySystem/organizationPermissions.jsp?organization_id=<%=organization.getId()%>','modifyDiv');" class="smaller">
-			<img src="/cat/images/edit_16.gif" style="height:10pt;" alt="Edit"/>
+			<img src="/cat/images/edit_16.gif" style="height:10pt;" alt="Edit permissions" title="Edit permissions"/>
 				Edit Permissions
 			</a></li>
 
@@ -43,7 +43,7 @@ for(Organization organization : organizations)
 						
 <h2>System Permissions</h2>
 <a href="javascript:loadModifyIntoDiv('/cat/auth/modifySystem/systemPermissions.jsp','modifyDiv');">
-				<img src="/cat/images/edit_16.gif" style="height:10pt;" alt="Edit"/>
+				<img src="/cat/images/edit_16.gif" style="height:10pt;" alt="Edit System permissions" title="Edit System permissions"/>
 				System Permissions
 </a>
 </div>

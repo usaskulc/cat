@@ -49,9 +49,9 @@ public class Instructor implements java.io.Serializable
 		this.id = id;
 	}
 
-	@Column(name = "userid", nullable = false, length = 12)
+	@Column(name = "userid", nullable = false, length = 30)
 	@NotNull
-	@Length(max = 12)
+	@Length(max = 30)
 	public String getUserid()
 	{
 		return this.userid;
