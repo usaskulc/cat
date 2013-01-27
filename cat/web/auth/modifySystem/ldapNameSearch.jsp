@@ -33,7 +33,7 @@ for(TreeMap<String,String> result : results)
 {
 	%>
 	<li><%=result.get("cn")%>
-	 <a href="javascript:setValues(escape('<%=result.get("givenName")%>'),escape('<%=result.get("sn")%>'),'<%=result.get("uid")%>');addPermission();" class="smaller">Add</a> 
+	 <a href="javascript:setValues('<%=result.get("givenName")%>','<%=result.get("sn")%>','<%=result.get("uid")%>');addPermission();" class="smaller">Add</a> 
 	</li>
 
 <%

@@ -32,7 +32,7 @@ for(TreeMap<String,String> result : results)
 {
 	%>
 	<li><%=result.get("cn")%>
-	 <a href="javascript:setFirst(escape('<%=result.get("givenName")%>'));setLast(escape('<%=result.get("sn")%>'));addInstructor('<%=result.get("uid")%>');" class="smaller">Add</a> 
+	 <a href="javascript:setFirst('<%=result.get("givenName")%>');setLast('<%=result.get("sn")%>');addInstructor('<%=result.get("uid")%>');" class="smaller">Add</a> 
 	</li>
 
 <%
