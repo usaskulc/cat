@@ -254,18 +254,19 @@ public class LdapConnection
 		start=System.currentTimeMillis();
 		LdapConnection ldap=new LdapConnection();
 		
-		TreeMap<String,String> data = ldap.getUserData("abv641");
+		TreeMap<String,String> data = ldap.getUserData("dfv574");
 		for(String key : data.keySet())
 		{
 			System.out.println(key +" = " + data.get(key));
 		}
 		
-		
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 		List<String> grouplist = ldap.getDirectDeptEmployees("University Learning Centre");
 		for(String group:grouplist)
 		{
 			System.out.println(group);
 		}
+		
 		/* List<TreeMap<String,String>> list = ldap.getUserData(grouplist);
 		for(TreeMap<String,String> data:list)
 		{
@@ -386,6 +387,9 @@ public class LdapConnection
 	public TreeMap<String,String> getUserData(String nsid) throws Exception
 	{
 		TreeMap<String,String> values=new TreeMap<String,String>();
+		
+		//the assumption is made that sn and givenName exist.  If these values have a different name, 
+		// please use a translation where the values are placed in the treemap
 		String[] attributesToReturn = {"sn", "givenName","initials","uofsStudentNumber","cn"};
 		SearchControls constraints = new SearchControls();
 		constraints.setReturningAttributes(attributesToReturn);
@@ -404,7 +408,6 @@ public class LdapConnection
 				 
 		NamingEnumeration<SearchResult> results = this.executeSearch(ouGroupString + ",ou=people,dc=usask,dc=ca","(uid="+nsid+")", constraints);
 									 
-		//NamingEnumeration<SearchResult> results = this.executeSearch("ou=people,dc=usask,dc=ca","(&(objectClass=eduPerson)(uid="+nsid+"))", constraints);
 		if(results != null)
 		{
 			while (results.hasMore()) 
@@ -426,7 +429,15 @@ public class LdapConnection
 							 
 							 if(temp instanceof String)
 							 {
-								 values.put(attrId, (String)temp);
+								//put attrId key and temp value in treemap.
+								/*
+								if (attrId.equals("your first name key"))
+									values.put("givenName",(String)temp);
+								else if (attrId.equals("your last name key"))
+									values.put("sn",(String)temp);
+								*/
+						
+								values.put(attrId, (String)temp);
 							 }
 						 }
 					}

@@ -20,7 +20,7 @@
 	    </init-param>
 	    <init-param>
 	      <param-name>edu.yale.its.tp.cas.client.filter.serverName</param-name>
-	      <param-value>ulc.usask.ca</param-value>
+	      <param-value>yourtomcatserver.yourdomain.edu</param-value><!-- name of the server to return to after successful authentication-->
 	    </init-param>
 	</filter>
 	<filter>

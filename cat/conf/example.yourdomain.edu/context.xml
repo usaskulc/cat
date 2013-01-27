@@ -4,7 +4,7 @@
 	
 	<Resource name="jdbc/currimap" auth="Container" type="javax.sql.DataSource"
 		maxActive="30" maxIdle="10" maxWait="-1"
-		username="currimapUser" password="ULCkerriMap"
+		username="db_user" password="db_password"
 		driverClassName="com.mysql.jdbc.Driver"
 		url="jdbc:mysql://localhost/currimap?autoReconnect=true"/>
 
