@@ -44,7 +44,7 @@ else
 				<%}
 				if(!hasParent && sysadmin)
 					{%>
-				<li><a href="javascript:loadModify('/cat/auth/modifySystem/organization.jsp?parent_organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add an organization" title="Add an organization">Add an organization</a>
+				<li><a href="javascript:loadModify('/cat/auth/modifySystem/editOrganization.jsp?parent_organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add an organization" title="Add an organization">Add an organization</a>
 				<%}
 				if(!hasParent && access)
 				{%>

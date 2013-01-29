@@ -49,6 +49,7 @@ public class OrganizationManager
 			Organization parent = (Organization) session.get(Organization.class,Integer.parseInt(parentId));
 			o.setParentOrganization(parent);
 		}
+		session.save(o);
 		CharacteristicType defaultType = CharacteristicManager.instance().getFirstCharacteristicType(session);
 		if(defaultType !=null)
 		{
@@ -57,7 +58,7 @@ public class OrganizationManager
 			link.setCharacteristicType(defaultType);	
 			session.save(link);
 		}
-		session.save(o);
+		
 		session.getTransaction().commit();
 		return true;
 		}

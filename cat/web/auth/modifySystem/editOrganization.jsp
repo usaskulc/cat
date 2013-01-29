@@ -9,6 +9,12 @@ if(organizationId > 0)
 	o  = OrganizationManager.instance().getOrganizationById(organizationId);
 	editing = true;
 }
+String parentId = request.getParameter("parent_organization_id");
+boolean hasParent = false;
+if(HTMLTools.isValid(parentId))
+{
+	hasParent = true;
+}
 %>
 <p>
 A organization can have 2 different names. The system-name is used for association of courses with organizations dynamically. 
@@ -21,6 +27,11 @@ A organization can have 2 different names. The system-name is used for associati
 			%><input type="hidden" name="objectId" id="objectId" value="<%=o.getId()%>"/>
 			<%
 		}
+	if(hasParent)
+	{
+		%><input type="hidden" name="parent_organization_id" id="parent_organization_id" value="<%=parentId%>"/>
+		<%
+	}
 		%>
 	<div class="formElement">
 		<div class="label">Name:</div>
@@ -49,7 +60,7 @@ A organization can have 2 different names. The system-name is used for associati
 	
 	<br/>
 	<div class="formElement">
-		<div class="label"><input type="button" name="saveButton" id="saveButton" value="Save Organization" onclick="saveSystem(new Array('name'),new Array('name','system_name','active'));" /></div>
+		<div class="label"><input type="button" name="saveButton" id="saveButton" value="Save Organization" onclick="saveSystem(new Array('name'),new Array('name','system_name','active','parent_organization_id'));" /></div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 	</div>
