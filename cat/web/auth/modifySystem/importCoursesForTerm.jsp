@@ -9,16 +9,16 @@ DataUpdater du = new DataUpdater();
 
 long start = System.currentTimeMillis(); 
 long processStart = start;
-List<String> depts = di.retrieveOrganizations();
+List<String> orgs = di.retrieveOrganizations();
 
-out.println("<br>Number of organizations to process: "+depts.size());
+out.println("<br>Number of organizations to process: "+orgs.size());
 out.flush();
 
 long now = System.currentTimeMillis();
 
 logger.error("It took "+(now-start)+" to retrieve all depts");
 start=now;
-out.println("<br>update organizations result:"+du.updateOrganizations(depts));
+out.println("<br>update organizations result:"+du.updateOrganizations(orgs));
 now = System.currentTimeMillis();
 response.flushBuffer();
 out.flush();

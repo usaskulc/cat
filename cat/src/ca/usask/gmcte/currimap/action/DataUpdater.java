@@ -18,6 +18,7 @@ public class DataUpdater
 {
 	private static Logger logger = Logger.getLogger(DataUpdater.class);
 
+	@SuppressWarnings("resource")
 	public String updateCourses(List<Course> courses,String department)
 	{
 		Connection con = ConnectionTool.getConnection("currimap");
@@ -32,7 +33,7 @@ public class DataUpdater
 		try
 		{
 			con.setAutoCommit(true);
-			String departmentQuery = "SELECT id FROM department WHERE name = ?";
+			String departmentQuery = "SELECT id FROM organization WHERE system_name = ?";
 			
 			String courseQuery = "SELECT id FROM course WHERE course_number = ? AND subject = ?";
 			String courseInsert  = "INSERT INTO course (course_number,subject,title) values (?,?,?)";
@@ -42,13 +43,13 @@ public class DataUpdater
 		
 
 			String instructorQuery = "SELECT id FROM instructor WHERE userid = ?";
-			String instructorInsert  = "INSERT INTO instructor (userid) values (?)";
+			String instructorInsert  = "INSERT INTO instructor (userid,first_name,last_name) values (?,?,?)";
 		
 			String instructorLinkQuery = "SELECT id FROM link_course_offering_instructor WHERE course_offering_id = ? AND instructor_id = ?";
 			String instructorLinkInsert  = "INSERT INTO link_course_offering_instructor (course_offering_id,instructor_id) values (?,?)";
 		
-			String courseDepartmentQuery = "SELECT id FROM link_course_department WHERE course_id = ? AND department_id = ?";
-			String courseDepartmentInsert  = "INSERT INTO link_course_department (course_id,department_id) values (?,?)";
+			String courseDepartmentQuery = "SELECT id FROM link_course_organization WHERE course_id = ? AND organization_id = ?";
+			String courseDepartmentInsert  = "INSERT INTO link_course_organization (course_id,organization_id) values (?,?)";
 		
 			
 			departmentStmt = con.prepareStatement(departmentQuery);
@@ -219,6 +220,9 @@ public class DataUpdater
 							{
 								insertStmt = con.prepareStatement(instructorInsert);
 								insertStmt.setString(1,instr.getUsername().trim());
+								insertStmt.setString(2,instr.getFirstName().trim());
+								insertStmt.setString(3,instr.getLastName().trim());
+								
 								inserted = insertStmt.executeUpdate();
 								if(inserted<1)
 								{
@@ -281,12 +285,12 @@ public class DataUpdater
 			}
 			else
 			{
-				logger.fatal("UNABLE TO FIND Department ["+department+"]");
+				logger.fatal("UNABLE TO FIND Organization ["+department+"]");
 			}
 		}
 		catch(Exception e)
 		{
-			logger.error("Problems checking departments",e);
+			logger.error("Problems checking organizations",e);
 			e.printStackTrace();
 		}
 		finally
@@ -302,7 +306,7 @@ public class DataUpdater
 		return r.toString();
 	}
 	
-	public String updateDepartments(List<String> depts)
+	public String updateOrganizations(List<String> orgs)
 	{
 		Connection con = ConnectionTool.getConnection("currimap");
 		PreparedStatement stmt = null;
@@ -311,29 +315,31 @@ public class DataUpdater
 		try
 		{
 			
-			String query = "SELECT id FROM department WHERE name = ?";
-			String insert  = "INSERT INTO department (name) values (?)";
-			for(String dept: depts)
+			String query = "SELECT id FROM organization WHERE system_name = ?";
+			String insert  = "INSERT INTO organization (name,system_name,active) values (?,?,'N')";
+			for(String org: orgs)
 			{
 				stmt = con.prepareStatement(query);
-				stmt.setString(1,dept.trim());
+				stmt.setString(1,org.trim());
 				rs = stmt.executeQuery();
 				if(!rs.next())
 				{
 				
 					stmt = con.prepareStatement(insert);
-					stmt.setString(1,dept.trim());
+					stmt.setString(1,org.trim());
+					stmt.setString(2,org.trim());
+					
 					int insertCount = stmt.executeUpdate();
 					if(insertCount == 1)
 					{
 						r.append("Added [");
-						r.append(dept);
+						r.append(org);
 						r.append("]\n");
 					}
 					else
 					{
 						r.append("Error! Unable to add [");
-						r.append(dept);
+						r.append(org);
 						r.append("] !!!!!!!\n");
 					}
 				}
@@ -341,7 +347,7 @@ public class DataUpdater
 		}
 		catch(Exception e)
 		{
-			logger.error("Problems checking departments",e);
+			logger.error("Problems checking organizations",e);
 		}
 		finally
 		{

@@ -10,6 +10,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Instructor {
     private String username;
+    private String firstName;
+    private String lastName;
+    
      public Instructor() {
     	
     }
@@ -25,4 +28,23 @@ public class Instructor {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @XmlElement(name = "firstname")
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	 @XmlElement(name = "lastname")
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+    
+    
 }

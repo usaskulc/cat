@@ -21,7 +21,7 @@ import ca.usask.gmcte.currimap.model.xml.Departments;
 public class DataImporter
 {
 	private static Logger logger = Logger.getLogger(DataImporter.class);
-	public  List<String> retrieveDepartments()
+	public  List<String> retrieveOrganizations() //Departments
 	{
 		ResourceBundle bundle = ResourceBundle.getBundle("ldapuser");
 		String departmentsSourceURL = bundle.getString("departmentsSourceURL");
@@ -35,6 +35,7 @@ public class DataImporter
 			{
 				toReturn.add(input.nextLine().split("=")[1]);
 			}
+			input.close();
 		}
 		catch(Exception e)
 		{
