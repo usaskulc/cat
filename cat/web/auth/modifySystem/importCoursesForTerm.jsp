@@ -1,6 +1,7 @@
 <%@ page import="java.util.*,java.net.*,org.apache.log4j.Logger,ca.usask.gmcte.util.*,ca.usask.ocd.ldap.*,ca.usask.gmcte.currimap.model.xml.*,ca.usask.gmcte.currimap.action.*"%>
 <%! Logger logger = Logger.getLogger("importCoursesForTerm.jsp"); %>
 <h1>DO NOT CLOSE THIS PAGE UNTIL YOU SEE "Completely done"</h1>
+<pre>
 <%
 String term = request.getParameter("term");
 out.println("Processing data for "+term+"<br><br>");
@@ -26,12 +27,12 @@ out.flush();
 logger.error("It took "+(now-start)+" to update all depts");
 start=now;
 
-for(String dept:depts)
+for(String dept:orgs)
 {
 	out.println("<br>Now processing: "+dept);
 	out.flush();
 	response.flushBuffer();
-	List<Course> courses  = di.retrieveCoursesForOrganization(dept,term);
+	List<Course> courses  = di.retrieveCoursesForDepartment(dept,term);
 	now = System.currentTimeMillis();
 	
 	logger.error("It took "+(now-start)+" to retrieve courses for dept " +dept);
