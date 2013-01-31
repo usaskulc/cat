@@ -57,6 +57,12 @@ else if(object.equals("Organization"))
 				out.println("ERROR: Organization still has outcomes linked to it");
 				return;
 			}
+			List<CharacteristicType> types = manager.getOrganizationCharacteristicTypes(org);
+			if(types!=null && !types.isEmpty())
+			{
+				out.println("ERROR: Organization still characteristic(s) linked to it");
+				return;
+			}
 					
 			if(manager.deleteOrganization(id))
 			{
