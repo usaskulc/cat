@@ -78,7 +78,7 @@ public class OrganizationManager
 
 
 			Organization o = (Organization) session.get(Organization.class,	Integer.parseInt(id));
-			if(oldParentId > -1 && oldParentId != parentId)
+			if(oldParentId != parentId)
 			{
 				Organization parent = (Organization) session.get(Organization.class, parentId);
 				o.setParentOrganization(parent);
