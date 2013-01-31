@@ -4,17 +4,31 @@ int organizationId = HTMLTools.getInt(request.getParameter("organization_id")) ;
 
 Organization o = new Organization();
 boolean editing = false;
+boolean hasChildren = false;
+
+
+
+
 if(organizationId > 0)
 {
 	o  = OrganizationManager.instance().getOrganizationById(organizationId);
 	editing = true;
+	List<Organization> children = OrganizationManager.instance().getChildOrganizationsOrderedByName(o,true);
+	hasChildren = children != null && !children.isEmpty();
+	
 }
-String parentId = request.getParameter("parent_organization_id");
+
+int parentId = HTMLTools.getInt(request.getParameter("parent_organization_id"));
 boolean hasParent = false;
-if(HTMLTools.isValid(parentId))
+if(parentId > 0)
 {
 	hasParent = true;
 }
+List<Organization> rootList = OrganizationManager.instance().getParentOrganizationsOrderedByName(true);
+Organization bogus = new Organization();
+bogus.setId(-1);
+bogus.setName("This Organization has no parent");
+rootList.add(0,bogus);
 %>
 <p>
 A organization can have 2 different names. The system-name is used for association of courses with organizations dynamically. 
@@ -22,17 +36,29 @@ A organization can have 2 different names. The system-name is used for associati
 </p>
 <form name="newCourseForm" id="newCourseForm" method="post" action="" >
 	<input type="hidden" name="objectClass" id="objectClass" value="Organization"/>
-	<% if(editing)
+	<%
+	
+	if(editing)
 		{
 			%><input type="hidden" name="objectId" id="objectId" value="<%=o.getId()%>"/>
 			<%
+			if(hasParent)
+			{
+				%><input type="hidden" name="old_parent_id" id="old_parent_id" value="<%=parentId%>"/>
+				<%
+			}
 		}
-	if(hasParent)
+	if(!hasChildren)
 	{
-		%><input type="hidden" name="parent_organization_id" id="parent_organization_id" value="<%=parentId%>"/>
-		<%
-	}
-		%>
+	%>
+	<div class="formElement">
+		<div class="label">Parent Organization:</div>
+		<div class="field"> <%=HTMLTools.createSelect("parent_organization_id",rootList, "Id", "Name", hasParent?""+parentId:null, null) %></div>
+		<div class="error" id="nameMessage"></div>
+		<div class="spacer"> </div>
+	</div>
+	<%} %>
+
 	<div class="formElement">
 		<div class="label">Name:</div>
 		<div class="field"> <input type="text" size="40" maxlength="100" name="name" id="name" value="<%=editing?o.getName():""%>" /></div>
@@ -60,7 +86,7 @@ A organization can have 2 different names. The system-name is used for associati
 	
 	<br/>
 	<div class="formElement">
-		<div class="label"><input type="button" name="saveButton" id="saveButton" value="Save Organization" onclick="saveSystem(new Array('name'),new Array('name','system_name','active','parent_organization_id'));" /></div>
+		<div class="label"><input type="button" name="saveButton" id="saveButton" value="Save Organization" onclick="saveSystem(new Array('name'),new Array('name','system_name','active','parent_organization_id','old_parent_id'));" /></div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 	</div>

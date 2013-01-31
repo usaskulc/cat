@@ -25,7 +25,7 @@ else
 %>
 
 
-<h<%=hasParent?"4":"3"%>><a href="javascript:toggleDisplay('org_<%=id%>','<%=clientBrowser%>');"><img src="images/closed_folder_<%=clientBrowser%>.gif" id="org_<%=id%>_img"><%=o.getName()%></a><%if(sysadmin){%> <a href="javascript:loadModify('/cat/auth/modifySystem/editOrganization.jsp?organization_id=<%=o.getId()%>');"><img src="/cat/images/edit_16.gif" alt="Edit organization" title="Edit organization" ></a><%} %></h<%=hasParent?"4":"3"%>>
+<h<%=hasParent?"4":"3"%>><a href="javascript:toggleDisplay('org_<%=id%>','<%=clientBrowser%>');"><img src="images/closed_folder_<%=clientBrowser%>.gif" id="org_<%=id%>_img"><%=o.getName()%></a><%if(sysadmin){%> <a href="javascript:loadModify('/cat/auth/modifySystem/editOrganization.jsp?organization_id=<%=o.getId()%>&parent_organization_id=<%=hasParent?parent.getId():"-1"%>');"><img src="/cat/images/edit_16.gif" alt="Edit organization" title="Edit organization" ></a><%} %></h<%=hasParent?"4":"3"%>>
 <div id="org_<%=id%>_div" style="display:none;">
 	<div id="Organization_<%=o.getId()%>_children" style="padding-left:20px;">
 		<div id="Organization_<%=o.getId()%>_programs">

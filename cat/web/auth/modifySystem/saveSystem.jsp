@@ -22,7 +22,8 @@ else if(object.equals("Organization"))
 	String name = request.getParameter("name");
 	String id = request.getParameter("id");
 	String organizationId = request.getParameter("organization");
-	String parentId = request.getParameter("parent_organization_id");
+	int parentId = HTMLTools.getInt(request.getParameter("parent_organization_id"));
+	int oldParentId = HTMLTools.getInt(request.getParameter("old_parent_id"));
 	String systemName = request.getParameter("system_name");
 	String active = request.getParameter("active");
 	String action = request.getParameter("action");
@@ -68,7 +69,7 @@ else if(object.equals("Organization"))
 		}
 		else
 		{
-			if(manager.update(id,name,systemName,active))
+			if(manager.update(id,name,systemName,active,parentId,oldParentId))
 			{
 				out.println("Organization updated");
 			}

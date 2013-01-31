@@ -64,7 +64,8 @@ else
 						<input type="button" onclick="document.location='characteristicsStart.jsp?course_offering_id=<%=courseOfferingId%>';" value="Start page">
 					<% }
 					else
-					{%> 
+					{%>	
+					   <input type="button" onclick="document.location='characteristicsStart.jsp?course_offering_id=<%=courseOfferingId%>';" value="Start page">
 					   <input type="button" onclick="document.location='characteristicsWizzard.jsp?feature=<%=prevFeature%>&course_offering_id=<%=courseOfferingId%>';" value="Previous">
 					<%}
 					
@@ -77,6 +78,8 @@ else
 					else
 					{%>
 					<input type="button" onclick="document.location='characteristicsWizzard.jsp?feature=<%=nextFeature%>&course_offering_id=<%=courseOfferingId%>';" value="Next"/> 
+					<input type="button" onclick="document.location='characteristicsWrapper.jsp?course_offering_id=<%=courseOfferingId%>';" value="Summary"/> 
+				
 					<%} %>
 					</form>
 					<h2>Characteristics of course offering <%=courseOffering.getCourse().getSubject()%> <%=courseOffering.getCourse().getCourseNumber()%> section 

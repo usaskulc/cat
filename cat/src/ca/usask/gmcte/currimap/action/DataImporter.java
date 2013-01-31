@@ -54,6 +54,7 @@ public class DataImporter
 			String url=classesForDeptURL.replaceAll("<dept>",URLEncoder.encode(department,"UTF-8")).replaceAll("<term>",term);
 			
 			//url = "http://localhost/abv641/Chemistry/sections.xml";
+			logger.error("Attempting to get courses from :"+url);
 			URL departmentURL=new URL(url);
 			JAXBContext jc = JAXBContext.newInstance(Departments.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();

@@ -26,7 +26,6 @@ import ca.usask.gmcte.currimap.model.OrganizationOutcomeGroup;
 import ca.usask.gmcte.currimap.model.Program;
 import ca.usask.gmcte.currimap.model.ProgramOutcome;
 import ca.usask.gmcte.currimap.model.to.ObjectPair;
-import ca.usask.gmcte.util.HTMLTools;
 import ca.usask.gmcte.util.HibernateUtil;
 
 public class OrganizationManager
@@ -34,7 +33,7 @@ public class OrganizationManager
 	private static OrganizationManager instance;
 	private static Logger logger = Logger.getLogger(OrganizationManager.class);
 
-	public boolean save(String name, String parentId,String systemName)
+	public boolean save(String name, int parentId,String systemName)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -44,9 +43,9 @@ public class OrganizationManager
 		o.setName(name);
 		o.setActive("Y");
 		o.setSystemName(systemName);
-		if(HTMLTools.isValid(parentId))
+		if(parentId > -1)
 		{
-			Organization parent = (Organization) session.get(Organization.class,Integer.parseInt(parentId));
+			Organization parent = (Organization) session.get(Organization.class,parentId);
 			o.setParentOrganization(parent);
 		}
 		session.save(o);
@@ -70,21 +69,26 @@ public class OrganizationManager
 		}
 	}
 
-	public boolean update(String id, String name, String systemName, String active)
+	public boolean update(String id, String name, String systemName, String active,int parentId,int oldParentId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
 
-		Organization o = (Organization) session.get(Organization.class,
-				Integer.parseInt(id));
-		o.setName(name);
-		o.setActive(active);
-		o.setSystemName(systemName);
-		session.merge(o);
-				session.getTransaction().commit();
-		return true;
+
+			Organization o = (Organization) session.get(Organization.class,	Integer.parseInt(id));
+			if(oldParentId > -1 && oldParentId != parentId)
+			{
+				Organization parent = (Organization) session.get(Organization.class, parentId);
+				o.setParentOrganization(parent);
+			}
+			o.setName(name);
+			o.setActive(active);
+			o.setSystemName(systemName);
+			session.merge(o);
+			session.getTransaction().commit();
+			return true;
 		}
 		catch(Exception e)
 		{
