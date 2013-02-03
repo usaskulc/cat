@@ -60,7 +60,7 @@ Two bar graphs will appear below showing the distribution of assessments across 
 				{%><span style="font-weight:bold;"> criterion threshold: <%=link.getCriterionLevel()%></span>
 				<%}%> 
 				 <%if(access){%>
-				 	<a href="javascript:loadModify('/cat/auth/courseOffering/editAssessmentMethods.jsp?assessment_link_id=<%=link.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit assessment method" title="Edit assessment method></a>
+				 	<a href="javascript:loadModify('/cat/auth/courseOffering/editAssessmentMethods.jsp?assessment_link_id=<%=link.getId()%>&course_offering_id=<%=courseOfferingId%>');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit assessment method" title="Edit assessment method"></a>
 				 	<a href="javascript:removeAssessmentMethod(<%=link.getId()%>,<%=courseOfferingId%>);" class="smaller"><img src="/cat/images/deletes.gif" style="height:10pt;" alt="Remove assessment method" title="Remove assessment method" ></a>
 				 	<%}%><div id="additionalAssessmentInfo_<%=link.getId()%>" style="display:none;padding:10px;"></div></td>
 			<td><%=formatter.format(link.getWeight() )%> %</td>

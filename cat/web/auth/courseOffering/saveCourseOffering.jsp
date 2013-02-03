@@ -48,24 +48,6 @@ else if(object.equals("AssessmentMethod"))
 	}
 	
 }
-else if(object.equals("Organization"))
-{
-	String organizationName = request.getParameter("name");
-	String systemName = request.getParameter("system_name");
-	String active = request.getParameter("active");
-	String id = request.getParameter("id");
-	
-	OrganizationManager manager = OrganizationManager.instance();
-	if(manager.update(id,organizationName, systemName, active) )
-	{
-		out.println("Organization updated");
-	}
-	else
-	{
-		out.println("There was a problem updating the Organization!");
-	}
-	
-}
 else if(object.equals("LinkCourseOfferingAssessmentMethod"))
 {
 	String courseOfferingId = request.getParameter("course_offering_id");
