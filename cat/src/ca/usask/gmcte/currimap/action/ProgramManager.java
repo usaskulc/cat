@@ -890,6 +890,27 @@ public class ProgramManager
 		}
 		return toReturn;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<LinkProgramProgramOutcome> getProgramOutcomesForProgram(Program p)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<LinkProgramProgramOutcome> toReturn = null;
+		try
+		{
+			toReturn = (List<LinkProgramProgramOutcome>)session
+			.createQuery("from LinkProgramProgramOutcome l where l.program.id = :programId order by l.programOutcome.group.name, l.programOutcome.name")
+			.setParameter("programId",p.getId())
+			.list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
 	@SuppressWarnings("unchecked")
 	public List<LinkCourseProgram> getLinkCourseProgramForProgram(Program p)
 	{
@@ -1032,7 +1053,28 @@ public class ProgramManager
 		}
 		return toReturn;
 	}
-	
+	@SuppressWarnings("unchecked")
+	public List<LinkCourseOutcomeProgramOutcome> getCourseOutcomeLinksForProgramOutcome(List<String> courseIds, ProgramOutcome po)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<LinkCourseOutcomeProgramOutcome> toReturn = null;
+		try
+		{
+			toReturn = (List<LinkCourseOutcomeProgramOutcome>)session.createQuery("from LinkCourseOutcomeProgramOutcome l where "+
+					 HibernateUtil.getListAsString(" l.courseOffering.course.id ",courseIds, true, false) 
+			            + " l.programOutcome.id = :programOutcomeId order by l.courseOutcome.name")
+				.setParameter("programOutcomeId",po.getId())
+				.list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<LinkCourseOfferingContributionProgramOutcome> getCourseOfferingContributionLinksForProgramOutcome(List<String> courseIds,LinkProgramProgramOutcome po)
 	{

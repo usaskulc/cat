@@ -38,6 +38,7 @@ import ca.usask.gmcte.currimap.model.LinkCourseOfferingAssessment;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingContributionProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseOfferingTeachingMethod;
+import ca.usask.gmcte.currimap.model.LinkCourseOutcomeProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseProgram;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome;
 import ca.usask.gmcte.currimap.model.Organization;
@@ -96,10 +97,6 @@ public class ExcelEporter
 		WritableCellFormat wrappedCell = new WritableCellFormat();
 		wrappedCell.setWrap(true);
 		
-		Label constructionLabel4 = new Label(0, 0, "Coming soon",biggerFormat);
-		courseWithinProgramSheet.addCell(constructionLabel4);
-		Label constructionLabel5 = new Label(0, 0, "Coming soon",biggerFormat);
-		courseToProgramSheet.addCell(constructionLabel5);
 		
 		
 		int col = 0;
@@ -602,7 +599,7 @@ public class ExcelEporter
 		}
 		
 		
-		//Mapping of COURSE OUTCOMES to Assessment
+		//Mapping of emphasis and depth to program outcomes
 		row=0;
 		col=0;
 		Label programOutcomeGroupLabel = new Label(col++, row, "Program Outcome Group",biggerFormat);
@@ -724,6 +721,129 @@ public class ExcelEporter
 				}
 			}
 		}
+		
+		//Mapping of COURSE OUTCOMES to Program Outcomes
+		row=0;
+		col=0;
+		programOutcomeGroupLabel = new Label(col++, row, "Program Outcome Group",biggerFormat);
+		courseToProgramSheet.addCell(programOutcomeGroupLabel);
+		programOutcomeLabel = new Label(col++, row, "Program Outcome",biggerFormat);
+		courseToProgramSheet.addCell(programOutcomeLabel);
+		programIdLabel = new Label(col++, row, "program_id",biggerFormat);
+		courseToProgramSheet.addCell(programIdLabel);
+		
+		courseIdLabel = new Label(col++, row, "course_id",biggerFormat);
+		courseToProgramSheet.addCell(courseIdLabel);
+		courseOfferingIdLabel = new Label(col++, row, "course_offering_id",biggerFormat);
+		courseToProgramSheet.addCell(courseOfferingIdLabel);
+	
+		Label outcomeIdHeaderLabel= new Label(col++, row, "Course Outcome_ID",biggerFormat);
+		courseToProgramSheet.addCell(outcomeIdHeaderLabel);
+		
+		
+		// set columns to 30 chars
+		for(int i = 0; i< 6; i++)
+		{
+			courseToProgramSheet.setColumnView(i,  30);
+		}
+		row++;
+	
+		for(ProgramOutcomeGroup group : groups)
+		{
+			List<LinkProgramProgramOutcome> programOutcomes = pm.getProgramOutcomeForGroup(group);
+			
+			for(LinkProgramProgramOutcome programOutcomeLink: programOutcomes)
+			{
+				
+				ProgramOutcome programOutcome = programOutcomeLink.getProgramOutcome();
+				
+				List<LinkCourseOutcomeProgramOutcome> links = pm.getCourseOutcomeLinksForProgramOutcome(courseIds, programOutcome);
+				
+				for(LinkCourseOutcomeProgramOutcome link : links)
+				{
+					col = 0;
+					//programOutcomeGroup
+					Label groupValueLabel = new Label(col++, row, group.getName(),wrappedCell);
+					courseToProgramSheet.addCell(groupValueLabel);
+			
+					//programOutcome
+					Label outcomeValueLabel = new Label(col++, row, programOutcome.getName(),wrappedCell);
+					courseToProgramSheet.addCell(outcomeValueLabel);
+			
+					
+					//programId
+					Label programValueLabel = new Label(col++, row, ""+programOutcomeLink.getProgram().getId(),wrappedCell);
+					courseToProgramSheet.addCell(programValueLabel);
+					//course
+
+					Label courseValueLabel = new Label(col++, row, ""+link.getCourseOffering().getCourse().getId(),wrappedCell);
+					courseToProgramSheet.addCell(courseValueLabel);
+					//courseOffering
+					Label courseOfferingValueLabel = new Label(col++, row, ""+link.getCourseOffering().getId(),wrappedCell);
+					courseToProgramSheet.addCell(courseOfferingValueLabel);
+					
+					//Outcome
+					Label outcomeIDValueLabel = new Label(col++, row, ""+link.getCourseOutcome().getId(),wrappedCell);
+					courseToProgramSheet.addCell(outcomeIDValueLabel);
+					
+					row++;
+				}
+				
+			}
+		}
+		
+		
+		
+		
+		
+		workbook.write();
+		workbook.close(); 
+		return file;
+	}
+
+	
+	
+	public static File createExcelFile(Program program) throws Exception
+	{
+		
+		ResourceBundle bundle = ResourceBundle.getBundle("currimap");
+		String folderName = bundle.getString("tempFileFolder");
+		File tempFolder = new File(folderName);
+		tempFolder = new File(tempFolder, ""+System.currentTimeMillis());
+		tempFolder.mkdirs();
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM_dd_yyyy_H_mm");
+		File file = new File(tempFolder,program.getName() +"_"+ dateFormatter.format(cal.getTime())+".xls");
+		WritableWorkbook workbook = Workbook.createWorkbook(file); 
+	
+		WritableSheet sheet = workbook.createSheet("First Sheet", 0); 
+		
+		WritableFont biggerFont = new WritableFont(WritableFont.ARIAL, 14,WritableFont.BOLD, false);
+		
+		WritableCellFormat biggerFormat = new WritableCellFormat (biggerFont); 
+		biggerFormat.setWrap(true);
+		
+		WritableCellFormat wrappedCell = new WritableCellFormat();
+		wrappedCell.setWrap(true);
+		
+		int col = 0;
+		int row = 3;
+		Organization organization = program.getOrganization();
+		if(organization.getParentOrganization() != null)
+			organization = organization.getParentOrganization();
+		
+		List<CourseAttribute> courseAttributes = OrganizationManager.instance().getCourseAttributes(organization);
+		
+		
+		
+		//main labels
+		String[] labels = {"Program Outcome Category", "Program Outcome","Core Course Contributions","Service Course Contributions","Total Contribution" };
+		
+		/*index 0 = outcome group
+		 * 1 = program outcome
+	
+		
+		
 		
 		workbook.write();
 		workbook.close(); 
