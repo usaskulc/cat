@@ -13,14 +13,22 @@ CourseManager cm = CourseManager.instance();
 OrganizationManager dm = OrganizationManager.instance();
 OutcomeManager om = OutcomeManager.instance();
 String type = request.getParameter("type");
-if(type!=null && type.equals("teachingMethodComment"))
+
+if(type!=null)
 {
+	if (type.equals("teachingMethodComment"))
 		type="teaching_comment";
+	else if (type.equals("contributionComment"))
+		type="contribution_comment";
+	else if (type.equals("outcomeComment"))
+		type="outcome_comment";
+	else
+		type="offering_comment";
+
 }
 else
-{
-		type="offering_comment";
-}
+	type="offering_comment";
+
 String value = "";
 if(HTMLTools.isValid(courseOfferingId))
 {
@@ -28,6 +36,14 @@ if(HTMLTools.isValid(courseOfferingId))
 	if (type.equals("teaching_comment"))
 	{
 		value = courseOffering.getTeachingComment();
+	}
+	else if (type.equals("contribution_comment"))
+	{
+		value = courseOffering.getContributionComment();
+	}
+	else if (type.equals("outcome_comment"))
+	{
+		value = courseOffering.getOutcomeComment();
 	}
 	else
 	{

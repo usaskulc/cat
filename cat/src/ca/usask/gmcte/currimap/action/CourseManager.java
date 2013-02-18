@@ -107,6 +107,10 @@ public class CourseManager
 			CourseOffering c = (CourseOffering)session.get(CourseOffering.class,id);
 			if(type.equals("teaching_comment"))
 				c.setTeachingComment(comments);
+			else if(type.equals("contribution_comment"))
+				c.setContributionComment(comments);
+			else if(type.equals("outcome_comment"))
+				c.setOutcomeComment(comments);
 			else
 				c.setComments(comments);
 			session.merge(c);

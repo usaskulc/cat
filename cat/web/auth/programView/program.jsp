@@ -98,6 +98,7 @@ Select the courses you would like view in the charts below.
 	</jsp:include>
 
 </div>
+
 <%
 if(false && access)
 {%>

@@ -108,6 +108,10 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 					
 					if( type != null && type=="teaching_comment")
 						loadURLIntoId("/cat/auth/courseOffering/editableTeachingMethods.jsp?course_offering_id="+courseOfferingId,"#editableTeachingMethodsDiv");
+					else if( type != null && type=="contribution_comment")
+						loadURLIntoId("/cat/auth/courseOffering/programOutcomeContributions.jsp?course_offering_id="+courseOfferingId,"#programOutcomeContributionsDiv");
+					else if( type != null && type=="outcome_comment")
+						loadURLIntoId("/cat/auth/courseOffering/outcomesMapping.jsp?course_offering_id="+courseOfferingId,"#outcomesMappingDiv");
 					else
 						loadURLIntoId("/cat/auth/courseOffering/comments.jsp?course_offering_id="+courseOfferingId,"#courseOfferingCommentsDiv");
 			

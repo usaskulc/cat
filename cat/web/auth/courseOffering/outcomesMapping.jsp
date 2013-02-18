@@ -113,3 +113,14 @@ session.setAttribute("courseOffering",courseOffering);
 	<%}%>
 </table>
 <hr/>
+		<h3>Additional information:</h3>
+		<br>
+		<p>To add/edit additional information please click the edit icon below.
+		</p>
+	<div id="outcomeComment">
+		
+	<%=!HTMLTools.isValid(courseOffering.getOutcomeComment())?"No additional information entered. Select edit icon below to add additional information.":courseOffering.getOutcomeComment() %>
+	
+</div>
+<br/>
+<a href="javascript:loadModify('/cat/auth/courseOffering/editComments.jsp?course_offering_id=<%=courseOfferingId%>&type=outcomeComment','outcomeComment');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit comments" title="Edit comments"></a>

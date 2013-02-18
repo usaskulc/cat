@@ -29,6 +29,7 @@ import ca.usask.gmcte.util.HibernateUtil;
 
 public class OutcomeManager
 {
+	public static String noMatchName = "No match to a course outcome";
 	private static OutcomeManager instance;
 	private static Logger logger = Logger.getLogger( OutcomeManager.class );
 
@@ -96,6 +97,31 @@ public class OutcomeManager
 			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
 			return false;
 		}
+	}
+	
+	public CourseOutcome getNoMatchOutcome()
+	{
+	     Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+         session.beginTransaction();
+         CourseOutcome c = null;
+         
+         try
+         {
+                 c = (CourseOutcome) session.createQuery("FROM CourseOutcome WHERE name=:name").setParameter("name", OutcomeManager.noMatchName).uniqueResult();
+                 if(c == null)
+                 {
+                	 c = new CourseOutcome();
+                	 c.setName(OutcomeManager.noMatchName);
+                	 session.save(c);
+                 }
+                 session.getTransaction().commit();
+         }
+         catch(Exception e)
+         {
+                 HibernateUtil.logException(logger, e);
+         }
+         return c;
+		
 	}
 	public boolean updateCharacteristic(int courseOfferingId, int outcomeId, String characteristicValue, String characteristicType)
 	{

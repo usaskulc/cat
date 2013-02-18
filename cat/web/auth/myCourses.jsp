@@ -13,8 +13,9 @@
 					
 					
 <br/>
-Welcome to the Gwenna Moss Centre for Teaching Effectiveness course information tool designed to assist academic units 
-at the University of Saskatchewan with curriculum mapping and, ultimately, with curriculum innovation processes.
+Welcome to the Gwenna Moss Centre for Teaching Effectiveness course information tool designed to assist academic units at the 
+University of Saskatchewan with curriculum mapping and, ultimately, with curriculum innovation processes.<br/>
+To select a course, scroll to the bottom to see a list of the courses you have taught.
 
 <h4><i>What is curriculum mapping?</i></h4>
 Curriculum mapping refers to a process in a broader curriculum development 

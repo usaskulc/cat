@@ -60,6 +60,7 @@ if(groups.isEmpty())
 %>
 <hr/>
 <strong>Indicate below what is the instructional emphasis and depth for each of these outcomes in your course on the following scales.</strong>
+  You also have the option to add information to the comment section appearing below the table.
 <br/>Emphasis: 
 <%
 boolean firstOption = true;
@@ -138,3 +139,14 @@ for( MasteryOptionValue optionValue : masteryOptionValues)
 	<%}%>
 </table>
 <hr/>
+		<h3>Additional information:</h3>
+		<br>
+		<p>To add/edit additional information please click the edit icon below.
+		</p>
+	<div id="contributionComment">
+		
+	<%=!HTMLTools.isValid(courseOffering.getContributionComment())?"No additional information entered. Select edit icon below to add additional information.":courseOffering.getContributionComment() %>
+	
+</div>
+<br/>
+<a href="javascript:loadModify('/cat/auth/courseOffering/editComments.jsp?course_offering_id=<%=courseOfferingId%>&type=contributionComment','contributionComment');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit comments" title="Edit comments"></a>

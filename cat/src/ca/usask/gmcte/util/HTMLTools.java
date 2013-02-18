@@ -100,7 +100,8 @@ public class HTMLTools
 				CourseOutcome o = outcomes.get(i);
 				int chopAt = Math.min(40, o.getName().length());
 				valueList.add(""+o.getId());
-				displayList.add( (i+1) + ". " + o.getName().substring(0,chopAt));
+				//the No match value should not receive a number
+				displayList.add( (i > 0? i+ ". ": "    ") + o.getName().substring(0,chopAt));
 			}
 		}
 		catch(Exception e)

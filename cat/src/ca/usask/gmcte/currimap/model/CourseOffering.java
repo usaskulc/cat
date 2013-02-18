@@ -37,6 +37,8 @@ public class CourseOffering implements java.io.Serializable
 	private String medium;
 	private String comments;
 	private String teachingComment;
+	private String contributionComment;
+	private String outcomeComment;
 	private int numStudents;
 	private TimeItTook timeItTook;
 	
@@ -234,6 +236,24 @@ public class CourseOffering implements java.io.Serializable
 
 	public void setTeachingComment(String teachingComment) {
 		this.teachingComment = teachingComment;
+	}
+	@Column(name = "contribution_comment", nullable = true, length = 65000)
+	@Length(max = 65000)
+	public String getContributionComment() {
+		return contributionComment;
+	}
+
+	public void setContributionComment(String contributionComment) {
+		this.contributionComment = contributionComment;
+	}
+	@Column(name = "outcome_comment", nullable = true, length = 65000)
+	@Length(max = 65000)
+	public String getOutcomeComment() {
+		return outcomeComment;
+	}
+
+	public void setOutcomeComment(String outcomeComment) {
+		this.outcomeComment = outcomeComment;
 	}
 	
 }

@@ -184,7 +184,7 @@ public class ProgramManager
 			ProgramOutcome pOutcome  = (ProgramOutcome)session.get(ProgramOutcome.class,programOutcomeId);
 			CourseOffering courseOffering  = (CourseOffering)session.get(CourseOffering.class,courseOfferingId);
 			CourseOutcome outcome = (CourseOutcome) session.get(CourseOutcome.class,outcomeId);
-			
+			logger.error(outcomeId + " "+(outcome==null));
 			LinkCourseOutcomeProgramOutcome o = null;
 			if(existingLinkId > -1) // need to update or delete
 			{
@@ -1020,8 +1020,9 @@ public class ProgramManager
 		logger.debug("OfferingId="+offering.getId()+" programOutcomeId = "+programOutcomeId);
 		try
 		{
-			toReturn = (List<LinkCourseOutcomeProgramOutcome>)session.createQuery("select l from LinkCourseOutcomeProgramOutcome l , LinkCourseOfferingOutcome l2 where l.programOutcome.id = :programOutcomeId AND l.courseOffering.id=:courseOfferingId AND l2.courseOffering = l.courseOffering  AND l.courseOutcome = l2.courseOutcome order by l2.displayIndex")
+			toReturn = (List<LinkCourseOutcomeProgramOutcome>)session.createQuery("select distinct l from LinkCourseOutcomeProgramOutcome l , LinkCourseOfferingOutcome l2 where l.programOutcome.id = :programOutcomeId AND l.courseOffering.id=:courseOfferingId AND l2.courseOffering = l.courseOffering  AND (l.courseOutcome = l2.courseOutcome OR l.courseOutcome.name=:noMatchName) order by COALESCE(l2.displayIndex,'aaaaaaa')")
 				.setParameter("programOutcomeId",programOutcomeId)
+				.setParameter("noMatchName", OutcomeManager.noMatchName)
 				.setParameter("courseOfferingId",offering.getId())
 				.list();
 			session.getTransaction().commit();
@@ -1723,7 +1724,64 @@ public class ProgramManager
 	{
 
 	}
+	public Map<String, Integer> getProgramOutcomeContributions(Program p, List<String> terms)
+	{
 	
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		Map<String, Integer> toReturn = new TreeMap<String, Integer>();
+		try
+		{
+
+	
+			StringBuffer sql = new StringBuffer();
+			sql.append("	SELECT a.outcome,a.course,sum(a.calc)/count(section) as value FROM ");
+			sql.append("	(");
+			sql.append("	select cov.calculation_value as calc, po.id as outcome, co.course_id as course, co.id as section");
+			sql.append("	from link_course_offering_contribution_program_outcome lcocpo");
+			sql.append("	, link_program_program_outcome lppo");
+			sql.append("	, program_outcome po");
+			sql.append("	, contribution_option_value cov");
+			sql.append("	, course_offering co");
+			sql.append("	WHERE lppo.id = lcocpo.link_program_program_outcome_id");
+			sql.append("	  AND po.id=lppo.program_outcome_id");
+			sql.append("	  AND cov.id = lcocpo.contribution_option_id ");
+			sql.append("	  AND co.id = lcocpo.course_offering_id");
+			sql.append("	  AND lppo.program_id=");
+			sql.append(p.getId());
+			sql.append("	 UNION  ");
+			sql.append("	select cov.calculation_value as calc, po.id as outcome, lccpo.course_id as course, -1 as section");
+			sql.append("	from link_course_contribution_program_outcome lccpo");
+			sql.append("	, link_program_program_outcome lppo");
+			sql.append("	, program_outcome po");
+			sql.append("	, contribution_option_value cov");
+			sql.append("	WHERE lppo.id = lccpo.link_program_program_outcome_id");
+			sql.append("	  AND po.id=lppo.program_outcome_id");
+			sql.append("	  AND cov.id = lccpo.contribution_option_id ");
+			sql.append("	  AND lppo.program_id=");
+			sql.append(p.getId());
+			sql.append("	  ) a");
+			sql.append("	 group by a.outcome,a.course");
+			sql.append("	 order by a.outcome,a.course");
+		
+		@SuppressWarnings("unchecked")
+		List<Pair> counts = (List<Pair>) session
+				.createSQLQuery(sql.toString()).setResultTransformer(Transformers.aliasToBean(Pair.class))
+				.setParameter("programId",p.getId())
+				.list();
+		for(Pair pair: counts)
+		{
+			toReturn.put(""+pair.getA(), pair.getB());
+		}
+		session.getTransaction().commit();
+	}
+	catch(Exception e)
+	{
+		HibernateUtil.logException(logger, e);
+	}
+	return toReturn;
+}
+
 
 	public static ProgramManager instance()
 	{
