@@ -143,11 +143,9 @@ for(Feature f: featureList)
 	}
 	else if(f.getFileName().equals("completionTime"))
 	{
-		 TimeItTook timeItTook = courseOffering.getTimeItTook();
-		 if(timeItTook == null)
-			 completion.add(f.getDisplayIndex()-1,"No data entered");
-		 else
-			 completion.add(f.getDisplayIndex()-1, timeItTook.getName());
+		List<Question> questionLinks = QuestionManager.instance().getAllQuestionsForProgram(program);
+		List<QuestionResponse> responses = QuestionManager.instance().getAllQuestionResponsesForProgramAndOffering(program,courseOffering);
+		completion.add(f.getDisplayIndex()-1, responses.size() +" out of "+questionLinks.size() +" questions have been answered");
 	}
 }
 
