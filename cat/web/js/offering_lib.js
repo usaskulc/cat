@@ -81,7 +81,7 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 				}
 			
 			});
-			//alert(parameters);
+			//console.log(parameters);
 		}
 		$.ajax({
 			type: 		"post",

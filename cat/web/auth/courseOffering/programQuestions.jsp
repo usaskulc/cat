@@ -58,8 +58,8 @@ for(Question q : questionLinks)
 				   name="saveCustomQuestionsButton" 
 				   id="saveCustomQuestionsButton" 
 				   value="Save responses" 
-				   onclick="clearItems();saveOffering(new Array('timeItTookOptionId'),
-				   				new Array('timeItTookOptionId','course_offering_id'),'Questions');" />
+				   onclick="clearItems();saveOffering(new Array('program_id','course_offering_id'),
+				   				new Array('course_offering_id','program_id'),'Questions');" />
 		</div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
