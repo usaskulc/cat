@@ -58,7 +58,31 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 			if(assessmentLinkId != null)
 				parameters+= "&assessment_link_id="+assessmentLinkId;
 		}
-		//alert(parameters);
+		else if (object == 'Questions')	
+		{
+			var courseOfferingId = $("#course_offering_id").val();
+			var programId = $("#program_id").val();
+			var idFilter = "[name^='"+programId+"_"+courseOfferingId+"_']"
+			parameters += "&program_id="+programId+"&course_offering_id="+courseOfferingId;
+			$(idFilter).each(function(index) {
+				if(($(this).is("input:checkbox") || $(this).is("input:radio")) && $(this).attr("checked")!= null && $(this).attr("checked") == "checked")
+				{
+					parameters += "&"+$(this).attr('name') + "=" + $(this).val();
+				}
+				else if($(this).is("select"))
+				{
+					parameters += "&"+$(this).attr('name') + "=" + $(this).val();
+				}
+				else if($(this).is("textarea"))
+				{
+					var text = $(this).val();
+					if (text != null && text.trim().length > 0)
+						parameters += "&"+$(this).attr('name') + "=" + escape(text);
+				}
+			
+			});
+			//alert(parameters);
+		}
 		$.ajax({
 			type: 		"post",
 			url: 		"/cat/auth/courseOffering/saveCourseOffering.jsp",
@@ -66,7 +90,6 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 			success:	function(msg) 
 			{
 				$('#saveButton').removeAttr("disabled");
-				$("#messageDiv").html(msg);
 				$("#messageDiv").show();
 				setTimeout("clearMessage();",2500);
 				if(msg.indexOf("ERROR") >=0)

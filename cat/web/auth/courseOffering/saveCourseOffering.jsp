@@ -287,6 +287,47 @@ else if (object.equals("TimeItTook"))
 		out.println("ERROR: Unable to save changes");
 	}
 }
+else if (object.equals("Questions"))
+{
+	int courseOfferingId = HTMLTools.getInt(request.getParameter("course_offering_id"));
+	int programId = HTMLTools.getInt(request.getParameter("program_id"));
+	String parameterStart = programId+"_"+courseOfferingId+"_";
+	TreeMap<String,String> responses = new TreeMap<String,String>();
+	Enumeration enums = request.getParameterNames();
+	while(enums.hasMoreElements())
+	{
+		String pName = (String)enums.nextElement();
+		if(pName.startsWith(parameterStart))
+		{
+			String value = request.getParameter(pName);
+			responses.put(pName,value);
+		}
+	}
+	QuestionManager qm = QuestionManager.instance();
+	Program p = ProgramManager.instance().getProgramById(programId);
+	List<Question> questions = qm.getAllQuestionsForProgram(p);
+	if(questions.size() != responses.size())
+	{
+		%>
+		<script type="text/javascript">
+			<%=changeClass(responses ,parameterStart, questions) %>
+		</script>
+		Not all Questions have been responded to. Please review your responses.
+		<%
+	}
+	else
+	{
+		if(qm.saveResponses(p,courseOfferingId,responses))
+		{
+			out.println("Responses saved");
+		}
+		else
+		{
+			out.println("ERROR: Unable to save responses");
+		}
+	}
+	
+}
 else
 {
 	out.println("ERROR: Unable to determine what to do (object ["+object+"] not recognized)");	
@@ -307,5 +348,26 @@ public boolean isInt(String s)
 	{
 	}
 	return false;
+}
+
+public String changeClass(TreeMap<String, String> responses ,String responseStart, List<Question> questions)
+{
+	StringBuilder r = new StringBuilder();
+	for(Question q : questions)
+	{
+		String id = responseStart+q.getId();
+		if(!responses.containsKey(id))
+		{
+			r.append("$(\"#area_");
+			r.append(id);
+			r.append("\").addClass(\"completeMessage\");");
+			r.append("$(\"#area_");
+			r.append(id);
+			r.append("\").show();");
+			
+		}
+	}
+	return r.toString();
+	
 }
 %>

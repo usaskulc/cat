@@ -825,4 +825,18 @@ function setProgramCourseContributionId(courseId)
 	document.location="/cat/auth/programView/courseCharacteristicsWrapper.jsp?course_id="+courseId+"&program_id="+programId;
 	resetChanges();
 }
+function setQuestionType(programId)
+{
+	var questionTypeBox = $("#question_type").get(0);
+	var questionTypeSelected = questionTypeBox.options[questionTypeBox.selectedIndex].value;
+	
+	loadURLIntoId("/cat/auth/programView/availableAnswerSets.jsp?program_id="+programId+"&question_type="+questionTypeSelected , "#questionTypeDisplayDiv");
+}
+
+function setAnswerSet(programId, answerSetId, questionType)
+{
+	$("#answer_set_id").val(answerSetId);
+	loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&question_type="+questionType+"&inUse=true&answer_set_id="+answerSetId , "#questionTypeDisplayDiv");
+}
+	
 
