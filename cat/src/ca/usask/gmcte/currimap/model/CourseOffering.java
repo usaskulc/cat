@@ -27,7 +27,7 @@ import org.hibernate.validator.NotNull;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "course_offering")
-public class CourseOffering implements java.io.Serializable
+public class CourseOffering implements java.io.Serializable, Comparable<CourseOffering>
 {
 
 	private int id;
@@ -254,6 +254,13 @@ public class CourseOffering implements java.io.Serializable
 
 	public void setOutcomeComment(String outcomeComment) {
 		this.outcomeComment = outcomeComment;
+	}
+
+	@Transient
+	@Override
+	public int compareTo(CourseOffering other) {
+		
+		return id - other.getId();
 	}
 	
 }

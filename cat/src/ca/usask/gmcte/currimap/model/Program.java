@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
@@ -24,7 +25,7 @@ import org.hibernate.validator.NotNull;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "program")
-public class Program implements java.io.Serializable
+public class Program implements java.io.Serializable, Comparable<Program>
 {
 
 	private int id;
@@ -126,6 +127,12 @@ public class Program implements java.io.Serializable
 	public void setLinkProgramOutcomes(List<LinkProgramProgramOutcome> linkProgramOutcomes)
 	{
 		this.linkProgramOutcomes = linkProgramOutcomes;
+	}
+
+	@Transient
+	@Override
+	public int compareTo(Program other) {
+		return id - other.getId();
 	}
 
 }
