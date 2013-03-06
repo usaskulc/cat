@@ -26,6 +26,7 @@ public class CourseClassification implements java.io.Serializable
 	private int id;
 	private String name;
 	private String description;
+	private int displayIndex;
 	private Set<LinkCourseProgram> linkCoursePrograms = new HashSet<LinkCourseProgram>(0);
 
 	public CourseClassification()
@@ -93,5 +94,13 @@ public class CourseClassification implements java.io.Serializable
 	public void setLinkCoursePrograms(Set<LinkCourseProgram> linkCoursePrograms)
 	{
 		this.linkCoursePrograms = linkCoursePrograms;
+	}
+	@Column(name = "display_index", nullable = false)
+	public int getDisplayIndex() {
+		return this.displayIndex;
+	}
+
+	public void setDisplayIndex(int displayIndex) {
+		this.displayIndex = displayIndex;
 	}
 }

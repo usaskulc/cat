@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
 import ca.usask.gmcte.currimap.model.Characteristic;
@@ -535,6 +536,25 @@ public class ProgramManager
 		try
 		{
 			toReturn = (List<Program>) session.createQuery("FROM Program ORDER BY lower(name)").list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
+	public List<Program> getAllProgramsForOrganization(Organization o)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<Program> toReturn = null;
+		try
+		{
+			toReturn = (List<Program>) session.createCriteria(Program.class)
+				    .add( Restrictions.eq("organization", o) )
+				    .list();
 			session.getTransaction().commit();
 		}
 		catch(Exception e)

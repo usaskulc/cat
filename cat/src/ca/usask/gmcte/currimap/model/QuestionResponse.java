@@ -43,7 +43,7 @@ public class QuestionResponse implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "question_id")
 	public Question getQuestion() {
 		return this.question;

@@ -7,8 +7,6 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-
 
 import ca.usask.gmcte.currimap.model.AnswerOption;
 import ca.usask.gmcte.currimap.model.AnswerSet;
@@ -198,7 +196,7 @@ public class QuestionManager
 		List<Question> toReturn = null;
 		try
 		{
-			toReturn = (List<Question>) session.createQuery("SELECT l.question FROM LinkProgramQuestion l WHERE l.program.id=:programId ORDER BY l.displayIndex")
+			toReturn = (List<Question>) session.createQuery("SELECT distinct l.question FROM LinkProgramQuestion l WHERE l.program.id=:programId ORDER BY l.displayIndex")
 					.setParameter("programId", program.getId())
 					.list();
 			session.getTransaction().commit();
@@ -306,11 +304,41 @@ public class QuestionManager
 		List<QuestionResponse> toReturn = null;
 		try
 		{
-			toReturn = session.createCriteria(QuestionResponse.class)
-				    .add( Restrictions.eq("program", program) )
-				    .add( Restrictions.eq("courseOffering",offering) )
-				    .list();
-			//logger.error("List size:"+toReturn.size());
+			toReturn = (List<QuestionResponse>)session.createQuery("FROM QuestionResponse WHERE program.id=:programId AND courseOffering.id=:courseOfferingId").setParameter("programId", program.getId()).setParameter("courseOfferingId", offering.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
+	public List<QuestionResponse> getAllQuestionResponsesForProgram(Program program)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<QuestionResponse> toReturn = null;
+		try
+		{
+			toReturn = (List<QuestionResponse>)session.createQuery("FROM QuestionResponse WHERE program.id=:programId").setParameter("programId", program.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
+	public List<QuestionResponse> getAllQuestionResponsesForOffering(CourseOffering offering)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<QuestionResponse> toReturn = null;
+		try
+		{
+			toReturn = (List<QuestionResponse>)session.createQuery("FROM QuestionResponse WHERE courseOffering.id=:courseOfferingId").setParameter("courseOfferingId", offering.getId()).list();
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
@@ -332,10 +360,11 @@ public class QuestionManager
 			{
 				String questionIdString = key.split("_")[2];
 				Question q = (Question)session.get(Question.class,Integer.parseInt(questionIdString));
-				QuestionResponse response = (QuestionResponse) session.createCriteria(QuestionResponse.class)
-					    .add( Restrictions.eq("program", p) )
-					    .add( Restrictions.eq("courseOffering",offering) )
-					    .add( Restrictions.eq("question", q))
+				QuestionResponse response = (QuestionResponse)session
+						.createQuery("FROM QuestionResponse WHERE program.id=:programId AND courseOffering.id=:courseOfferingId AND question.id=:questionId")
+						.setParameter("programId", p.getId())
+						.setParameter("courseOfferingId", courseOffering)
+						.setParameter("questionId", q.getId())
 					    .uniqueResult();
 				if(response == null)
 				{

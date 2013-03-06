@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
+
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -23,6 +25,9 @@ import ca.usask.gmcte.currimap.action.CourseManager;
 import ca.usask.gmcte.currimap.action.OrganizationManager;
 import ca.usask.gmcte.currimap.action.OutcomeManager;
 import ca.usask.gmcte.currimap.action.ProgramManager;
+import ca.usask.gmcte.currimap.action.QuestionManager;
+import ca.usask.gmcte.currimap.model.AnswerOption;
+import ca.usask.gmcte.currimap.model.AnswerSet;
 import ca.usask.gmcte.currimap.model.AssessmentFeedbackOption;
 import ca.usask.gmcte.currimap.model.AssessmentFeedbackOptionType;
 import ca.usask.gmcte.currimap.model.AssessmentTimeOption;
@@ -45,6 +50,8 @@ import ca.usask.gmcte.currimap.model.Organization;
 import ca.usask.gmcte.currimap.model.Program;
 import ca.usask.gmcte.currimap.model.ProgramOutcome;
 import ca.usask.gmcte.currimap.model.ProgramOutcomeGroup;
+import ca.usask.gmcte.currimap.model.Question;
+import ca.usask.gmcte.currimap.model.QuestionResponse;
 import ca.usask.gmcte.currimap.model.to.ProgramOutcomeCourseContribution;
 
 
@@ -54,8 +61,8 @@ public class ExcelEporter
 
 	public static File createExportFile(Organization organization) throws Exception
 	{
-		
-		ResourceBundle bundle = ResourceBundle.getBundle("currimap");
+		Logger logger = Logger.getLogger(ExcelEporter.class);
+			ResourceBundle bundle = ResourceBundle.getBundle("currimap");
 		String folderName = bundle.getString("tempFileFolder");
 		File tempFolder = new File(folderName);
 		tempFolder = new File(tempFolder, ""+System.currentTimeMillis());
@@ -81,7 +88,10 @@ public class ExcelEporter
 		WritableSheet assessmentToOutcomeSheet = workbook.createSheet("Assessment of Outcomes", sheetIndex++); 
 		WritableSheet courseWithinProgramSheet = workbook.createSheet("Course within Program", sheetIndex++); 
 		WritableSheet courseToProgramSheet = workbook.createSheet("Course OC -> Program OC", sheetIndex++); 
-		
+		WritableSheet questionSheet = workbook.createSheet("Final Questions", sheetIndex++); 
+		try
+		{
+
 		CourseManager cm =  CourseManager.instance();
 		List<Course> homeCourses = cm.getCoursesForOrganization(organization);
 		Map<String,Course> homeCourseMapping = new TreeMap<String,Course>(); 
@@ -794,13 +804,93 @@ public class ExcelEporter
 		
 		
 		
+		//Final Questions
+		row=0;
+		col=0;
 		
+		programIdLabel = new Label(col++, row, "program_id",biggerFormat);
+		questionSheet.addCell(programIdLabel);
+				
+		courseOfferingIdLabel = new Label(col++, row, "course_offering_id",biggerFormat);
+		questionSheet.addCell(courseOfferingIdLabel);
+			
+		QuestionManager qm = QuestionManager.instance();
+		List<Program> programs = pm.getAllProgramsForOrganization(organization);
+		int maxQuestions = 0;
+		for(Program program : programs)
+		{
+			col = 2;
 		
+			List<Question> programQuestions	= qm.getAllQuestionsForProgram(program);
+			int[] questionIds = new int[programQuestions.size()];
+			int i = 0;
+			for (Question q : programQuestions)
+			{
+				Label questionLabel = new Label(col++, row, q.getDisplay(),wrappedCell);
+				questionSheet.addCell(questionLabel);
+				questionIds[i++] = q.getId();
+			}
+			if(programQuestions.size() > maxQuestions)
+				maxQuestions = programQuestions.size();
+			
+			row++;
+			col = 0;
+			List<QuestionResponse> responses = qm.getAllQuestionResponsesForProgram(program);
+			for(QuestionResponse response: responses)
+			{
+		
+				Label programIdValueLabel = new Label(col++, row, ""+program.getId(),wrappedCell);
+				questionSheet.addCell(programIdValueLabel);
+				Label courseOfferingIdValueLabel = new Label(col++, row, ""+response.getCourseOffering().getId(),wrappedCell);
+				questionSheet.addCell(courseOfferingIdValueLabel);
+				int index = findIndex(questionIds, response.getQuestion().getId());
+				if(index > -1)
+				{
+					String value = response.getResponse();
+					if(response.getQuestion().getAnswerSet() != null)
+						value = getDisplayValue(response.getQuestion().getAnswerSet(), value);
+					
+					Label responseValueLabel = new Label(index+2, row, value,wrappedCell);
+					questionSheet.addCell(responseValueLabel);
+				}
+				else
+					logger.error("Unable to find question with ID "+response.getQuestion().getId() + " for program "+program.getId());
+				row++;
+			}
+		}
+			
+		// set columns to 30 chars
+		for(int i = 0; i< maxQuestions+2; i++)
+		{
+			questionSheet.setColumnView(i,  30);
+		}	
+		}
+		catch(Exception e)
+		{
+			logger.error("Oops...",e);
+		}
 		workbook.write();
 		workbook.close(); 
 		return file;
 	}
-
+	private static String getDisplayValue(AnswerSet set, String value)
+	{
+		for(AnswerOption option : set.getAnswerOptions())
+		{
+			if(option.getValue().equals(value))
+				return option.getDisplay();
+		}
+		return value;
+	}
+	private static int findIndex(int[] a, int toFind)
+	{
+		for(int i = 0; i < a.length ; i++)
+		{
+			if(a[i] == toFind)
+				return i;
+		}
+		return -1;
+	}
 	
 	
 	public static File createExcelFile(Program program) throws Exception

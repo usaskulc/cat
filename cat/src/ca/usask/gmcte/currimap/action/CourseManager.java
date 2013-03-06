@@ -37,6 +37,7 @@ import ca.usask.gmcte.currimap.model.LinkCourseOutcomeProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkCourseProgram;
 import ca.usask.gmcte.currimap.model.Organization;
 import ca.usask.gmcte.currimap.model.Program;
+import ca.usask.gmcte.currimap.model.QuestionResponse;
 import ca.usask.gmcte.currimap.model.TeachingMethod;
 import ca.usask.gmcte.currimap.model.TeachingMethodPortionOption;
 import ca.usask.gmcte.currimap.model.Time;
@@ -1770,8 +1771,26 @@ public class CourseManager
 				session.save(newLink);
 			}
 			
+			List<QuestionResponse> responses = QuestionManager.instance().getAllQuestionResponsesForOffering(source);
+			for(QuestionResponse r : responses)
+			{
+				QuestionResponse newR = new QuestionResponse();
+				newR.setCourseOffering(target);
+				newR.setProgram(r.getProgram());
+				newR.setQuestion(r.getQuestion());
+				newR.setResponse(r.getResponse());
+				session.save(newR);
+			}
+						
 			//comments
 			target.setComments(source.getComments());
+			target.setContributionComment(source.getContributionComment());
+			target.setOutcomeComment(source.getOutcomeComment());
+			target.setTeachingComment(source.getTeachingComment());
+			
+			
+			
+			
 			session.merge(target);
 			session.getTransaction().commit();
 			return true;
@@ -1794,7 +1813,7 @@ public class CourseManager
 		List<CourseClassification> toReturn = null;
 		try
 		{
-			toReturn = (List<CourseClassification>)session.createQuery("from CourseClassification").list();
+			toReturn = (List<CourseClassification>)session.createQuery("from CourseClassification ORDER BY displayIndex").list();
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
