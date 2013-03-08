@@ -185,7 +185,7 @@ public class HTMLTools
 	public static String createSelectAssessmentMethods(String name, List<Assessment> list, String selectedValue)
 	{
 		StringBuilder s = new StringBuilder();
-		s.append("<select size=\"10\" name=\"");
+		s.append("<select size=\"1\" name=\"");
 		s.append(name);
 		s.append("\" id=\"");
 		s.append(name);
