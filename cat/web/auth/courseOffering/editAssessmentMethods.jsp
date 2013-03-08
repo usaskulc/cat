@@ -48,7 +48,30 @@ if(linkId > -1)
 				</div>
 			</div>
 			<hr/>
+			
 			<div class="formElement">
+				<div class="label">Due/occur:</div>
+				<div class="field">
+				<%=HTMLTools.createSelect( "when", cm.getAssessmentTimeOptions(), "Id", "Name", editing?""+link.getWhen().getId():null, null)%>
+				</div>
+			</div>
+			
+						<hr/>
+			<jsp:include page="additionalAssessmentOptions.jsp">
+				<jsp:param name="assessment_link_id" value="<%=linkId%>" />
+			</jsp:include>
+	
+			<hr/>
+		
+		
+		
+		
+		
+		
+		
+			
+			<div class="formElement">
+			<p>If a specific mark is required on this assignment or students must complete this assignment to pass the course or continue in the program, then complete the following questions. If not, scroll down to press save, then close.</p>
 				<div class="label">Students must meet a criterion on this course-work to pass or proceed in the program/course:</div>
 				<div class="field">
 						<input type="radio" name="criterion_exists" <%=editing?(link.getCriterionExists().equalsIgnoreCase("N")?"checked=\"checked\"":""):"checked=\"checked\"" %> value="N"> Not applicable<br/>
@@ -81,17 +104,6 @@ if(linkId > -1)
 						<input type="radio" name="criterion_completed" <%=editing?(link.getCriterionCompleted().equalsIgnoreCase("Y")?"checked=\"checked\"":""):"" %> value="Y"> Yes
 				</div>
 			</div>
-			<hr/>
-			<div class="formElement">
-				<div class="label">Due/occur:</div>
-				<div class="field">
-				<%=HTMLTools.createSelect( "when", cm.getAssessmentTimeOptions(), "Id", "Name", editing?""+link.getWhen().getId():null, null)%>
-				</div>
-			</div>
-			<hr/>
-			<jsp:include page="additionalAssessmentOptions.jsp">
-				<jsp:param name="assessment_link_id" value="<%=linkId%>" />
-			</jsp:include>
 			
 			<hr/>
 			<div class="formElement">
