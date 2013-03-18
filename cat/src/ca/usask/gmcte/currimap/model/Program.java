@@ -34,7 +34,8 @@ public class Program implements java.io.Serializable, Comparable<Program>
 	private String description;
 	private List<LinkCourseProgram> linkCoursePrograms = new ArrayList<LinkCourseProgram>(0);
 	private List<LinkProgramProgramOutcome> linkProgramOutcomes = new ArrayList<LinkProgramProgramOutcome>(0);
-
+	private List<LinkProgramQuestion> linkProgramQuestions = new ArrayList<LinkProgramQuestion>(0);
+	
 	public Program()
 	{
 	}
@@ -133,6 +134,15 @@ public class Program implements java.io.Serializable, Comparable<Program>
 	@Override
 	public int compareTo(Program other) {
 		return id - other.getId();
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+	public List<LinkProgramQuestion> getLinkProgramQuestions() {
+		return linkProgramQuestions;
+	}
+
+	public void setLinkProgramQuestions(List<LinkProgramQuestion> linkProgramQuestions) {
+		this.linkProgramQuestions = linkProgramQuestions;
 	}
 
 }

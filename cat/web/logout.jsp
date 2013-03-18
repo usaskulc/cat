@@ -4,7 +4,7 @@ session.removeAttribute("edu.yale.its.tp.cas.client.filter.user");
 
 session.removeAttribute("userIsSysadmin");
 session.removeAttribute("userHasAccessToOfferings");
-session.removeAttribute("userHasAccessToPrograms");
+session.removeAttribute("userHasAccessToOrganizations");
 session.removeAttribute("userHasAccessToOrganizations");
 
 session.removeAttribute("sessionInitialized");

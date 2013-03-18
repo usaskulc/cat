@@ -15,7 +15,7 @@ String programId = request.getParameter("program_id");
 Boolean sessionValue = (Boolean)session.getAttribute("userIsSysadmin");
 boolean sysadmin = sessionValue != null && sessionValue;
 @SuppressWarnings("unchecked")
-HashMap<String,Program>  userHasAccessToPrograms = (HashMap<String,Program> )session.getAttribute("userHasAccessToPrograms");
+HashMap<String,Program>  userHasAccessToOrganizations = (HashMap<String,Program> )session.getAttribute("userHasAccessToOrganizations");
 boolean access = sysadmin;
 if(HTMLTools.isValid(programId))
 {

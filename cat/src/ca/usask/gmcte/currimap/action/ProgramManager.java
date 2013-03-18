@@ -25,12 +25,14 @@ import ca.usask.gmcte.currimap.model.LinkCourseProgram;
 import ca.usask.gmcte.currimap.model.LinkOrganizationCharacteristicType;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcome;
 import ca.usask.gmcte.currimap.model.LinkProgramProgramOutcomeCharacteristic;
+import ca.usask.gmcte.currimap.model.LinkProgramQuestion;
 import ca.usask.gmcte.currimap.model.MasteryOptionValue;
 import ca.usask.gmcte.currimap.model.Organization;
 import ca.usask.gmcte.currimap.model.Program;
 import ca.usask.gmcte.currimap.model.ProgramAdmin;
 import ca.usask.gmcte.currimap.model.ProgramOutcome;
 import ca.usask.gmcte.currimap.model.ProgramOutcomeGroup;
+import ca.usask.gmcte.currimap.model.QuestionResponse;
 import ca.usask.gmcte.currimap.model.Time;
 import ca.usask.gmcte.currimap.model.to.CourseAssessmentOption;
 import ca.usask.gmcte.currimap.model.to.CourseOfferingContribution;
@@ -299,9 +301,55 @@ public class ProgramManager
 		session.beginTransaction();
 		try
 		{
-		LinkCourseProgram l = (LinkCourseProgram) session.get(LinkCourseProgram.class, courseLinkId);
-		session.delete(l);
-				session.getTransaction().commit();
+			LinkCourseProgram l = (LinkCourseProgram) session.get(LinkCourseProgram.class, courseLinkId);
+			Program p = l.getProgram();
+			Course c = l.getCourse();
+			
+			//any program contributions in the system linked to the course offering and program outcomes need to be deleted as well.
+			@SuppressWarnings("unchecked")
+			List <LinkCourseOfferingContributionProgramOutcome> offeringContributions = 
+					 (List<LinkCourseOfferingContributionProgramOutcome>) session
+					     .createQuery("FROM LinkCourseOfferingContributionProgramOutcome lcoc "+
+					                 "WHERE linkProgramOutcome IN (SELECT l FROM LinkProgramProgramOutcome l WHERE l.program.id=:programId) " +
+					                 "  AND lcoc.courseOffering.course.id = :courseId")
+					                 .setParameter("programId", p.getId())
+					                 .setParameter("courseId",c.getId())
+					                 .list();
+			for(LinkCourseOfferingContributionProgramOutcome contr: offeringContributions)
+			{
+				session.delete(contr);
+			}
+			
+			//any program contributions in the system linked to the course and program outcomes need to be deleted as well.
+			@SuppressWarnings("unchecked")
+			List <LinkCourseContributionProgramOutcome> courseContributions = 
+					 (List<LinkCourseContributionProgramOutcome>) session
+					     .createQuery("FROM LinkCourseContributionProgramOutcome lcoc "+
+					                 "WHERE linkProgramOutcome IN (SELECT l FROM LinkProgramProgramOutcome l WHERE l.program.id=:programId) " +
+					                 "  AND lcoc.course.id = :courseId")
+					                 .setParameter("programId", p.getId())
+					                 .setParameter("courseId",c.getId())
+					                 .list();
+			for(LinkCourseContributionProgramOutcome contr: courseContributions)
+			{
+				session.delete(contr);
+			}	
+			
+			@SuppressWarnings("unchecked")
+			List<LinkCourseOutcomeProgramOutcome> courseOutcomeLinks = (List<LinkCourseOutcomeProgramOutcome>)session
+					 .createQuery("FROM LinkCourseOutcomeProgramOutcome " +
+					 		    " WHERE courseOffering.course.id=:courseId " +
+					 		    "   AND programOutcome IN (SELECT l.programOutcome FROM LinkProgramProgramOutcome l WHERE l.program.id=:programId)")
+					 		    .setParameter("courseId", c.getId())
+					 		    .setParameter("programId",p.getId())
+					 		    .list();
+			for (LinkCourseOutcomeProgramOutcome link:courseOutcomeLinks)
+			{
+				session.delete(link);
+			}
+			
+			session.delete(l);
+			session.getTransaction().commit();
 		return true;
 		}
 		catch(Exception e)
@@ -336,27 +384,40 @@ public class ProgramManager
 		session.beginTransaction();
 		try
 		{
-		Program p = (Program) session.get(Program.class, programId);
-		List<LinkProgramProgramOutcome> outcomeLinks = p.getLinkProgramOutcomes();
-		for(LinkProgramProgramOutcome link: outcomeLinks)
-		{
-			session.delete(link);
-		}
-		List<LinkCourseProgram> courseLinks = p.getLinkCoursePrograms();
-		for(LinkCourseProgram link: courseLinks)
-		{
-			session.delete(link);
-		}
-	
-		@SuppressWarnings("unchecked")
-		List<ProgramAdmin> adminLinks = session.createQuery("FROM ProgramAdmin WHERE program.id = :programId").setParameter("programId",p.getId()).list();
-		for(ProgramAdmin link: adminLinks)
-		{
-			session.delete(link);
-		}
-		session.delete(p);
-				session.getTransaction().commit();
-		return true;
+			Program p = (Program) session.get(Program.class, programId);
+			List<LinkProgramProgramOutcome> outcomeLinks = p.getLinkProgramOutcomes();
+			for(LinkProgramProgramOutcome link: outcomeLinks)
+			{
+				session.delete(link);
+			}
+			
+			List<QuestionResponse> questionResponses = QuestionManager.instance().getAllQuestionResponsesForProgram(p,session);
+			for(QuestionResponse link: questionResponses)
+			{
+				session.delete(link);
+			}
+			
+			List<LinkProgramQuestion> programQuestions = p.getLinkProgramQuestions();
+			for(LinkProgramQuestion link: programQuestions)
+			{
+				
+				session.delete(link);
+			}
+			List<LinkCourseProgram> courseLinks = p.getLinkCoursePrograms();
+			for(LinkCourseProgram link: courseLinks)
+			{
+				session.delete(link);
+			}
+		
+			@SuppressWarnings("unchecked")
+			List<ProgramAdmin> adminLinks = session.createQuery("FROM ProgramAdmin WHERE program.id = :programId").setParameter("programId",p.getId()).list();
+			for(ProgramAdmin link: adminLinks)
+			{
+				session.delete(link);
+			}
+			session.delete(p);
+			session.getTransaction().commit();
+			return true;
 		}
 		catch(Exception e)
 		{

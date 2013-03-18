@@ -388,6 +388,53 @@ else if (object.equals("LinkCourseOrganization"))
 		out.println("ERROR: Unable to add Organization");
 	}
 }
+else if (object.equals("MoveQuestionItem"))
+{
+	int programId = HTMLTools.getInt(request.getParameter("id"));
+	int toMoveId = HTMLTools.getInt(request.getParameter("option_id"));
+	int setId = HTMLTools.getInt(request.getParameter("set_id"));
+	String action = request.getParameter("action");
+	String type = request.getParameter("type");
+
+	QuestionManager manager = QuestionManager.instance();
+	if(type.equals("answerOption"))
+	{
+		if(manager.moveAnswerOption(toMoveId, action))
+		{
+			out.println("");
+		}
+		else
+		{
+			out.println("ERROR: Unable to move answer option");
+		}
+	}
+	else if (type.equals("question"))
+	{
+		if(manager.moveQuestion(toMoveId, action))
+		{
+			out.println("");
+		}
+		else
+		{
+			out.println("ERROR: Unable to move answer option");
+		}
+	}
+}
+else if (object.equals("LinkProgramQuestion"))
+{
+	int programId = HTMLTools.getInt(request.getParameter("program_id"));
+	int questionId = HTMLTools.getInt(request.getParameter("question_id"));
+	
+	QuestionManager manager = QuestionManager.instance();
+	if(manager.addQuestionToProgram(questionId, programId))
+	{
+		out.println("Question added");
+	}
+	else
+	{
+		out.println("ERROR: Unable to add Question");
+	}
+}
 else if (object.equals("ProgramOutcomeWithCharacteristics"))
 {
 	int existingOutcomeId = HTMLTools.getInt(request.getParameter("outcome_id"));

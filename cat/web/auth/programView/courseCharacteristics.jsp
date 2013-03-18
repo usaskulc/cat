@@ -80,6 +80,11 @@ for(Organization dep : accessToOrganizations)
 
 out.println("Currently selected Program :");
 out.println(HTMLTools.createSelect("programToSet", programs, "Id", "Name", programId, "setProgramCourseContributionId("+courseId+")"));
+%>
+<form><input type="button" value="Add another course" onclick="loadModifyIntoDivWithReload('/cat/auth/modifyProgram/linkCourseProgram.jsp?program_id=<%=programId%>','','programCoursesDiv');" class="smaller"/>
+			</form>
+
+<%
 
 String courseTitle = null;
 LinkCourseProgram temp = cm.getLinkCourseProgramByCourseAndProgram(Integer.parseInt(programId),course.getId());

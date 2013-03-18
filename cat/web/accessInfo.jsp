@@ -13,22 +13,6 @@ if(sessionInitialized !=null && sessionInitialized)
 	else
 	{
 		
-		HashMap<String,Program>  userHasAccessToPrograms = (HashMap<String,Program> )session.getAttribute("userHasAccessToPrograms");
-		if(userHasAccessToPrograms==null)
-		{
-			out.println("userHasAccessToPrograms NULL!!!");
-		}
-		else
-		{
-			out.println("<hr/>Programs: <ul>");
-				
-		
-			for(String key : userHasAccessToPrograms.keySet())
-			{
-				out.println("<li>"+key+" "+userHasAccessToPrograms.get(key).getName()+"</li>");
-			}
-			out.println("</ul>");
-		}
 		HashMap<String,Organization>  userHasAccessToOrganizations = (HashMap<String,Organization> )session.getAttribute("userHasAccessToOrganizations");
 		if(userHasAccessToOrganizations==null)
 		{

@@ -12,6 +12,7 @@ import ca.usask.gmcte.currimap.model.AnswerOption;
 import ca.usask.gmcte.currimap.model.AnswerSet;
 
 import ca.usask.gmcte.currimap.model.CourseOffering;
+import ca.usask.gmcte.currimap.model.LinkProgramQuestion;
 import ca.usask.gmcte.currimap.model.Program;
 import ca.usask.gmcte.currimap.model.Question;
 import ca.usask.gmcte.currimap.model.QuestionResponse;
@@ -104,7 +105,7 @@ public class QuestionManager
 		try
 		{
 			AnswerOption toMove = (AnswerOption)session.get(AnswerOption.class,toMoveId);
-			List<AnswerOption> existing = (List<AnswerOption>)session.createQuery("FROM AnswerOption WHERE answerSet.id=:answerSetId").setParameter("answerSetId", toMove.getAnswerSet().getId()).list();		
+			List<AnswerOption> existing = (List<AnswerOption>)session.createQuery("FROM AnswerOption WHERE answerSet.id=:answerSetId order by displayIndex").setParameter("answerSetId", toMove.getAnswerSet().getId()).list();		
 			if(direction.equals("up"))
 			{
 				AnswerOption prev = null;
@@ -159,7 +160,114 @@ public class QuestionManager
 					}
 		
 				}
+				if(toDelete != null)
+				{
+					session.delete(toDelete);
+				}
 			}
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public boolean moveQuestion(int toMoveId, String direction)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			LinkProgramQuestion toMove = (LinkProgramQuestion)session.get(LinkProgramQuestion.class,toMoveId);
+			List<LinkProgramQuestion> existing = (List<LinkProgramQuestion>)session.createQuery("FROM LinkProgramQuestion WHERE program.id=:programId ORDER BY displayIndex").setParameter("programId", toMove.getProgram().getId()).list();		
+			if(direction.equals("up"))
+			{
+				LinkProgramQuestion prev = null;
+				for(LinkProgramQuestion link : existing)
+				{
+					if(link.getId() == toMoveId && prev!=null)
+					{
+						int swap = prev.getDisplayIndex();
+						prev.setDisplayIndex(link.getDisplayIndex());
+						link.setDisplayIndex(swap);
+						session.merge(prev);
+						session.merge(prev);
+						break;
+					}
+					prev = link;
+				}
+			}
+			else if(direction.equals("down"))
+			{
+				LinkProgramQuestion prev = null;
+				for(LinkProgramQuestion link : existing)
+				{
+					if(prev !=null)
+					{
+						int swap = prev.getDisplayIndex();
+						prev.setDisplayIndex(link.getDisplayIndex());
+						link.setDisplayIndex(swap);
+						session.merge(prev);
+						session.merge(link);
+						break;
+					}
+					if(link.getId() == toMoveId)
+					{
+						prev = link;
+					}
+					
+				}
+			}
+			else if(direction.equals("delete"))
+			{
+				LinkProgramQuestion toDelete = null;
+				for(LinkProgramQuestion link : existing)
+				{
+					if(toDelete !=null)
+					{
+						link.setDisplayIndex(link.getDisplayIndex()-1);
+						session.merge(link);
+					}
+					if(link.getId() == toMoveId)
+					{
+						toDelete = link;
+					}
+		
+				}
+				if(toDelete != null)
+				{
+					session.delete(toDelete);
+				}
+			}
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
+
+	public boolean addQuestionToProgram(int questionId,int programId)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			Question q = (Question)session.get(Question.class,questionId);
+			Program p = (Program)session.get(Program.class, programId);
+			LinkProgramQuestion newLink = new LinkProgramQuestion();
+			newLink.setProgram(p);
+			newLink.setQuestion(q);
+			int max = (Integer)session.createQuery("select max(displayIndex) from LinkProgramQuestion where program.id = :programId").setParameter("programId",programId).uniqueResult();
+			newLink.setDisplayIndex(max+1);
+			session.save(newLink);
 			session.getTransaction().commit();
 			return true;
 		}
@@ -314,6 +422,10 @@ public class QuestionManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
+	public List<QuestionResponse> getAllQuestionResponsesForProgram(Program program,Session session)
+	{
+		return  (List<QuestionResponse>)session.createQuery("FROM QuestionResponse WHERE program.id=:programId").setParameter("programId", program.getId()).list();
+	}
 	public List<QuestionResponse> getAllQuestionResponsesForProgram(Program program)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -321,7 +433,7 @@ public class QuestionManager
 		List<QuestionResponse> toReturn = null;
 		try
 		{
-			toReturn = (List<QuestionResponse>)session.createQuery("FROM QuestionResponse WHERE program.id=:programId").setParameter("programId", program.getId()).list();
+			toReturn =  getAllQuestionResponsesForProgram( program,session);
 			session.getTransaction().commit();
 		}
 		catch(Exception e)

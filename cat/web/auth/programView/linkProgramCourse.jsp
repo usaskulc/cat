@@ -5,8 +5,9 @@ String programId = request.getParameter("program_id") ;
 Boolean sessionValue = (Boolean)session.getAttribute("userIsSysadmin");
 boolean sysadmin = sessionValue != null && sessionValue;
 @SuppressWarnings("unchecked")
-HashMap<String,Program>  userHasAccessToPrograms = (HashMap<String,Program> )session.getAttribute("userHasAccessToPrograms");
-boolean access = sysadmin || userHasAccessToPrograms!=null && userHasAccessToPrograms.containsKey(programId);
+HashMap<String,Organization>  userHasAccessToOrganizations = (HashMap<String,Organization> )session.getAttribute("userHasAccessToOrganizations");
+Organization organization = OrganizationManager.instance().getOrganizationByProgramId(programId);	
+boolean access = sysadmin || userHasAccessToOrganizations!=null && userHasAccessToOrganizations.containsKey(""+organization.getId());
 
 CourseManager cm = CourseManager.instance();
 LinkCourseProgram o = new LinkCourseProgram();
