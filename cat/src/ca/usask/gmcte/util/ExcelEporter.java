@@ -838,7 +838,7 @@ public class ExcelEporter
 			List<QuestionResponse> responses = qm.getAllQuestionResponsesForProgram(program);
 			for(QuestionResponse response: responses)
 			{
-		
+				col = 0;
 				Label programIdValueLabel = new Label(col++, row, ""+program.getId(),wrappedCell);
 				questionSheet.addCell(programIdValueLabel);
 				Label courseOfferingIdValueLabel = new Label(col++, row, ""+response.getCourseOffering().getId(),wrappedCell);
