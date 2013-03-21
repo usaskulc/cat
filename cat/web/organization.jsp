@@ -49,7 +49,7 @@ boolean hasChildren = children !=null && !children.isEmpty();
 					{%>
 				<li><a href="javascript:loadModify('/cat/auth/modifySystem/editOrganization.jsp?parent_organization_id=<%=o.getId()%>');" class="smaller"><img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add an organization" title="Add an organization">Add an organization</a>
 				<%}
-				if(access && !hasChildren)
+				if(access)
 				{%>
 				<li><a href="/cat/auth/programView/organizationOfferingsWrapper.jsp?organization_id=<%=o.getId()%>" target="_blank">Data Completion table (opens in a new tab or window, <b>may take some time to load</b>)</a></li>
 				<%}
