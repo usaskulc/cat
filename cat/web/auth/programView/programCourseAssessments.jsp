@@ -14,7 +14,6 @@ boolean access = sysadmin;
 if(HTMLTools.isValid(programId))
 {
 	Organization organization = OrganizationManager.instance().getOrganizationByProgramId(programId);	
-	@SuppressWarnings("unchecked")
 	access = sysadmin || userHasAccessToOrganizations!=null && userHasAccessToOrganizations.containsKey(""+organization.getId());
 }
 if(!access)

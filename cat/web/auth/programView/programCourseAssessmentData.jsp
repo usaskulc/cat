@@ -20,8 +20,6 @@ boolean access = sysadmin;
 if(HTMLTools.isValid(programId))
 {
 	Organization organization = OrganizationManager.instance().getOrganizationByProgramId(programId);	
-	@SuppressWarnings("unchecked")
-	HashMap<String,Organization>  userHasAccessToOrganizations = (HashMap<String,Organization> )session.getAttribute("userHasAccessToOrganizations");
 	access = sysadmin || userHasAccessToOrganizations!=null && userHasAccessToOrganizations.containsKey(""+organization.getId());
 }
 
