@@ -88,5 +88,11 @@
 	<mapping class="ca.usask.gmcte.currimap.model.MasteryOptionValue"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkOrganizationOrganizationOutcome"/>
 	<mapping class="ca.usask.gmcte.currimap.model.LinkProgramOutcomeOrganizationOutcome"/>
+	<mapping class="ca.usask.gmcte.currimap.model.AnswerSet"/>
+	<mapping class="ca.usask.gmcte.currimap.model.AnswerOption"/>
+	<mapping class="ca.usask.gmcte.currimap.model.Question"/>
+	<mapping class="ca.usask.gmcte.currimap.model.QuestionType"/>
+	<mapping class="ca.usask.gmcte.currimap.model.QuestionResponse"/>
+	<mapping class="ca.usask.gmcte.currimap.model.LinkProgramQuestion"/>
 	</session-factory>
 </hibernate-configuration>
