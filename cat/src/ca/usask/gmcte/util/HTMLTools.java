@@ -92,16 +92,21 @@ public class HTMLTools
 		valueList.add("-1");
 		List<String> displayList = new ArrayList<String>();
 		displayList.add("Please select an outcome to add");
+		int maxLength = 70;
 		try
 		{
 			
 			for(int i = 0; i < outcomes.size();  i++)
 			{
 				CourseOutcome o = outcomes.get(i);
-				int chopAt = Math.min(40, o.getName().length());
+				String display = o.getName();
+				if (display.length() > maxLength+5)
+				{
+					display = display.substring(0,maxLength - 10) + " ... " + display.substring(display.length()-10); 
+				}
 				valueList.add(""+o.getId());
 				//the No match value should not receive a number
-				displayList.add( (i > 0? i+ ". ": "    ") + o.getName().substring(0,chopAt));
+				displayList.add( (i+1)+". "+ display);
 			}
 		}
 		catch(Exception e)
