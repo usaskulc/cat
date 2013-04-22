@@ -65,7 +65,7 @@ Repeat using both drop-down menus for additional entries, including for matching
 		if(access)
 		{
 		%>
-		<tr><td><%=HTMLTools.createSelect("new_course_outcome",outcomes,null,null,false) %></td>
+		<tr><td><%=HTMLTools.createSelect("new_course_outcome",outcomes,null,null) %></td>
 			<td><%=HTMLTools.createSelect("new_assessment_link", list, new Integer(-1),true)%>
 			    <input type="button" onclick="editOutcomeAssessment(<%=courseOfferingId %>,-1);" value="add"/>
 			</td>
