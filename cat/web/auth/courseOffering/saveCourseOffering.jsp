@@ -318,7 +318,7 @@ else if (object.equals("Questions"))
 	{
 		if(questions.size() != responses.size())
 		{
-			result="<script type=\"text/javascript\">\n"+changeClass(responses ,parameterStart, questions)+"\n</script>\nNot all responses have been saved. No all questions have a response. Please review your responses.";
+			result="<script type=\"text/javascript\">\n"+changeClass(responses ,parameterStart, questions)+"\n</script>\nNot all responses have been saved. Not all questions have a response. Please review your responses.";
 		}
 		else
 		{
