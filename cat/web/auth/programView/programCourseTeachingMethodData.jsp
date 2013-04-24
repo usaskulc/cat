@@ -68,7 +68,7 @@ int maxYValue = 0;
 double maxColumnValue = -1.0;
 for(TeachingMethodPortionOption option : optionsList)
 {
-	yLabels.add(option.getName());
+	yLabels.add(option.getName()+" ("+option.getComparativeValue()+")");
 	yValues.add(option.getComparativeValue());
 	if(maxYValue < option.getComparativeValue())
 		maxYValue = option.getComparativeValue();
