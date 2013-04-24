@@ -91,7 +91,12 @@ function saveOffering(requiredParameterArray, parameterArray,type)
 			{
 				$('#saveButton').removeAttr("disabled");
 				$("#messageDiv").show();
-				setTimeout("clearMessage();",2500);
+				
+				if (object != 'Questions')	
+					setTimeout("clearMessage();",2500);
+				else
+					setTimeout("clearMessage();",5000);
+					
 				if(msg.indexOf("ERROR") >=0)
 				{
 					alert("There was a problem saving the data! "+msg);
