@@ -4,6 +4,8 @@
 
 <h2>Some final questions</h2>
 <br>
+Please complete the following questions and click the "save responses" button to save your answers.
+<br/>
 <%
 int courseOfferingId = HTMLTools.getInt(request.getParameter("course_offering_id"));
 CourseManager cm = CourseManager.instance();

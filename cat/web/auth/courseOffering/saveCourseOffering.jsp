@@ -306,26 +306,26 @@ else if (object.equals("Questions"))
 	QuestionManager qm = QuestionManager.instance();
 	Program p = ProgramManager.instance().getProgramById(programId);
 	List<Question> questions = qm.getAllQuestionsForProgram(p);
-	if(questions.size() != responses.size())
+	String result = "";
+	
+	
+	if(!qm.saveResponses(p,courseOfferingId,responses))
 	{
-		%>
-		<script type="text/javascript">
-			<%=changeClass(responses ,parameterStart, questions) %>
-		</script>
-		Not all Questions have been responded to. Please review your responses.
-		<%
+		result="ERROR: The was a problem saving your responses!"+result;
+
 	}
 	else
 	{
-		if(qm.saveResponses(p,courseOfferingId,responses))
+		if(questions.size() != responses.size())
 		{
-			out.println("Responses saved");
+			result="<script type=\"text/javascript\">\n"+changeClass(responses ,parameterStart, questions)+"\n</script>\nNot all responses have been saved. No all questions have a response. Please review your responses.";
 		}
 		else
 		{
-			out.println("ERROR: Unable to save responses");
+			result = "Responses saved.";
 		}
 	}
+	out.println(result);
 	
 }
 else

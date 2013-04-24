@@ -18,7 +18,7 @@ List<TeachingMethodPortionOption> optionsList = cm.getTeachingMethodPortionOptio
 int maxYValue = 0;
 for(TeachingMethodPortionOption option : optionsList)
 {
-	optionsString.add(option.getName());
+	optionsString.add(option.getName()+" ("+option.getComparativeValue()+")");
 	optionValuesString.add(option.getComparativeValue());
 	if(option.getComparativeValue() > maxYValue)
 		maxYValue = option.getComparativeValue();
