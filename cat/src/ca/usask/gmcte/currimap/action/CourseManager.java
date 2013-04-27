@@ -1773,7 +1773,8 @@ public class CourseManager
 				session.save(newLink);
 			}
 			
-			List<QuestionResponse> responses = QuestionManager.instance().getAllQuestionResponsesForOffering(source);
+			@SuppressWarnings("unchecked")
+			List<QuestionResponse> responses = (List<QuestionResponse>)session.createQuery("FROM QuestionResponse WHERE courseOffering.id=:courseOfferingId").setParameter("courseOfferingId", source.getId()).list();
 			for(QuestionResponse r : responses)
 			{
 				QuestionResponse newR = new QuestionResponse();
