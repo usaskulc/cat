@@ -1707,6 +1707,8 @@ public class CourseManager
 				newLink.setWhen(am.getWhen());
 				newLink.setCriterionExists(am.getCriterionExists());
 				newLink.setCriterionLevel(am.getCriterionLevel());
+				newLink.setCriterionCompleted(am.getCriterionCompleted());
+				newLink.setCriterionSubmitted(am.getCriterionSubmitted());
 				session.save(newLink);
 				List<AssessmentFeedbackOption> fbOptions = this.getAssessmentOptionsSelectedForLinkOffering(am.getId(),session);
 				for(AssessmentFeedbackOption fbOption : fbOptions)

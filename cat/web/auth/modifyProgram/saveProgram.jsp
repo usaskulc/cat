@@ -390,7 +390,7 @@ else if (object.equals("LinkCourseOrganization"))
 }
 else if (object.equals("MoveQuestionItem"))
 {
-	int programId = HTMLTools.getInt(request.getParameter("id"));
+	int programId = HTMLTools.getInt(request.getParameter("program_id"));
 	int toMoveId = HTMLTools.getInt(request.getParameter("option_id"));
 	int setId = HTMLTools.getInt(request.getParameter("set_id"));
 	String action = request.getParameter("action");
@@ -405,18 +405,18 @@ else if (object.equals("MoveQuestionItem"))
 		}
 		else
 		{
-			out.println("ERROR: Unable to move answer option");
+			out.println("ERROR: Unable to perform answer option action");
 		}
 	}
 	else if (type.equals("question"))
 	{
-		if(manager.moveQuestion(toMoveId, action))
+		if(manager.moveQuestion(programId,toMoveId, action))
 		{
 			out.println("");
 		}
 		else
 		{
-			out.println("ERROR: Unable to move answer option");
+			out.println("ERROR: Unable to perform question action");
 		}
 	}
 }
@@ -424,15 +424,82 @@ else if (object.equals("LinkProgramQuestion"))
 {
 	int programId = HTMLTools.getInt(request.getParameter("program_id"));
 	int questionId = HTMLTools.getInt(request.getParameter("question_id"));
+	String action = request.getParameter("action");
 	
 	QuestionManager manager = QuestionManager.instance();
-	if(manager.addQuestionToProgram(questionId, programId))
+	if(action.equals("add"))
 	{
-		out.println("Question added");
+		if(manager.addQuestionToProgram(questionId, programId))
+		{
+			out.println("Question added");
+		}
+		else
+		{
+			out.println("ERROR: Unable to add Question");
+		}
+	}
+	else if(action.equals("remove"))
+	{
+			if(manager.addQuestionToProgram(questionId, programId))
+			{
+				out.println("Question added");
+			}
+			else
+			{
+				out.println("ERROR: Unable to add Question");
+			}
+
+		}
+}
+
+else if (object.equals("ProgramQuestion"))
+{
+	int programId = HTMLTools.getInt(request.getParameter("program_id"));
+	int questionId = HTMLTools.getInt(request.getParameter("question_id"));
+	String display = request.getParameter("display");
+	String questionType = request.getParameter("question_type");
+	int answerSetId = HTMLTools.getInt(request.getParameter("answer_set_id"));
+	QuestionManager manager = QuestionManager.instance();
+	
+	AnswerSet set= null;
+	if (answerSetId < 0 && !questionType.equals("textarea"))
+	{
+		 set = manager.getAnswerSetByName(request.getParameter("answer_set_id"));
+		 answerSetId = set.getId();
+	}	 
+
+	if(manager.saveQuestion(questionId, display, questionType, answerSetId))
+	{
+		out.println("Question saved");
 	}
 	else
 	{
-		out.println("ERROR: Unable to add Question");
+		out.println("ERROR: Unable to save Question");
+	}
+}
+else if (object.equals("AnswerOption"))
+{
+	int programId = HTMLTools.getInt(request.getParameter("as_program_id"));
+	int answerSetId = HTMLTools.getInt(request.getParameter("as_answer_set_id"));
+	String display = request.getParameter("as_display");
+	String calcValue = request.getParameter("calc_value");
+	int optionId = HTMLTools.getInt(request.getParameter("as_option_id"));
+	QuestionManager manager = QuestionManager.instance();
+
+	if(optionId == -1 && answerSetId == -1)
+	{
+		String answerSetName = request.getParameter("answer_set_name");
+		manager.saveAnswerSet(answerSetName);
+		AnswerSet newSet = manager.getAnswerSetByName(answerSetName);
+		answerSetId = newSet.getId();
+	}
+	if(manager.saveAnswerOption(optionId,calcValue, display, answerSetId))
+	{
+		out.println("Option saved");
+	}
+	else
+	{
+		out.println("ERROR: Unable to save Option");
 	}
 }
 else if (object.equals("ProgramOutcomeWithCharacteristics"))
@@ -509,6 +576,21 @@ else if (object.equals("ProgramOutcomeWithCharacteristics"))
 		}
 	}
 	
+}
+else if(object.equals("DeleteLibraryQuestion"))
+{
+	int programId = HTMLTools.getInt(request.getParameter("program_id"));
+	int questionId = HTMLTools.getInt(request.getParameter("question_id"));
+	
+	QuestionManager manager = QuestionManager.instance();
+	if(manager.deleteQuestion(questionId))
+	{
+		out.println("Question deleted");
+	}
+	else
+	{
+		out.println("ERROR: Unable to delete question");
+	}
 }
 else
 {

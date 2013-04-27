@@ -4,7 +4,7 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 	clearMessages(requiredParameterArray);
 	if(checkRequired(requiredParameterArray))
 	{
-		
+			
 		$('#saveButton').attr("disabled","true");
 		var object = $("#objectClass").val();
 		if(type != null)
@@ -24,7 +24,7 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 			parameters += "&parentObjectId="+parentObjectId;
 		}
 		parameters += readParameters(parameterArray);
-		//alert(parameters);
+		//console.log(parameters);
 		$.ajax({
 			type: 		"post",
 			url: 		"/cat/auth/modifyProgram/saveProgram.jsp",
@@ -168,10 +168,46 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 				{
 					
 				}
-				
+				else if (object == "AnswerOption")
+				{
+					var programId = $("#program_id").val();
+					$("#optionMessageDiv").html(msg);
+					$("#optionMessageDiv").show();
+					$("#optionMessageDiv").html(msg);
+					$('#saveOptionButton').removeAttr("disabled");
+					
+					var questionType = $("#as_question_type").val();
+					var setId = $("#answer_set_id").val();
+					var asOptionId = $("#as_option_id").val();
+					var asSetId = $("#as_answer_set_id").val();
+					
+					if(asSetId == "-1" && asOptionId == "-1")
+					{
+						var setName = $("#answer_set_name").val();
+						loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&answer_set_id="+setName+"&inUse=false&editMode=true"+"&question_type="+questionType, "#AnswerSetDiv");
+						$("#EditAnswerSetDiv").html("");
+						$("#answer_set_id").val(setName);
+					}
+					else
+					{
+						loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&answer_set_id="+setId+"&inUse=false&editMode=true"+"&question_type="+questionType, "#AnswerSetDiv");
+						$("#EditAnswerSetDiv").html("");
+					}
+				}
+				else if (object == "ProgramQuestion")
+				{
+					var programId = $("#program_id").val();
+					var listShownString = $("#list_shown").val();
+					if (listShownString != null && listShownString)
+					{
+						loadURLIntoId("/cat/auth/programView/questionLibrary.jsp?program_id="+programId,"#questionLibraryDiv","Question has been added to the library.");
+					}
+							
+				}
 				$('#saveButton').removeAttr("disabled");
 				setTimeout("clearMessage();",500);
-				if(object != "Course" && object!="NewProgramOutcome" && object!= "InstructorAttributeValue" && object!="CourseAttributeValue" && object!="ProgramOutcomeOrganizationOutcome" && object !="LinkCourseOrganization")
+				//console.log("object="+object);
+				if(object != "AnswerOption" && object != "ProgramQuestion" && object != "Course" && object!="NewProgramOutcome" && object!= "InstructorAttributeValue" && object!="CourseAttributeValue" && object!="ProgramOutcomeOrganizationOutcome" && object !="LinkCourseOrganization")
 				{
 					setTimeout("closeEdit()",2000);
 				}
@@ -182,6 +218,7 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 			}
 		});
 	}
+	
 }
 
 function removeProgram(program_id,organization_id)
@@ -829,19 +866,20 @@ function setQuestionType(programId)
 {
 	var questionTypeBox = $("#question_type").get(0);
 	var questionTypeSelected = questionTypeBox.options[questionTypeBox.selectedIndex].value;
-	
-	loadURLIntoId("/cat/auth/programView/availableAnswerSets.jsp?program_id="+programId+"&question_type="+questionTypeSelected , "#questionTypeDisplayDiv");
+	$("#question_type").val(questionTypeSelected);
+	loadURLIntoId("/cat/auth/programView/availableAnswerSets.jsp?program_id="+programId+"&question_type="+questionTypeSelected , "#AnswerSetDiv");
 }
 
 function setAnswerSet(programId, answerSetId, questionType)
 {
 	$("#answer_set_id").val(answerSetId);
-	loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&question_type="+questionType+"&inUse=true&answer_set_id="+answerSetId , "#questionTypeDisplayDiv");
+	loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&question_type="+questionType+"&inUse=true&answer_set_id="+answerSetId , "#AnswerSetDiv");
 }
+
 function addQuestionToProgram(questionId,programId)
 {
 	$('#saveButton').attr("disabled","true");
-	var parameters = "object=LinkProgramQuestion";
+	var parameters = "object=LinkProgramQuestion&action=add";
 	parameters+="&question_id="+questionId+"&program_id="+programId;
 	//alert(parameters);
 	$.ajax({
@@ -869,12 +907,60 @@ function addQuestionToProgram(questionId,programId)
 
 }
 
-function editAnswerOption(programId, answerSetId,answerOptionId,action)
+function editAnswerOption(programId, answerSetId,answerOptionId,action,questionType)
 {
-	
+	if(action == "delete")
+	{
+		if (!confirm("Are you sure you want to remove this option?"))
+		{
+			return;
+		}
+		else
+		{
+			var parameters = "answer_option_id="+answerOptionId;
+			parameters+="&program_id="+programId;
+			//alert(parameters);
+			$.ajax({
+				type: 		"post",
+				url: 		"/cat/auth/modifyProgram/removeAnswerOption.jsp",
+				data: 		parameters,
+				success:	function(msg) 
+				{
+					if(msg.indexOf("ERROR") >=0)
+					{
+						alert("There was a problem deleting the option! "+msg);
+					}
+					else
+					{
+						loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&answer_set_id="+answerSetId+"&question_type="+questionType+"&inUse=false%editMode=true", "#AnswerSetId_"+answerSetId);
+						loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&question_type="+questionType+"&answer_set_id="+answerSetId+"&inUse=false&editMode=true", "#AnswerSetDiv");
+						
+					}
+					resetChanges();
+				}
+			
+			});
+		}
+
+	}
+	else
+	{
+		loadURLIntoId("/cat/auth/programView/editAnswerOption.jsp?program_id="+programId+"&answer_set_id="+answerSetId+"&option_id="+answerOptionId+"&question_type="+questionType, "#EditAnswerSetDiv");
+		setTimeout("scrollDown()",500);
+	}
+}
+function scrollDown()
+{
+	$("#outerEditDiv").animate({ scrollTop: $("#outerEditDiv").prop("scrollHeight") }, 1000);
+			
 }
 function move(programId,type,optionId,questionType,action,setId)
 {
+	if(action == "delete" && !confirm("Are you sure you want to remove this question?"))
+	{
+		return;
+	}
+
 	var parameters = "object=MoveQuestionItem";
 	parameters+="&type="+type+"&program_id="+programId+"&option_id="+optionId+"&set_id="+setId+"&action="+action;
 	//alert(parameters);
@@ -888,14 +974,48 @@ function move(programId,type,optionId,questionType,action,setId)
 			$("#messageDiv").show();
 			if(msg.indexOf("ERROR") >=0)
 			{
-				alert("There was a problem moving the item! "+msg);
+				alert("There was a problem with the "+action+" of the item! "+msg);
 			}
 			else
 			{
 				if(type == "question")
 					loadURLIntoId("/cat/auth/programView/programQuestions.jsp?program_id="+programId, "#programQuestionsDiv");
 				else if(type == "answerOption")
-					loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&question_type="+questionType+"&answer_set_id="+setId+"&inUse=false", "#AnswerSetId_"+setId);
+					loadURLIntoId("/cat/auth/programView/answerSet.jsp?program_id="+programId+"&question_type="+questionType+"&answer_set_id="+setId+"&inUse=false&editMode=true", "#AnswerSetDiv");
+			}
+			
+			resetChanges();
+		}
+	
+	});
+	
+}
+
+function deleteQuestion(programId, questionId)
+{
+	if(!confirm("Are you sure you want to remove this question from the library?"))
+	{
+		return;
+	}
+
+	var parameters = "object=DeleteLibraryQuestion";
+	parameters+="&program_id="+programId+"&question_id="+questionId;
+	//alert(parameters);
+	$.ajax({
+		type: 		"post",
+		url: 		"/cat/auth/modifyProgram/saveProgram.jsp",
+		data: 		parameters,
+		success:	function(msg) 
+		{
+			$("#messageDiv").html(msg);
+			$("#messageDiv").show();
+			if(msg.indexOf("ERROR") >=0)
+			{
+				alert("There was a problem deleting the question! "+msg);
+			}
+			else
+			{
+				loadURLIntoId("/cat/auth/programView/questionLibrary.jsp?program_id="+programId, "#questionLibraryDiv");
 			}
 			
 			resetChanges();

@@ -25,7 +25,7 @@ public class QuestionManager
 	private static QuestionManager instance;
 	private static Logger logger = Logger.getLogger(QuestionManager.class);
 
-	public boolean save(int id,String display, int answerSetId, int questionTypeId)
+	public boolean saveQuestion(int id,String display, String questionType, int answerSetId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -43,9 +43,9 @@ public class QuestionManager
 				AnswerSet set = (AnswerSet)session.get(AnswerSet.class, answerSetId);
 				o.setAnswerSet(set);
 			}
-			if(questionTypeId > -1)
+			if(questionType != null)
 			{
-				QuestionType type = (QuestionType)session.get(QuestionType.class, questionTypeId);
+				QuestionType type = (QuestionType)session.createQuery("FROM QuestionType WHERE name=:name").setParameter("name", questionType).uniqueResult();;
 				o.setQuestionType(type);
 			}
 			if(id > -1)
@@ -63,7 +63,7 @@ public class QuestionManager
 		}
 	}
 
-	public boolean saveAnswerOption(int id,String value, String display, int displayIndex, int answerSetId)
+	public boolean saveAnswerOption(int id,String value, String display, int answerSetId)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -71,7 +71,22 @@ public class QuestionManager
 		{
 			AnswerOption o = new AnswerOption();
 			if( id > -1)
+			{
 				o = (AnswerOption) session.get(AnswerOption.class,id);
+				if(!value.equals(o.getValue())) // if the value was already used in question responses, it needs to be updated.
+				{
+					@SuppressWarnings("unchecked")
+					List<QuestionResponse> responsesUsingAnswer = (List<QuestionResponse>)session
+							.createQuery("FROM QuestionResponse WHERE question in (FROM Question WHERE answerSet.id=:answerSetId) AND response=:responseValue")
+							.setParameter("answerSetId",o.getAnswerSet().getId()).setParameter("responseValue",o.getValue()).list();
+					for(QuestionResponse response : responsesUsingAnswer)
+					{
+						response.setResponse(value);
+						session.merge(response);
+					}
+					
+				}
+			}
 			else
 			{
 				AnswerSet set = (AnswerSet)session.get(AnswerSet.class,  answerSetId);
@@ -95,6 +110,43 @@ public class QuestionManager
 			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
 			return false;
 		}
+	}
+	public boolean saveAnswerSet(String name)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			AnswerSet o = new AnswerSet();
+			o.setName(name);
+			session.save(o);
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
+	public AnswerSet getAnswerSetByName(String name)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		AnswerSet toReturn = null;
+		try
+		{
+			toReturn = (AnswerSet)session.createQuery("from AnswerSet where name=:name")
+					.setParameter("name",name)
+					.uniqueResult();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -152,6 +204,13 @@ public class QuestionManager
 					if(toDelete !=null)
 					{
 						link.setDisplayIndex(link.getDisplayIndex()-1);
+						List<QuestionResponse> responsesUsingAnswer = (List<QuestionResponse>)session
+								.createQuery("FROM QuestionResponse WHERE question in (FROM Question WHERE answerSet.id=:answerSetId) AND response=:responseValue")
+								.setParameter("answerSetId",toMove.getAnswerSet().getId()).setParameter("responseValue",toMove.getValue()).list();
+						for(QuestionResponse resp :responsesUsingAnswer)
+						{
+							session.delete(resp);
+						}
 						session.merge(link);
 					}
 					if(link.getId() == toMoveId)
@@ -175,14 +234,41 @@ public class QuestionManager
 			return false;
 		}
 	}
+	public LinkProgramQuestion getLinkProgramQuestion(int programId, int questionId)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		LinkProgramQuestion toReturn = null;
+		try
+		{
+			toReturn = (LinkProgramQuestion)session.createQuery("from LinkProgramQuestion where program.id = :programId and question.id=:questionId")
+					.setParameter("programId",programId)
+					.setParameter("questionId", questionId)
+					.uniqueResult();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	
+	
 	@SuppressWarnings("unchecked")
-	public boolean moveQuestion(int toMoveId, String direction)
+	public boolean moveQuestion(int programId, int questionId, String direction)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		try
 		{
-			LinkProgramQuestion toMove = (LinkProgramQuestion)session.get(LinkProgramQuestion.class,toMoveId);
+			LinkProgramQuestion toMove = (LinkProgramQuestion)session
+					.createQuery("FROM LinkProgramQuestion WHERE program.id=:programId AND question.id=:questionId")
+					.setParameter("programId", programId)
+					.setParameter("questionId",questionId)
+					.uniqueResult();
+		
+			int toMoveId = toMove.getId();
 			List<LinkProgramQuestion> existing = (List<LinkProgramQuestion>)session.createQuery("FROM LinkProgramQuestion WHERE program.id=:programId ORDER BY displayIndex").setParameter("programId", toMove.getProgram().getId()).list();		
 			if(direction.equals("up"))
 			{
@@ -230,6 +316,7 @@ public class QuestionManager
 					if(toDelete !=null)
 					{
 						link.setDisplayIndex(link.getDisplayIndex()-1);
+						
 						session.merge(link);
 					}
 					if(link.getId() == toMoveId)
@@ -240,6 +327,12 @@ public class QuestionManager
 				}
 				if(toDelete != null)
 				{
+					List<QuestionResponse> responsesToQuestion = (List<QuestionResponse>)session
+							.createQuery("FROM QuestionResponse WHERE question.id=:questionId")
+							.setParameter("questionId",questionId).list();
+					for(QuestionResponse resp: responsesToQuestion)
+						session.delete(resp);
+					
 					session.delete(toDelete);
 				}
 			}
@@ -351,6 +444,40 @@ public class QuestionManager
 		}
 		return toReturn;
 	}
+	public boolean deleteQuestion(int questionId)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			Question q = (Question)session.get(Question.class,questionId);
+			@SuppressWarnings("unchecked")
+			List<QuestionResponse> responsesToQuestion = (List<QuestionResponse>)session
+					.createQuery("FROM QuestionResponse WHERE question.id=:questionId")
+					.setParameter("questionId",q.getId()).list();
+			for(QuestionResponse resp: responsesToQuestion)
+				session.delete(resp);
+			
+			@SuppressWarnings("unchecked")
+			List<LinkProgramQuestion> questionLinks = (List<LinkProgramQuestion>)session
+					.createQuery("FROM LinkProgramQuestion WHERE question.id=:questionId")
+					.setParameter("questionId",q.getId()).list();
+			for(LinkProgramQuestion qLink: questionLinks)
+				session.delete(qLink);
+			
+			
+			session.delete(q);
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			return false;
+		}
+	}
+
 	public AnswerSet getAnswerSetById(int id)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -359,6 +486,22 @@ public class QuestionManager
 		try
 		{
 			toReturn = (AnswerSet) session.get(AnswerSet.class,id);
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	public AnswerOption getAnswerOptionById(int id)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		AnswerOption toReturn = null;
+		try
+		{
+			toReturn = (AnswerOption) session.get(AnswerOption.class,id);
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
@@ -451,6 +594,58 @@ public class QuestionManager
 		try
 		{
 			toReturn = (List<QuestionResponse>)session.createQuery("FROM QuestionResponse WHERE courseOffering.id=:courseOfferingId").setParameter("courseOfferingId", offering.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
+	public List<String> getAllQuestionIdsWithResponses()
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<String> toReturn = null;
+		try
+		{
+			toReturn = (List<String>)session.createQuery("SELECT distinct ''||question.id FROM QuestionResponse").list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
+	public List<String> getAllQuestionIdsUsedInProgramsOtherThan(int programId)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<String> toReturn = null;
+		try
+		{
+			toReturn = (List<String>)session.createQuery("SELECT distinct ''||question.id FROM LinkProgramQuestion WHERE program.id<>:programId").setParameter("programId",programId).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getAllAnswerSetIdsWithResponses()
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<String> toReturn = null;
+		try
+		{
+			toReturn = (List<String>)session.createQuery("SELECT distinct ''||q.answerSet.id FROM Question q,QuestionResponse qr WHERE qr.question=q").list();
 			session.getTransaction().commit();
 		}
 		catch(Exception e)
