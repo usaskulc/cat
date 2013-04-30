@@ -8,7 +8,7 @@ int programId = HTMLTools.getInt(request.getParameter("program_id"));
 String questionType = request.getParameter("question_type");
 @SuppressWarnings("unchecked")
 List<QuestionResponse> responses = (List<QuestionResponse>) session.getAttribute("programQuestionResponses");
-String answer = responseValue(responses, questionId);
+List<String> answers = responseValue(responses, questionId);
 QuestionManager qm = QuestionManager.instance();
 
 AnswerSet set = qm.getAnswerSetById(answerSetId);
@@ -19,32 +19,37 @@ for(AnswerOption option : list)
 {
 		
 	%>
-	<input type="<%=questionType %>" name="<%=programId%>_<%=courseOfferingId%>_<%=questionId%>"  value="<%=option.getValue()%>"   <%=answerIndicator(answer,option.getValue()) %> /><%=option.getDisplay()%><br/>
+	<input type="<%=questionType %>" name="<%=programId%>_<%=courseOfferingId%>_<%=questionId%>"  value="<%=option.getValue()%>"   <%=answerIndicator(answers,option.getValue()) %> /><%=option.getDisplay()%><br/>
 	<%
 }
 %>
 
 <%!
-public String responseValue(List<QuestionResponse> responses , int questionId)
+public List<String> responseValue(List<QuestionResponse> responses , int questionId)
 {
+	List<String> responseValues = new ArrayList<String>();
+	
 	for(QuestionResponse response : responses)
 	{
 		if(response.getQuestion().getId().intValue() == questionId)
 		{
-			return response.getResponse();
+			responseValues.add(response.getResponse());
 		}
 	}
-	return "";
+	return responseValues;
 }
 
-public String answerIndicator(String answerValue, String optionValue)
+public String answerIndicator(List<String> answerValues, String optionValue)
 {
-	if(answerValue == null)
+	if(answerValues == null || answerValues.isEmpty())
 		return "";
 
-	if(answerValue.trim().equals(optionValue))
+	for(String answerValue:answerValues)
 	{
-		return "checked=\"checked\"";
+		if(answerValue.trim().equals(optionValue)) 
+		{
+			return "checked=\"checked\"";
+		}
 	}
 	return "";
 }

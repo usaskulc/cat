@@ -144,7 +144,7 @@ for(Feature f: featureList)
 	else if(f.getFileName().equals("completionTime"))
 	{
 		List<Question> questionLinks = QuestionManager.instance().getAllQuestionsForProgram(program);
-		List<QuestionResponse> responses = QuestionManager.instance().getAllQuestionResponsesForProgramAndOffering(program,courseOffering);
+		List<Question> responses = QuestionManager.instance().getAllQuestionsWithResponsesForProgramAndOffering(program,courseOffering);
 		completion.add(f.getDisplayIndex()-1, responses.size() +" out of "+questionLinks.size() +" questions have been answered");
 	}
 }

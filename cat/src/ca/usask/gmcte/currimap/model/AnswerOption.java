@@ -65,9 +65,9 @@ public class AnswerOption implements java.io.Serializable {
 		this.answerSet = answerSet;
 	}
 
-	@Column(name = "display", nullable = false, length = 100)
+	@Column(name = "display", nullable = false, length = 150)
 	@NotNull
-	@Length(max = 100)
+	@Length(max = 150)
 	public String getDisplay() {
 		return this.display;
 	}

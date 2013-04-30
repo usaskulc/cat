@@ -6,8 +6,9 @@ Enumeration e = request.getParameterNames();
 while(e.hasMoreElements())
 {
 	String pName = (String)e.nextElement();
-	String value = request.getParameter(pName);
-	logger.error("("+pName + ") = ("+value+")");
+	String[] values = request.getParameterValues(pName);
+	for(String value:values)
+		logger.error("("+pName + ") = ("+value+")");
 }
 
 
@@ -292,27 +293,32 @@ else if (object.equals("Questions"))
 	int courseOfferingId = HTMLTools.getInt(request.getParameter("course_offering_id"));
 	int programId = HTMLTools.getInt(request.getParameter("program_id"));
 	String parameterStart = programId+"_"+courseOfferingId+"_";
-	TreeMap<String,String> responses = new TreeMap<String,String>();
+	TreeMap<String,String[]> responses = new TreeMap<String,String[]>();
 	Enumeration enums = request.getParameterNames();
 	while(enums.hasMoreElements())
 	{
 		String pName = (String)enums.nextElement();
 		if(pName.startsWith(parameterStart))
 		{
-			String value = request.getParameter(pName);
-			responses.put(pName,value);
+			String[] values = request.getParameterValues(pName);
+			responses.put(pName,values);
 		}
 	}
 	QuestionManager qm = QuestionManager.instance();
 	Program p = ProgramManager.instance().getProgramById(programId);
 	List<Question> questions = qm.getAllQuestionsForProgram(p);
+	if(!qm.clearResponsesForOfferingInProgram(p,courseOfferingId))
+	{
+		out.println("ERROR: something went wrong while clearing your previous answers!");
+		return;
+	}
+	
 	String result = "";
 	
 	
 	if(!qm.saveResponses(p,courseOfferingId,responses))
 	{
 		result="ERROR: The was a problem saving your responses!"+result;
-
 	}
 	else
 	{
@@ -350,7 +356,7 @@ public boolean isInt(String s)
 	return false;
 }
 
-public String changeClass(TreeMap<String, String> responses ,String responseStart, List<Question> questions)
+public String changeClass(TreeMap<String, String[]> responses ,String responseStart, List<Question> questions)
 {
 	StringBuilder r = new StringBuilder();
 	for(Question q : questions)

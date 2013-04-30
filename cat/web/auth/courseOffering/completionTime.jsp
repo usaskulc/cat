@@ -10,7 +10,34 @@ Please complete the following questions and click the "save responses" button to
 int courseOfferingId = HTMLTools.getInt(request.getParameter("course_offering_id"));
 CourseManager cm = CourseManager.instance();
 CourseOffering courseOffering = cm.getCourseOfferingById(courseOfferingId);
-int programId = HTMLTools.getInt((String)session.getAttribute("programId"));
+String programId = (String)session.getAttribute("programId");
+
+OrganizationManager dm = OrganizationManager.instance();
+int programIdParameter = HTMLTools.getInt(request.getParameter("program_id"));
+if(programIdParameter > -1)
+{
+	session.setAttribute("programId",""+programIdParameter);
+	programId = ""+programIdParameter; 
+}
+
+out.println("Currently selected Program :");
+List<Organization> organizations = cm.getOrganizationForCourseOffering(courseOffering);
+List<Program> programs = new ArrayList<Program>();
+Program bogus = new Program();
+bogus.setId(-1);
+bogus.setName("Please select a Program");
+programs.add(bogus);
+for(Organization dep : organizations)
+{
+	programs.addAll(dm.getProgramOrderedByNameForOrganization(dep));
+}
+out.println(HTMLTools.createSelect("programToSet", programs, "Id", "Name", programId, "setProgramIdQuestions("+courseOfferingId+")"));
+
+if(!HTMLTools.isValid(programId))
+{
+	return;
+}
+
 %>
 <form>
 		<input type="hidden" name="program_id" value="<%=programId%>" id="program_id" />

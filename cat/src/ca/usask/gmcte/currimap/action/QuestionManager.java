@@ -565,6 +565,23 @@ public class QuestionManager
 		return toReturn;
 	}
 	@SuppressWarnings("unchecked")
+	public List<Question> getAllQuestionsWithResponsesForProgramAndOffering(Program program, CourseOffering offering)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		List<Question> toReturn = null;
+		try
+		{
+			toReturn = (List<Question>)session.createQuery("SELECT distinct l.question FROM QuestionResponse l WHERE l.program.id=:programId AND l.courseOffering.id=:courseOfferingId").setParameter("programId", program.getId()).setParameter("courseOfferingId", offering.getId()).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e)
+		{
+			HibernateUtil.logException(logger, e);
+		}
+		return toReturn;
+	}
+	@SuppressWarnings("unchecked")
 	public List<QuestionResponse> getAllQuestionResponsesForProgram(Program program,Session session)
 	{
 		return  (List<QuestionResponse>)session.createQuery("FROM QuestionResponse WHERE program.id=:programId").setParameter("programId", program.getId()).list();
@@ -654,7 +671,36 @@ public class QuestionManager
 		}
 		return toReturn;
 	}
-	public boolean saveResponses(Program p, int courseOffering, TreeMap<String,String> responses)
+	public boolean clearResponsesForOfferingInProgram(Program p, int courseOfferingId)
+	{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		try
+		{
+			
+			@SuppressWarnings("unchecked")
+			List<QuestionResponse> questionResponses = (List<QuestionResponse>)session
+						.createQuery("FROM QuestionResponse WHERE program.id=:programId AND courseOffering.id=:courseOfferingId")
+						.setParameter("programId", p.getId())
+						.setParameter("courseOfferingId", courseOfferingId)
+					    .list();
+				
+			for(QuestionResponse responseToDelete : questionResponses)
+			{
+				session.delete(responseToDelete);
+			}	
+			session.getTransaction().commit();
+			return true;
+		}
+		catch(Exception e)
+		{
+			try{session.getTransaction().rollback();}catch(Exception e2){logger.error("Unable to roll back!",e2);}
+			HibernateUtil.logException(logger, e);
+			return false;
+		}
+	}
+	
+	public boolean saveResponses(Program p, int courseOffering, TreeMap<String,String[]> responses)
 	{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -667,25 +713,16 @@ public class QuestionManager
 			{
 				String questionIdString = key.split("_")[2];
 				Question q = (Question)session.get(Question.class,Integer.parseInt(questionIdString));
-				QuestionResponse response = (QuestionResponse)session
-						.createQuery("FROM QuestionResponse WHERE program.id=:programId AND courseOffering.id=:courseOfferingId AND question.id=:questionId")
-						.setParameter("programId", p.getId())
-						.setParameter("courseOfferingId", courseOffering)
-						.setParameter("questionId", q.getId())
-					    .uniqueResult();
-				if(response == null)
+				String[] responseValues = responses.get(key);
+				for(String responseString :responseValues)
 				{
-					response = new QuestionResponse();
+					
+					QuestionResponse response = new QuestionResponse();
 					response.setProgram(p);
 					response.setCourseOffering(offering);
 					response.setQuestion(q);
-					response.setResponse(responses.get(key));
+					response.setResponse(responseString);
 					session.save(response);
-				}
-				else
-				{
-					response.setResponse(responses.get(key));
-					session.merge(response);
 				}
 			}
 			session.getTransaction().commit();

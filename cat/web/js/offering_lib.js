@@ -587,6 +587,12 @@ function setProgramStartId(courseOfferingId)
 	document.location="/cat/auth/courseOffering/characteristicsStart.jsp?course_offering_id="+courseOfferingId+"&program_id="+programId;
 	resetChanges();
 }
+function setProgramIdQuestions(courseOfferingId)
+{
+	var programId = $("#programToSet").val();
+	loadURLIntoId("/cat/auth/courseOffering/completionTime.jsp?course_offering_id="+courseOfferingId+"&program_id="+programId,"#completionTimeDiv");
+	resetChanges();
+}
 function processContributionChange(courseOfferingId, programOutcomeId, existingLink)
 {
 	var outcomeSelectBox;

@@ -1,4 +1,4 @@
-<%@ page import="java.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.model.*"%>
+<%@ page import="java.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.model.*,org.hibernate.validator.Length"%>
 <%
 int programId = HTMLTools.getInt(request.getParameter("program_id"));
 int answerSetId = HTMLTools.getInt(request.getParameter("answer_set_id"));
@@ -38,10 +38,10 @@ if(answerSetId == -1 && optionId == -1)
 	<% 
 	additionalValues=",'answer_set_name'";
 }
-
+int fieldSize= (AnswerOption.class.getMethod("getDisplay")).getAnnotation(Length.class).max();
 %>
 	<div class="formElement">
-		<div class="label">Display:</div>
+		<div class="label">Display (<%=fieldSize%> characters max):</div>
 		<div class="field"><input type="text" name="as_display" id="as_display" value="<%=editing?option.getDisplay():""%>"/></div>
 		<div class="field"><div id="as_displayMessage" class="completeMessage"></div></div>
 		<div class="spacer"> </div>

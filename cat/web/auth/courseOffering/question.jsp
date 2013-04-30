@@ -8,7 +8,7 @@ Question q = qm.getQuestionById(questionId);
 String questionType = q.getQuestionType().getName(); //select, radio, checkbox or textarea
 @SuppressWarnings("unchecked")
 List<QuestionResponse> responses = (List<QuestionResponse>) session.getAttribute("programQuestionResponses");
-String answer = responseValue(responses, questionId);
+List<String> answers = responseValue(responses, questionId);
 %>
 <%=q.getDisplay()%>
 <%
@@ -18,12 +18,16 @@ if(questionType.equals("select"))
 	List<AnswerOption> options = new ArrayList<AnswerOption>();
 	options.addAll(q.getAnswerSet().getAnswerOptions());
 	
-	out.println(HTMLTools.createSelect(programId + "_" + courseOfferingId + "_" + questionId , options, "value", "display", answer, ""));
+	out.println(HTMLTools.createSelect(programId + "_" + courseOfferingId + "_" + questionId , options, "value", "display", answers.get(0), ""));
 }
 else if(questionType.equals("textarea"))
 {
+	String answerText = "";
+	if(answers.size()>0)
+		answerText = answers.get(0);
+		
 	%>
-	<textarea id="<%=programId%>_<%=courseOfferingId%>_<%=questionId%>" name="<%=programId%>_<%=courseOfferingId%>_<%=questionId%>" cols="40" rows="6"><%=answer%></textarea>
+	<textarea id="<%=programId%>_<%=courseOfferingId%>_<%=questionId%>" name="<%=programId%>_<%=courseOfferingId%>_<%=questionId%>" cols="40" rows="6"><%=answerText%></textarea>
 	<%
 }
 else
@@ -45,15 +49,17 @@ else
 %>
 	
 	<%!
-public String responseValue(List<QuestionResponse> responses , int questionId)
+public List<String> responseValue(List<QuestionResponse> responses , int questionId)
 {
+	List<String> responseValues = new ArrayList<String>();
+	
 	for(QuestionResponse response : responses)
 	{
 		if(response.getQuestion().getId().intValue() == questionId)
 		{
-			return response.getResponse();
+			responseValues.add(response.getResponse());
 		}
 	}
-	return "";
+	return responseValues;
 }
 %>
