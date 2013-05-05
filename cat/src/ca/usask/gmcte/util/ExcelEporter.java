@@ -858,8 +858,7 @@ public class ExcelEporter
 				questionIds[i++] = q.getId();
 				col+=2;
 			}
-			if(programQuestions.size() > maxQuestions)
-				maxQuestions = programQuestions.size();
+			maxQuestions = Math.max(programQuestions.size() , maxQuestions);
 			
 			row++;
 			col = 0;
@@ -912,6 +911,7 @@ public class ExcelEporter
 				
 				row += maxAnswerCount;
 			}
+			row++;
 		}
 			
 		// set columns to 30 chars
