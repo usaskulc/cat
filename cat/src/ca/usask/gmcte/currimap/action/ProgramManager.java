@@ -187,7 +187,7 @@ public class ProgramManager
 			ProgramOutcome pOutcome  = (ProgramOutcome)session.get(ProgramOutcome.class,programOutcomeId);
 			CourseOffering courseOffering  = (CourseOffering)session.get(CourseOffering.class,courseOfferingId);
 			CourseOutcome outcome = (CourseOutcome) session.get(CourseOutcome.class,outcomeId);
-			logger.error(outcomeId + " "+(outcome==null));
+			logger.debug(outcomeId + " "+(outcome==null));
 			LinkCourseOutcomeProgramOutcome o = null;
 			if(existingLinkId > -1) // need to update or delete
 			{
@@ -1024,8 +1024,8 @@ public class ProgramManager
 		{
 			String query = "SELECT DISTINCT l.courseOffering FROM LinkCourseOfferingContributionProgramOutcome l where "
 			   + HibernateUtil.getListAsString("l.courseOffering.term",termList,true) +" l.linkProgramOutcome.program.id = :programId AND (l.contribution.calculationValue + l.mastery.calculationValue) > 0";
-			logger.error(query);
-			 tempList = (List<CourseOffering>)session
+			logger.debug(query);
+			tempList = (List<CourseOffering>)session
 					 .createQuery(query)
 					 .setParameter("programId",program.getId()).list();
 			session.getTransaction().commit();
@@ -1377,7 +1377,7 @@ public class ProgramManager
 			sql.append("   AND lppo.program_outcome_id = :programOutcomeId");
 			sql.append("   AND (cov.calculation_value + mov.calculation_value) > 0 ");
 			
-			logger.error("getContributionForProgramOutcome Core contributions:"+programOutcome.getId() + " "+ program.getId()+" "+sql.toString());
+			logger.debug("getContributionForProgramOutcome Core contributions:"+programOutcome.getId() + " "+ program.getId()+" "+sql.toString());
 			List<CourseOfferingContribution> fromOfferings = (List<CourseOfferingContribution>) session
 							.createSQLQuery(sql.toString()).setResultTransformer(Transformers.aliasToBean(CourseOfferingContribution.class))
 							.setParameter("programId",program.getId())
@@ -1412,7 +1412,7 @@ public class ProgramManager
 			sql.append("    AND lppo.program_id=:programId");
 			sql.append("    AND lppo.program_outcome_id = :programOutcomeId");
 			sql.append("    AND (cov.calculation_value + mov.calculation_value)  > 0 ");
-			logger.error("getServiceCourseContributionForProgramOutomce "+sql.toString());
+			logger.debug("getServiceCourseContributionForProgramOutomce "+sql.toString());
 			List<CourseOfferingContribution> fromCourses = (List<CourseOfferingContribution>) session
 					.createSQLQuery(sql.toString()).setResultTransformer(Transformers.aliasToBean(CourseOfferingContribution.class))
 					.setParameter("programId",program.getId())
@@ -1455,7 +1455,7 @@ public class ProgramManager
 			sql.append("   AND lcopo.mastery_option_id = mov.id");
 			sql.append("   AND lcp.program_id = :programId");
 			sql.append("   GROUP BY  co.course_id, lppo.program_outcome_id");
-			logger.error("getProgramOutcomeCoreCourseContributionForProgram Core contributions:"+sql.toString());
+			logger.debug("getProgramOutcomeCoreCourseContributionForProgram Core contributions:"+sql.toString());
 			List<ProgramOutcomeCourseContribution> fromOfferings = (List<ProgramOutcomeCourseContribution>) session
 							.createSQLQuery(sql.toString()).setResultTransformer(Transformers.aliasToBean(ProgramOutcomeCourseContribution.class))
 							.setParameter("programId",program.getId())
@@ -1487,7 +1487,7 @@ public class ProgramManager
 			sql.append("    AND lccpo.contribution_option_id = cov.id");
 			sql.append("    AND lccpo.mastery_option_id = mov.id");
 			sql.append("    AND lppo.program_id=:programId");
-			logger.error("getProgramOutcomeServiceCourseContributionForProgram :"+sql.toString());
+			logger.debug("getProgramOutcomeServiceCourseContributionForProgram :"+sql.toString());
 			List<ProgramOutcomeCourseContribution> fromCourses = (List<ProgramOutcomeCourseContribution>) session
 					.createSQLQuery(sql.toString()).setResultTransformer(Transformers.aliasToBean(ProgramOutcomeCourseContribution.class))
 					.setParameter("programId",program.getId())

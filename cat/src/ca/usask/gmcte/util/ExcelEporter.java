@@ -152,7 +152,7 @@ public class ExcelEporter
 			Organization o = p.getProgram().getOrganization();
 			if (o.getParentOrganization() !=null)
 			{
-				Label parentOrgValueLabel = new Label(col, row, ""+o.getParentOrganization().getName(),wrappedCell);
+				Label parentOrgValueLabel = new Label(col, row, o.getParentOrganization().getName(),wrappedCell);
 				programsSheet.addCell(parentOrgValueLabel);
 			}
 			col++;
@@ -160,14 +160,14 @@ public class ExcelEporter
 			programsSheet.addCell(orgValueLabel);
 			Label progValueLabel = new Label(col++, row, p.getProgram().getName(),wrappedCell);
 			programsSheet.addCell(progValueLabel);
-			Label progIdValueLabel = new Label(col++, row, ""+p.getProgram().getId(),wrappedCell);
+			Number progIdValueLabel = new Number(col++, row, p.getProgram().getId(),wrappedCell);
 			programsSheet.addCell(progIdValueLabel);
 			Label courseSubjectValueLabel = new Label(col++, row, p.getCourse().getSubject(),wrappedCell);
 			programsSheet.addCell(courseSubjectValueLabel);
 			
-			Label courseNumberValueLabel = new Label(col++, row, ""+p.getCourse().getCourseNumber(),wrappedCell);
+			Number courseNumberValueLabel = new Number(col++, row, p.getCourse().getCourseNumber(),wrappedCell);
 			programsSheet.addCell(courseNumberValueLabel);
-			Label courseIdValueLabel = new Label(col++, row, ""+p.getCourse().getId(),wrappedCell);
+			Number courseIdValueLabel = new Number(col++, row, p.getCourse().getId(),wrappedCell);
 			programsSheet.addCell(courseIdValueLabel);
 			Label courseClassificationValueLabel = new Label(col++, row, p.getCourseClassification().getName(),wrappedCell);
 			programsSheet.addCell(courseClassificationValueLabel);
@@ -213,6 +213,8 @@ public class ExcelEporter
 		sheet.addCell(courseSubjectLabel);
 		courseNumberLabel = new Label(col++, row, "Number",biggerFormat);
 		sheet.addCell(courseNumberLabel);
+		Label courseTitleLabel = new Label(col++, row, "Title",biggerFormat);
+		sheet.addCell(courseTitleLabel);
 		courseIdLabel = new Label(col++, row, "course_id",biggerFormat);
 		sheet.addCell(courseIdLabel);
 		List<String> courseIds = new ArrayList<String>();
@@ -226,10 +228,13 @@ public class ExcelEporter
 		{
 			Label subjectLabel = new Label(col++, row, c.getSubject(),wrappedCell);
 			sheet.addCell(subjectLabel);
-			Label numberLabel = new Label(col++, row, ""+c.getCourseNumber(),wrappedCell);
+			Number numberLabel = new Number(col++, row, c.getCourseNumber(),wrappedCell);
 			sheet.addCell(numberLabel);
-			Label idLabel = new Label(col++, row, ""+c.getId(),wrappedCell);
+			Number idLabel = new Number(col++, row, c.getId(),wrappedCell);
 			sheet.addCell(idLabel);
+			Label titleLabel = new Label(col++, row, c.getTitle(),wrappedCell);
+			sheet.addCell(titleLabel);
+			
 			courseIds.add(""+c.getId());
 			row++;
 			col=0;
@@ -273,26 +278,26 @@ public class ExcelEporter
 		col=0;
 		for (CourseOffering co : offerings)
 		{
-			Label courseLabel = new Label(col++, row, ""+co.getCourse().getId());
+			Number courseLabel = new Number(col++, row, co.getCourse().getId());
 			offeringsSheet.addCell(courseLabel);
 			
 			Label coTermLabel = new Label(col++, row, co.getTerm(),wrappedCell);
 			offeringsSheet.addCell(coTermLabel);
-			Label coSectionNumLabel = new Label(col++, row, ""+co.getSectionNumber(),wrappedCell);
+			Label coSectionNumLabel = new Label(col++, row, co.getSectionNumber(),wrappedCell);
 			offeringsSheet.addCell(coSectionNumLabel);
-			Label medLabel = new Label(col++, row, ""+co.getMedium(),wrappedCell);
+			Label medLabel = new Label(col++, row, co.getMedium(),wrappedCell);
 			offeringsSheet.addCell(medLabel);
 			Label instructorsLabel = new Label(col++, row, cm.getInstructorsString(co, false, "-2",false),wrappedCell);
 			offeringsSheet.addCell(instructorsLabel);
-			Label studentsLabel = new Label(col++, row, ""+co.getNumStudents(),wrappedCell);
+			Number studentsLabel = new Number(col++, row, co.getNumStudents(),wrappedCell);
 			offeringsSheet.addCell(studentsLabel);
 			Label completionLabel = new Label(col++, row, co.getTimeItTook()!=null?co.getTimeItTook().getName():"",wrappedCell);
 			offeringsSheet.addCell(completionLabel);
-			Label completionCalcLabel = new Label(col++, row, co.getTimeItTook()!=null?""+co.getTimeItTook().getCalculationValue():"",wrappedCell);
+			Number completionCalcLabel = new Number(col++, row, co.getTimeItTook()!=null?co.getTimeItTook().getCalculationValue():0,wrappedCell);
 			offeringsSheet.addCell(completionCalcLabel);
 			Label commentLabel = new Label(col++, row, co.getComments()!=null?co.getComments():"", wrappedCell);
 			offeringsSheet.addCell(commentLabel);
-			Label idLabel = new Label(col++, row, ""+co.getId(),wrappedCell);
+			Number idLabel = new Number(col++, row, co.getId(),wrappedCell);
 			offeringsSheet.addCell(idLabel);
 			row++;
 			col=0;
@@ -325,16 +330,16 @@ public class ExcelEporter
 		col=0;
 		for (LinkCourseOfferingTeachingMethod meth : methods)
 		{
-			Label courseLabel = new Label(col++, row, ""+meth.getCourseOffering().getCourse().getId());
+			Number courseLabel = new Number(col++, row, meth.getCourseOffering().getCourse().getId());
 			teachingMethodSheet.addCell(courseLabel);
 			
-			Label idLabel = new Label(col++, row, ""+meth.getCourseOffering().getId(),wrappedCell);
+			Number idLabel = new Number(col++, row, meth.getCourseOffering().getId(),wrappedCell);
 			teachingMethodSheet.addCell(idLabel);
-			Label strategyLabel = new Label(col++, row, ""+meth.getTeachingMethod().getName(),wrappedCell);
+			Label strategyLabel = new Label(col++, row, meth.getTeachingMethod().getName(),wrappedCell);
 			teachingMethodSheet.addCell(strategyLabel);
-			Label extLabel = new Label(col++, row, ""+meth.getHowLong().getName(),wrappedCell);
+			Label extLabel = new Label(col++, row, meth.getHowLong().getName(),wrappedCell);
 			teachingMethodSheet.addCell(extLabel);
-			Label extValLabel = new Label(col++, row, ""+meth.getHowLong().getComparativeValue(),wrappedCell);
+			Number extValLabel = new Number(col++, row, meth.getHowLong().getComparativeValue(),wrappedCell);
 			teachingMethodSheet.addCell(extValLabel);
 			row++;
 			col=0;
@@ -420,24 +425,24 @@ public class ExcelEporter
 		for (LinkCourseOfferingAssessment item : assessmentList)
 		{
 			col=0;
-			Label courseLabel = new Label(col++, row, ""+item.getCourseOffering().getCourse().getId());
+			Number courseLabel = new Number(col++, row, item.getCourseOffering().getCourse().getId());
 			assessmentSheet.addCell(courseLabel);
 			
-			Label idLabel = new Label(col++, row, ""+item.getCourseOffering().getId(),wrappedCell);
+			Number idLabel = new Number(col++, row, item.getCourseOffering().getId(),wrappedCell);
 			assessmentSheet.addCell(idLabel);
-			Label assessmentIdVal = new Label(col++, row, ""+item.getAssessment().getId(),wrappedCell);
+			Number assessmentIdVal = new Number(col++, row, item.getAssessment().getId(),wrappedCell);
 			assessmentSheet.addCell(assessmentIdVal);
 			
-			Label group = new Label(col++, row, ""+item.getAssessment().getGroup().getShortName(),wrappedCell);
+			Label group = new Label(col++, row, item.getAssessment().getGroup().getShortName(),wrappedCell);
 			assessmentSheet.addCell(group);
-			Label name = new Label(col++, row, ""+item.getAssessment().getName(),wrappedCell);
+			Label name = new Label(col++, row, item.getAssessment().getName(),wrappedCell);
 			assessmentSheet.addCell(name);
 			Label additionalInfo = new Label(col++, row, HTMLTools.isValid(item.getAdditionalInfo())?item.getAdditionalInfo():"", wrappedCell);
 			assessmentSheet.addCell(additionalInfo);
 			
-			Label weight = new Label(col++, row, ""+item.getWeight(), wrappedCell);
+			Number weight = new Number(col++, row, item.getWeight(), wrappedCell);
 			assessmentSheet.addCell(weight);
-			Label when = new Label(col++, row, ""+item.getWhen().getName(), wrappedCell);
+			Label when = new Label(col++, row, item.getWhen().getName(), wrappedCell);
 			assessmentSheet.addCell(when);
 			String criterion = item.getCriterionExists();
 			Label criterionLabel =  new Label(col++, row, criterion, wrappedCell);
@@ -445,11 +450,11 @@ public class ExcelEporter
 			
 			if(criterion.equalsIgnoreCase("Y"))
 			{
-				Label criterionLevel = new Label(col++, row, ""+item.getCriterionLevel(), wrappedCell);
+				Number criterionLevel = new Number(col++, row, item.getCriterionLevel(), wrappedCell);
 				assessmentSheet.addCell(criterionLevel);
-				Label criterionCompl = new Label(col++, row, ""+item.getCriterionCompleted(), wrappedCell);
+				Label criterionCompl = new Label(col++, row, item.getCriterionCompleted(), wrappedCell);
 				assessmentSheet.addCell(criterionCompl);
-				Label criterionSubm = new Label(col++, row, ""+item.getCriterionSubmitted(), wrappedCell);
+				Label criterionSubm = new Label(col++, row, item.getCriterionSubmitted(), wrappedCell);
 				assessmentSheet.addCell(criterionSubm);
 			}
 			else
@@ -536,14 +541,14 @@ public class ExcelEporter
 		for(LinkCourseOfferingOutcome oLink : outcomes)
 		{
 			col=0;
-			Label courseLabel = new Label(col++, row, ""+oLink.getCourseOffering().getCourse().getId());
+			Number courseLabel = new Number(col++, row, oLink.getCourseOffering().getCourse().getId());
 			outcomesSheet.addCell(courseLabel);
 			
-			Label idLabel = new Label(col++, row, ""+oLink.getCourseOffering().getId(),wrappedCell);
+			Number idLabel = new Number(col++, row, oLink.getCourseOffering().getId(),wrappedCell);
 			outcomesSheet.addCell(idLabel);
 			Label outcomeTextLabel= new Label(col++, row, oLink.getCourseOutcome().getName(),wrappedCell);
 			outcomesSheet.addCell(outcomeTextLabel);
-			Label outIdLabel = new Label(col++, row, ""+oLink.getCourseOutcome().getId(),wrappedCell);
+			Number outIdLabel = new Number(col++, row, oLink.getCourseOutcome().getId(),wrappedCell);
 			outcomesSheet.addCell(outIdLabel);
 		
 			List<Characteristic> outcomeCharacteristics = outcomeManager.getCharacteristicsForCourseOfferingOutcome(oLink.getCourseOffering(),oLink.getCourseOutcome(), organization);
@@ -595,15 +600,15 @@ public class ExcelEporter
 		for(LinkAssessmentCourseOutcome link : existingLinks)
 		{
 			col=0;
-			Label courseLabel = new Label(col++, row, ""+link.getCourseOffering().getCourse().getId());
+			Number courseLabel = new Number(col++, row, link.getCourseOffering().getCourse().getId());
 			assessmentToOutcomeSheet.addCell(courseLabel);
 			
-			Label idLabel = new Label(col++, row, ""+link.getCourseOffering().getId(),wrappedCell);
+			Number idLabel = new Number(col++, row, link.getCourseOffering().getId(),wrappedCell);
 			assessmentToOutcomeSheet.addCell(idLabel);
 			
-			Label assessmentIdTextLabel= new Label(col++, row, ""+link.getAssessmentLink().getAssessment().getId(),wrappedCell);
+			Number assessmentIdTextLabel= new Number(col++, row, link.getAssessmentLink().getAssessment().getId(),wrappedCell);
 			assessmentToOutcomeSheet.addCell(assessmentIdTextLabel);
-			Label outIdLabel = new Label(col++, row, ""+link.getOutcome().getId(),wrappedCell);
+			Number outIdLabel = new Number(col++, row, link.getOutcome().getId(),wrappedCell);
 			assessmentToOutcomeSheet.addCell(outIdLabel);
 			row++;
 		}
@@ -632,9 +637,11 @@ public class ExcelEporter
 		courseWithinProgramSheet.addCell(depthNameLabel);
 		Label depthIdLabel= new Label(col++, row, "Depth value",biggerFormat);
 		courseWithinProgramSheet.addCell(depthIdLabel);
+		
+		whenInProgramLabel = new Label(col++, row, "When in Program",biggerFormat);
+		courseWithinProgramSheet.addCell(whenInProgramLabel);	
 		homeOrServiceLabel = new Label(col++, row, "Home or Service",biggerFormat);
 		courseWithinProgramSheet.addCell(homeOrServiceLabel);
-		
 		// set columns to 30 chars
 		for(int i = 0; i< 9; i++)
 		{
@@ -665,27 +672,37 @@ public class ExcelEporter
 			
 					
 					//programId
-					Label programValueLabel = new Label(col++, row, ""+programOutcomeLink.getProgram().getId(),wrappedCell);
+					Number programValueLabel = new Number(col++, row, programOutcomeLink.getProgram().getId(),wrappedCell);
 					courseWithinProgramSheet.addCell(programValueLabel);
 					//course
 
-					Label courseValueLabel = new Label(col++, row, ""+link.getCourseOffering().getCourse().getId(),wrappedCell);
+					Number courseValueLabel = new Number(col++, row, link.getCourseOffering().getCourse().getId(),wrappedCell);
 					courseWithinProgramSheet.addCell(courseValueLabel);
 					//courseOffering
-					Label courseOfferingValueLabel = new Label(col++, row, ""+link.getCourseOffering().getId(),wrappedCell);
+					Number courseOfferingValueLabel = new Number(col++, row, link.getCourseOffering().getId(),wrappedCell);
 					courseWithinProgramSheet.addCell(courseOfferingValueLabel);
 					
 					//emphasis
 					Label emphasisValueLabel = new Label(col++, row, link.getContribution().getName(),wrappedCell);
 					courseWithinProgramSheet.addCell(emphasisValueLabel);
-					Label emphasisIdValueLabel = new Label(col++, row, ""+link.getContribution().getCalculationValue(),wrappedCell);
+					Number emphasisIdValueLabel = new Number(col++, row, link.getContribution().getCalculationValue(),wrappedCell);
 					courseWithinProgramSheet.addCell(emphasisIdValueLabel);
 				
 					//depth
 					Label depthValueLabel = new Label(col++, row, link.getMastery().getName(),wrappedCell);
 					courseWithinProgramSheet.addCell(depthValueLabel);
-					Label depthIdValueLabel = new Label(col++, row, ""+link.getMastery().getCalculationValue(),wrappedCell);
+					Number depthIdValueLabel = new Number(col++, row, link.getMastery().getCalculationValue(),wrappedCell);
 					courseWithinProgramSheet.addCell(depthIdValueLabel);
+					
+					LinkCourseProgram courseLink = getProgramLink(programLinks, programOutcomeLink.getProgram().getId(), link.getCourseOffering().getCourse().getId());
+					String whenInProgramValue = "";
+					if(courseLink!=null)
+						whenInProgramValue = courseLink.getTime().getName();
+					
+					Label whenInProgramValueLabel = new Label(col++, row, whenInProgramValue,wrappedCell);
+					courseWithinProgramSheet.addCell(whenInProgramValueLabel);
+					
+					
 					Label homeOfServiceValueLabel = new Label(col++, row, "Home course",wrappedCell);
 					courseWithinProgramSheet.addCell(homeOfServiceValueLabel);
 					row++;
@@ -704,11 +721,11 @@ public class ExcelEporter
 			
 					
 					//programId
-					Label programValueLabel = new Label(col++, row, ""+programOutcomeLink.getProgram().getId(),wrappedCell);
+					Number programValueLabel = new Number(col++, row, programOutcomeLink.getProgram().getId(),wrappedCell);
 					courseWithinProgramSheet.addCell(programValueLabel);
 					//course
 
-					Label courseValueLabel = new Label(col++, row, ""+link.getCourse().getId(),wrappedCell);
+					Number courseValueLabel = new Number(col++, row, link.getCourse().getId(),wrappedCell);
 					courseWithinProgramSheet.addCell(courseValueLabel);
 					//courseOffering
 					Label courseOfferingValueLabel = new Label(col++, row, "",wrappedCell);
@@ -717,14 +734,23 @@ public class ExcelEporter
 					//emphasis
 					Label emphasisValueLabel = new Label(col++, row, link.getContribution().getName(),wrappedCell);
 					courseWithinProgramSheet.addCell(emphasisValueLabel);
-					Label emphasisIdValueLabel = new Label(col++, row, ""+link.getContribution().getCalculationValue(),wrappedCell);
+					Number emphasisIdValueLabel = new Number(col++, row, link.getContribution().getCalculationValue(),wrappedCell);
 					courseWithinProgramSheet.addCell(emphasisIdValueLabel);
 				
 					//depth
 					Label depthValueLabel = new Label(col++, row, link.getMastery().getName(),wrappedCell);
 					courseWithinProgramSheet.addCell(depthValueLabel);
-					Label depthIdValueLabel = new Label(col++, row, ""+link.getMastery().getCalculationValue(),wrappedCell);
+					Number depthIdValueLabel = new Number(col++, row, link.getMastery().getCalculationValue(),wrappedCell);
 					courseWithinProgramSheet.addCell(depthIdValueLabel);
+				
+					LinkCourseProgram courseLink = getProgramLink(programLinks, programOutcomeLink.getProgram().getId(), link.getCourse().getId());
+					String whenInProgramValue = "";
+					if(courseLink!=null)
+						whenInProgramValue = courseLink.getTime().getName();
+					
+					Label whenInProgramValueLabel = new Label(col++, row, whenInProgramValue,wrappedCell);
+					courseWithinProgramSheet.addCell(whenInProgramValueLabel);
+
 					Label homeOfServiceValueLabel = new Label(col++, row,"Service Course",wrappedCell);
 					courseWithinProgramSheet.addCell(homeOfServiceValueLabel);
 					row++;
@@ -782,18 +808,18 @@ public class ExcelEporter
 			
 					
 					//programId
-					Label programValueLabel = new Label(col++, row, ""+programOutcomeLink.getProgram().getId(),wrappedCell);
+					Number programValueLabel = new Number(col++, row, programOutcomeLink.getProgram().getId(),wrappedCell);
 					courseToProgramSheet.addCell(programValueLabel);
 					//course
 
-					Label courseValueLabel = new Label(col++, row, ""+link.getCourseOffering().getCourse().getId(),wrappedCell);
+					Number courseValueLabel = new Number(col++, row, link.getCourseOffering().getCourse().getId(),wrappedCell);
 					courseToProgramSheet.addCell(courseValueLabel);
 					//courseOffering
-					Label courseOfferingValueLabel = new Label(col++, row, ""+link.getCourseOffering().getId(),wrappedCell);
+					Number courseOfferingValueLabel = new Number(col++, row, link.getCourseOffering().getId(),wrappedCell);
 					courseToProgramSheet.addCell(courseOfferingValueLabel);
 					
 					//Outcome
-					Label outcomeIDValueLabel = new Label(col++, row, ""+link.getCourseOutcome().getId(),wrappedCell);
+					Number outcomeIDValueLabel = new Number(col++, row, link.getCourseOutcome().getId(),wrappedCell);
 					courseToProgramSheet.addCell(outcomeIDValueLabel);
 					
 					row++;
@@ -826,9 +852,10 @@ public class ExcelEporter
 			int i = 0;
 			for (Question q : programQuestions)
 			{
-				Label questionLabel = new Label(col++, row, q.getDisplay(),wrappedCell);
+				Label questionLabel = new Label(col, row, q.getDisplay(),wrappedCell);
 				questionSheet.addCell(questionLabel);
 				questionIds[i++] = q.getId();
+				col+=2;
 			}
 			if(programQuestions.size() > maxQuestions)
 				maxQuestions = programQuestions.size();
@@ -836,31 +863,58 @@ public class ExcelEporter
 			row++;
 			col = 0;
 			List<QuestionResponse> responses = qm.getAllQuestionResponsesForProgram(program);
-			for(QuestionResponse response: responses)
+			
+			TreeMap<String, TreeMap<String,ArrayList<String[]>>> responsesMapping = getMapping(responses);
+			int startColumn = 0;
+			
+			for(String offeringId : responsesMapping.keySet())
 			{
-				col = 0;
-				Label programIdValueLabel = new Label(col++, row, ""+program.getId(),wrappedCell);
+				TreeMap<String,ArrayList<String[]>> answersToAllQuestionsForOffering = responsesMapping.get(offeringId);
+				col = startColumn;
+				Number programIdValueLabel = new Number(startColumn, row, program.getId(),wrappedCell);
 				questionSheet.addCell(programIdValueLabel);
-				Label courseOfferingIdValueLabel = new Label(col++, row, ""+response.getCourseOffering().getId(),wrappedCell);
+				Number courseOfferingIdValueLabel = new Number(startColumn + 1, row, Integer.parseInt(offeringId),wrappedCell);
 				questionSheet.addCell(courseOfferingIdValueLabel);
-				int index = findIndex(questionIds, response.getQuestion().getId());
-				if(index > -1)
+				int maxAnswerCount=0;
+				
+				for (Question q : programQuestions)
 				{
-					String value = response.getResponse();
-					if(response.getQuestion().getAnswerSet() != null)
-						value = getDisplayValue(response.getQuestion().getAnswerSet(), value);
-					
-					Label responseValueLabel = new Label(index+2, row, value,wrappedCell);
-					questionSheet.addCell(responseValueLabel);
+				
+					int rowIndex = 2 * findIndex(questionIds, q.getId());
+					if(rowIndex > -1)
+					{
+						ArrayList<String[]> questionAnswers = answersToAllQuestionsForOffering.get(""+q.getId());
+						if(questionAnswers != null)
+						{
+							maxAnswerCount = Math.max(maxAnswerCount, questionAnswers.size());
+							for(int answerIndex = 0 ; answerIndex < questionAnswers.size(); answerIndex++)
+							{
+								if(answerIndex > 0)
+								{
+									Number repeatProgramIdValueLabel = new Number(startColumn, row + answerIndex , program.getId(),wrappedCell);
+									questionSheet.addCell(repeatProgramIdValueLabel);
+									Number repeatCourseOfferingIdValueLabel = new Number(startColumn + 1, row + answerIndex, Integer.parseInt(offeringId),wrappedCell);
+									questionSheet.addCell(repeatCourseOfferingIdValueLabel);
+									
+								}
+								String[] answerPair = questionAnswers.get(answerIndex);
+								Label responseValueLabel = new Label(rowIndex+2, row + answerIndex,answerPair[1],wrappedCell);
+								questionSheet.addCell(responseValueLabel);				
+								Label responseCalcuationValueLabel = new Label(rowIndex + 2 + 1, row + answerIndex, answerPair[0],wrappedCell);
+								questionSheet.addCell(responseCalcuationValueLabel);
+							}
+						}
+					}
+					else
+						logger.error("Unable to find question with ID "+q.getId() + " for program "+program.getId());
 				}
-				else
-					logger.error("Unable to find question with ID "+response.getQuestion().getId() + " for program "+program.getId());
-				row++;
+				
+				row += maxAnswerCount;
 			}
 		}
 			
 		// set columns to 30 chars
-		for(int i = 0; i< maxQuestions+2; i++)
+		for(int i = 0; i< (maxQuestions*2)+2; i++)
 		{
 			questionSheet.setColumnView(i,  30);
 		}	
@@ -873,6 +927,40 @@ public class ExcelEporter
 		workbook.close(); 
 		return file;
 	}
+	
+	private static TreeMap<String, TreeMap<String,ArrayList<String[]>>> getMapping(List<QuestionResponse> allResponses)
+	{
+		TreeMap<String, TreeMap<String,ArrayList<String[]>>> mapping = new TreeMap<String, TreeMap<String,ArrayList<String[]>>>();
+		for(QuestionResponse response : allResponses)
+		{
+			String courseOfferingId = ""+response.getCourseOffering().getId();
+			String questionId = "" + response.getQuestion().getId();
+			TreeMap<String,ArrayList<String[]>> groupedResponses  = mapping.get(courseOfferingId);
+			if(groupedResponses == null)
+			{
+				groupedResponses = new TreeMap<String,ArrayList<String[]>>();
+			}
+			ArrayList<String[]> questionResponses = groupedResponses.get(questionId);
+			if(questionResponses == null)
+			{
+				questionResponses =  new ArrayList<String[]>();
+			}
+			String[] values = new String[2];
+			values[1] = response.getResponse();
+			if(response.getQuestion().getAnswerSet()!=null)
+				values[0] = getDisplayValue(response.getQuestion().getAnswerSet(), values[1]);
+			else
+				values[0] = "";
+			questionResponses.add(values);
+			groupedResponses.put(questionId,questionResponses);
+			mapping.put(courseOfferingId, groupedResponses);
+			
+		}
+		
+		return mapping;
+		
+	}
+	
 	private static String getDisplayValue(AnswerSet set, String value)
 	{
 		for(AnswerOption option : set.getAnswerOptions())
@@ -881,7 +969,8 @@ public class ExcelEporter
 				return option.getDisplay();
 		}
 		return value;
-	}
+	}	
+	
 	private static int findIndex(int[] a, int toFind)
 	{
 		for(int i = 0; i < a.length ; i++)
@@ -948,7 +1037,7 @@ public class ExcelEporter
 		ResourceBundle bundle = ResourceBundle.getBundle("currimap");
 		String folderName = bundle.getString("tempFileFolder");
 		File tempFolder = new File(folderName);
-		tempFolder = new File(tempFolder, ""+System.currentTimeMillis());
+		tempFolder = new File(tempFolder, System.currentTimeMillis());
 		tempFolder.mkdirs();
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM_dd_yyyy_H_mm");
@@ -1203,7 +1292,7 @@ public class ExcelEporter
 				if(contribution.getProgramOutcomeId() == programOutcomeId)
 				{
 				
-					int count = offeringCounts.get(""+contribution.getCourseId()) != null?offeringCounts.get(""+contribution.getCourseId()): 1; 
+					int count = offeringCounts.get(contribution.getCourseId()) != null?offeringCounts.get(contribution.getCourseId()): 1; 
 					contributionValue = (0.0+contribution.getContributionSum())/count;
 					sum = sum + contributionValue;
 					contributionFound = true;
@@ -1231,6 +1320,16 @@ public class ExcelEporter
 		}
 		return false;
 	}
-
-
+	
+	private static LinkCourseProgram getProgramLink(List<LinkCourseProgram> programLinks, int p, int c)
+	{
+		for(LinkCourseProgram link: programLinks)
+		{
+			if(link.getProgram().getId() == p && link.getCourse().getId() == c)
+			{
+				return link;
+			}
+		}
+		return null;
+	}
 }
