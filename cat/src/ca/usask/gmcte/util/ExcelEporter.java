@@ -230,10 +230,11 @@ public class ExcelEporter
 			sheet.addCell(subjectLabel);
 			Number numberLabel = new Number(col++, row, c.getCourseNumber(),wrappedCell);
 			sheet.addCell(numberLabel);
-			Number idLabel = new Number(col++, row, c.getId(),wrappedCell);
-			sheet.addCell(idLabel);
+
 			Label titleLabel = new Label(col++, row, c.getTitle(),wrappedCell);
 			sheet.addCell(titleLabel);
+			Number idLabel = new Number(col++, row, c.getId(),wrappedCell);
+			sheet.addCell(idLabel);
 			
 			courseIds.add(""+c.getId());
 			row++;
