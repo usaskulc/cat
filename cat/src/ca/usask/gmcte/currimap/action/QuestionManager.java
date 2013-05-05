@@ -358,7 +358,13 @@ public class QuestionManager
 			LinkProgramQuestion newLink = new LinkProgramQuestion();
 			newLink.setProgram(p);
 			newLink.setQuestion(q);
-			int max = (Integer)session.createQuery("select max(displayIndex) from LinkProgramQuestion where program.id = :programId").setParameter("programId",programId).uniqueResult();
+			int max = 1;
+			@SuppressWarnings("unchecked")
+			List<LinkProgramQuestion> list = (List<LinkProgramQuestion>)session.createQuery("from LinkProgramQuestion where program.id = :programId").setParameter("programId",programId).list();
+			if(list != null && !list.isEmpty() )
+			{
+				max = (Integer)session.createQuery("select max(displayIndex) from LinkProgramQuestion where program.id = :programId").setParameter("programId",programId).uniqueResult();
+			}
 			newLink.setDisplayIndex(max+1);
 			session.save(newLink);
 			session.getTransaction().commit();
