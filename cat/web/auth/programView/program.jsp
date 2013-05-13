@@ -28,7 +28,7 @@ else
 	clientBrowser="windows";
 %>
 <h2><%=o.getName()%><%if(sysadmin){%> &nbsp; <a href="javascript:loadModify('/cat/auth/modifyProgram/program.jsp?organization_id=<%=organization.getId()%>&program_id=<%=o.getId()%>','characteristicsModifyDiv');" class="smaller"><img src="/cat/images/edit_16.gif" alt="Edit program details" title="Edit program details"></a><%}%></h2>
-<a href="javascript:toggleDisplay('programQuestionEditSection','<%=clientBrowser%>');"><img src="/cat/images/closed_folder_<%=clientBrowser%>.gif" id="programQuestionEditSection_img">Manage Questions</a>
+<a href="javascript:toggleDisplay('programQuestionEditSection','<%=clientBrowser%>');"><img src="/cat/images/closed_folder_<%=clientBrowser%>.gif" id="programQuestionEditSection_img">Manage Final Questions</a>
 <div id="programQuestionEditSection_div" style="display:none;">
 					
 	<div id="programQuestionsDiv">

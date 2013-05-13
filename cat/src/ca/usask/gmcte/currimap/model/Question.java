@@ -47,9 +47,9 @@ public class Question implements java.io.Serializable {
 		this.answerSet = answerSet;
 	}
 
-	@Column(name = "display", nullable = false, length = 100)
+	@Column(name = "display", nullable = false, length = 500)
 	@NotNull
-	@Length(max = 100)
+	@Length(max = 500)
 	public String getDisplay() {
 		return this.display;
 	}

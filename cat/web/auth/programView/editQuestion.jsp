@@ -1,11 +1,11 @@
-<%@ page import="java.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.model.*"%>
+<%@ page import="java.util.*,ca.usask.gmcte.currimap.action.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.model.*,org.hibernate.validator.Length"%>
 <form>
 <%
 int programId = HTMLTools.getInt(request.getParameter("program_id"));
 Program program = ProgramManager.instance().getProgramById(programId);
 QuestionManager qm = QuestionManager.instance();
 int questionId = HTMLTools.getInt(request.getParameter("question_id"));
-
+int fieldSize= (Question.class.getMethod("getDisplay")).getAnnotation(Length.class).max();
 if(questionId < 0)
 {
 	%>
@@ -42,7 +42,7 @@ types.add(0,noType);
 	<input type="hidden" name="program_id" id="program_id" value="<%=programId%>" />
 
 	<div class="formElement">
-		<div class="label">Question display:</div>
+		<div class="label">Question display (<%=fieldSize%> characters max):</div>
 		<div class="field"><input type="text" name="display" id="display" value="<%=editing?q.getDisplay():""%>"/></div>
 		<div class="field"><div id="displayMessage" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
