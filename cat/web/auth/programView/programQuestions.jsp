@@ -27,8 +27,8 @@ List<Question> questionLinks = qm.getAllQuestionsForProgram(o);
 %>
 <ul>
 	<li>	<a href="javascript:loadModify('/cat/auth/programView/editQuestion.jsp?program_id=<%=programId%>&question_id=-1');" class="smaller">
-				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add a question" title="Add a question"/>
-				Add a question
+				<img src="/cat/images/add_24.gif" style="height:10pt;" alt="Add/create/edit a question" title="Add/create/edit a question"/>
+				Add/create/edit a question
 			</a>
 	</li>
 <%

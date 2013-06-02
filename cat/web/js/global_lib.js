@@ -165,7 +165,7 @@ function loadModifyIntoDiv(url,targetDiv)
 			}
 			else
 			{
-				alert("Something went wrong during processing !");
+				alert("Something went wrong during processing ! Please try to reload the page and try again.");
 			}
 	 		
 	 

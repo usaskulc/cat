@@ -26,10 +26,11 @@ else
 String additionalValues="";
 if(answerSetId == -1 && optionId == -1)
 {
+	int answerSetNameFieldSize= (AnswerSet.class.getMethod("getName")).getAnnotation(Length.class).max();
 	%>
 	<div class="formElement">
-		<div class="label">New Answer Set name:</div>
-		<div class="field"><input type="text" name="answer_set_name" id="answer_set_name" value=""/></div>
+		<div class="label">New Answer Set name (<%=answerSetNameFieldSize%> characters max):</div>
+		<div class="field"><input type="text" name="answer_set_name" id="answer_set_name" value="" maxlength="<%=answerSetNameFieldSize%> size="50" /></div>
 		<div class="field"><div id="answer_set_nameMessage" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 		
@@ -42,7 +43,7 @@ int fieldSize= (AnswerOption.class.getMethod("getDisplay")).getAnnotation(Length
 %>
 	<div class="formElement">
 		<div class="label">Display (<%=fieldSize%> characters max):</div>
-		<div class="field"><input type="text" name="as_display" id="as_display" value="<%=editing?option.getDisplay():""%>"/></div>
+		<div class="field"><input type="text" name="as_display" id="as_display" value="<%=editing?option.getDisplay():""%>" maxlength="<%=fieldSize%>" size="80"/></div>
 		<div class="field"><div id="as_displayMessage" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 		

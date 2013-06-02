@@ -32,18 +32,17 @@ noType.setId(-1);
 noType.setDescription("Please select a question type");
 noType.setName("");
 types.add(0,noType);
-
 %>
 
 
-	<input type="hidden" name="answer_set_id" id="answer_set_id" value="<%=editing?q.getAnswerSet().getId():"-1"%>" />
+	<input type="hidden" name="answer_set_id" id="answer_set_id" value="<%=(editing && q.getAnswerSet()!=null) ? ""+q.getAnswerSet().getId() : "-1"%>" />
 
 	<input type="hidden" name="question_id" id="question_id" value="<%=editing?q.getId():"-1"%>" />
 	<input type="hidden" name="program_id" id="program_id" value="<%=programId%>" />
 
 	<div class="formElement">
 		<div class="label">Question display (<%=fieldSize%> characters max):</div>
-		<div class="field"><input type="text" name="display" id="display" value="<%=editing?q.getDisplay():""%>"/></div>
+		<div class="field"><input type="text" name="display" id="display" size="80" maxlength="<%=fieldSize%>" value="<%=editing?q.getDisplay():""%>"/></div>
 		<div class="field"><div id="displayMessage" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 		
@@ -52,9 +51,9 @@ types.add(0,noType);
 	
 	<div class="formElement">
 		<div class="label">Question type:</div>
-		<div class="field"><%=HTMLTools.createSelect("question_type", types, "name", "description", editing?""+q.getQuestionType().getId():null, "setQuestionType("+programId+");")%>
+		<div class="field"><%=HTMLTools.createSelect("question_type", types, "name", "description", editing?""+q.getQuestionType().getName():null, "setQuestionType("+programId+");")%>
 		</div>
-		<div class="field"><div id="question_type_idMessage" class="completeMessage"></div></div>
+		<div class="field"><div id="question_typeMessage" class="completeMessage"></div></div>
 		<div class="spacer"> </div>
 		
 	</div>

@@ -15,7 +15,7 @@ for(Question question:availableQuestions)
 			<td>
 				<input type="button" name="addQuestion<%=question.getId()%>Button" id="addQuestion<%=question.getId()%>Button" value="Add this question" onclick="addQuestionToProgram(<%=question.getId()%>,<%=programId%>);" />
 			</td>
-			<td><%=uneditableQuestions.contains(""+question.getId())?"<span style=\"color:red;\">Question is in use by another program.</span><br/>":"" %>
+			<td><%=uneditableQuestions.contains(""+question.getId())?"<span style=\"color:red;\">Question cannot be edited or removed, as it is in use by another program</span><br/>":"" %>
 				<jsp:include page="question.jsp">
 					<jsp:param name="question_id" value="<%=question.getId()%>"/>
 					<jsp:param name="questionInUse" value="<%=uneditableQuestions.contains(String.valueOf(question.getId()))%>"/>	

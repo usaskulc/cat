@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" import="java.util.*,java.net.*,ca.usask.gmcte.util.*,ca.usask.gmcte.currimap.model.*,ca.usask.gmcte.currimap.action.*, org.apache.log4j.Logger,org.hibernate.validator.Length"%>
-<%!private static Logger logger = Logger.getLogger("/auth/courseOffering/index.jsp");%>
+<%!private static Logger logger = Logger.getLogger("/auth/modifyProgram/saveProgram.jsp");%>
 <%
 Enumeration e = request.getParameterNames();
 while(e.hasMoreElements())
@@ -489,7 +489,11 @@ else if (object.equals("AnswerOption"))
 	if(optionId == -1 && answerSetId == -1)
 	{
 		String answerSetName = request.getParameter("answer_set_name");
-		manager.saveAnswerSet(answerSetName);
+		if(!manager.saveAnswerSet(answerSetName))
+		{
+			out.println("Unable to create new Answerset! Please make sure that the values you entered are not too long.");
+			return;
+		}
 		AnswerSet newSet = manager.getAnswerSetByName(answerSetName);
 		answerSetId = newSet.getId();
 	}
