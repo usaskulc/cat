@@ -1,0 +1,7 @@
+LICENSE.README
+
+The Curriculum Alignment Tool (CAT) is being released under the GNU Lesser General Public License.  However, some libraries used by CAT fall under the GPL license and thus cannot be used in proprietary software.  
+
+Exclusion List:
+- MySQL Connector/ODBC  (GPL License)
+- JavaServer Faces  (CDDL+GPL License)
