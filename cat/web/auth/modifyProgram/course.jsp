@@ -63,6 +63,9 @@ if(courseId != null  && courseId.trim().length() > 0)
 		<jsp:include page="courseOrganizations.jsp"/>
 	</div>
 	<%} %>
+	To assign this course to your department, please contact a system administrator (e.g., gmcte@usask.ca).
+	<br/>
+	
 	<div class="formElement">
 		<div class="label"><input type="button" name="saveCourseButton" id="saveCourseButton" value="Save Course" onclick="saveProgram(new Array('subject','courseNumber','title'<%=organizationParameter%>),new Array('subject','courseNumber','title','description','organization','program_id'));" /></div>
 		<div class="field"><div id="messageDiv" class="completeMessage"></div></div>

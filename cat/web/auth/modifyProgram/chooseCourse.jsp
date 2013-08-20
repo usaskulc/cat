@@ -6,7 +6,7 @@ String programId = request.getParameter("program_id") ;
 		<jsp:include page="existingCourseSelector.jsp"/>
 	</div>
 <br>
-	<a href="javascript:openDiv('addCourseDiv');" class="smaller"><img src="/cat/images/add_24.gif" style="height:14pt;" alt="Add" >Add a course(the one I am looking for isn't in the system yet)</a>
+	<a href="javascript:openDiv('addCourseDiv');" class="smaller"><img src="/cat/images/add_24.gif" style="height:14pt;" alt="Add" >Add a course (the one I am looking for isn't in the system yet)</a>
 <br>
 <div id="addCourseDiv" style="display:none;">
 	<jsp:include page="/auth/modifyProgram/course.jsp"/>
