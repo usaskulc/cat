@@ -67,6 +67,7 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 				//console.log("object="+object);
 				//console.log("objectId="+objectId);
 				var programId = $("#program_id").val();
+				
 				var organizationId = $("#organization_id").val();
 				if(object == "Organization")
 				{
@@ -191,7 +192,8 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 				}
 				else if (object == "AnswerOption")
 				{
-					var programId = $("#program_id").val();
+					var programId = $("#as_program_id").val();
+			
 					$("#optionMessageDiv").html(msg);
 					$("#optionMessageDiv").show();
 					$("#optionMessageDiv").html(msg);
