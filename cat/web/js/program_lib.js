@@ -44,6 +44,13 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 		{	
 			parameters += "&parentObjectId="+parentObjectId;
 		}
+		var asProgramId = $("#as_program_id").val();
+		if(asProgramId!=null)
+		{
+			parameters!="&programId="+asProgramId;
+		}
+		
+		
 		parameters += readParameters(parameterArray);
 		//console.log(parameters);
 		$.ajax({
