@@ -47,7 +47,7 @@ function saveProgram(requiredParameterArray, parameterArray,type)
 		var asProgramId = $("#as_program_id").val();
 		if(asProgramId!=null)
 		{
-			parameters += "&programId="+asProgramId;
+			parameters += "&program_id="+asProgramId;
 		}
 		
 		
