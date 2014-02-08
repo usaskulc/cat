@@ -24,6 +24,15 @@
 	    </init-param>
 	</filter>
 	<filter>
+	    <filter-name>CAS Logout Filter</filter-name>
+	    <filter-class>ca.usask.ulc.filters.CasLogoutFilter</filter-class>
+		<init-param>
+			<param-name>ca.usask.ulc.filters.CasLogoutFilter.url</param-name>
+			<!-- Logout URL can take a service parameter that contains the url to redirect to after logout -->
+			<param-value>https://cas.usask.ca/cas/logout?service=https%3A%2F%2Fyourtomcatserver.yourdomain.ca</param-value>
+		</init-param>
+	</filter>
+	<filter>
 	    <filter-name>Session Init Filter</filter-name>
 	    <filter-class>ca.usask.ulc.filters.InitSessionFilter</filter-class>
 	</filter>
@@ -44,6 +53,7 @@
 	
 
  	<filter-mapping><filter-name>CAS Filter</filter-name><url-pattern>/auth/*</url-pattern> </filter-mapping>
+  <filter-mapping><filter-name>CAS Logout Filter</filter-name><url-pattern>/auth/logout</url-pattern> </filter-mapping>
  	
   <filter-mapping><filter-name>Session Init Filter</filter-name><url-pattern>/*</url-pattern> </filter-mapping>
 	
