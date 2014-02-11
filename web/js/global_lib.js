@@ -242,12 +242,6 @@ function logout()
 	window.open("/cat/logout.jsp");
 	setTimeout('document.location="/cat/logout.jsp"',1000);
 }
-function updateLoginStatusAfterlogout()
-{
-	window.location="/cat/auth/myCourses.jsp";
-	//window.location.reload(); 
-	//loadURLIntoId("/cat/login.jsp","#loginStatus");
-}
 function openEdit()
 {
 	var text = "";

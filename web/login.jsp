@@ -23,7 +23,7 @@
 String userid=(String)session.getAttribute("edu.yale.its.tp.cas.client.filter.user");
 if (userid != null)
 {
-	%>You are logged in as <%=userid%>. <a href="javascript:logout();">Log out</a>
+	%>You are logged in as <%=userid%>. <a href="/cat/auth/logout">Log out</a>
 	<%
 }
 else
